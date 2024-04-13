@@ -618,7 +618,7 @@ const convert = {
         global.entities = output;
         global.entities.sort((a, b) => {
             let sort = a.layer - b.layer;
-            if (!sort) {
+            if (!sort && a.layer == 100) {
                 let d1 = (a.render.x - global.player.renderx) ** 2 + (a.render.y - global.player.rendery) ** 2,
                     d2 = (b.render.x - global.player.renderx) ** 2 + (b.render.y - global.player.rendery) ** 2;
                 sort = d2 - d1;

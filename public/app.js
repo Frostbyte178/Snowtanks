@@ -984,7 +984,7 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
-    drawPoly(context, xx, yy, (drawSize / m.size) * m.realSize, m.shape, rot, instance.borderless, instance.drawFill, m.imageInterpolation, m.borderFirst, m.heightScale);
+    drawPoly(context, xx, yy, (drawSize / m.size) * m.realSize, m.shape, rot, instance.borderless, instance.drawFill, m.imageInterpolation, m.borderFirst, m.heightScale ? (1 + (m.heightScale - 1) * ratio) : undefined);
     
     // Draw guns above us
     for (let i = 0; i < source.guns.length; i++) {

@@ -886,7 +886,7 @@ class Entity extends EventEmitter {
         this.children = [];
         this.statusEffects = [];
         this.color = new Color(16);
-        this.glow = {radius: null, color: new Color(-1).compiled, alpha: 1, recursion: 1}
+        this.glow = {radius: null, color: new Color(-1).compiled, alpha: 1, recursion: 1};
         this.invisible = [0, 0];
         this.alphaRange = [0, 1];
         // Define it
