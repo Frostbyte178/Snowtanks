@@ -886,7 +886,7 @@ class Entity extends EventEmitter {
         this.children = [];
         this.statusEffects = [];
         this.color = new Color(16);
-        this.glow = {radius: null, color: new Color(-1), alpha: 1, recursion: 1}
+        this.glow = {radius: null, color: new Color(-1).compiled, alpha: 1, recursion: 1}
         this.invisible = [0, 0];
         this.alphaRange = [0, 1];
         // Define it
@@ -1125,11 +1125,11 @@ class Entity extends EventEmitter {
             }
             this.color.interpret(set.COLOR);
         }
-        this.upgradeColor = set.UPGRADE_COLOR == null ? null : new Color(set.UPGRADE_COLOR);
+        this.upgradeColor = set.UPGRADE_COLOR == null ? null : new Color(set.UPGRADE_COLOR).compiled;
         if (set.GLOW != null) {
             this.glow = {
                 radius: set.GLOW.RADIUS ?? 0,
-                color: new Color(set.GLOW.COLOR),
+                color: new Color(set.GLOW.COLOR).compiled,
                 alpha: set.GLOW.ALPHA ?? 1,
                 recursion: set.GLOW.RECURSION ?? 1
             };

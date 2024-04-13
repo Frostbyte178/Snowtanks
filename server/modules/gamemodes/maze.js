@@ -11,33 +11,6 @@ let checkMazeForBlocks = (initX, initY, size, maze) => {
         }
         maze[initY][initX] = size;
     },
-    makeHitbox = (wall) => {
-        const _size = wall.size + 4;
-        //calculate the relative corners
-        let relativeCorners = [
-                Math.atan2(    _size,     _size) + wall.angle,
-                Math.atan2(0 - _size,     _size) + wall.angle,
-                Math.atan2(0 - _size, 0 - _size) + wall.angle,
-                Math.atan2(    _size, 0 - _size) + wall.angle
-            ],
-            distance = Math.sqrt(_size ** 2 + _size ** 2);
-
-        //convert 4 corners into 4 lines
-        for (let i = 0; i < 4; i++) {
-            relativeCorners[i] = {
-                x: distance * Math.sin(relativeCorners[i]),
-                y: distance * Math.cos(relativeCorners[i])
-            };
-        }
-
-        wall.hitbox = [
-            [relativeCorners[0], relativeCorners[1]],
-            [relativeCorners[1], relativeCorners[2]],
-            [relativeCorners[2], relativeCorners[3]],
-            [relativeCorners[3], relativeCorners[0]]
-        ];
-        wall.hitboxRadius = distance;
-    },
     generateMaze = (size) => {
         let maze = JSON.parse(JSON.stringify(Array(size).fill(Array(size).fill(true))));
         let activeLocsThatWeCantPlaceIn = 0;

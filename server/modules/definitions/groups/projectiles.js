@@ -82,18 +82,20 @@ Class.missile = {
             POSITION: [14, 6, 1, 0, -2, 130, 0],
             PROPERTIES: {
                 AUTOFIRE: true,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { recoil: 1.35 }, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {speed: 1.3, maxSpeed: 1.3}]),
                 TYPE: [ "bullet", { PERSISTS_AFTER_DEATH: true } ],
-                STAT_CALCULATOR: gunCalcNames.thruster
+                STAT_CALCULATOR: gunCalcNames.thruster,
+                WAIT_TO_CYCLE: true,
             }
         },
         {
             POSITION: [14, 6, 1, 0, 2, 230, 0],
             PROPERTIES: {
                 AUTOFIRE: true,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { recoil: 1.35 }, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {speed: 1.3, maxSpeed: 1.3}]),
                 TYPE: [ "bullet", { PERSISTS_AFTER_DEATH: true } ],
-                STAT_CALCULATOR: gunCalcNames.thruster
+                STAT_CALCULATOR: gunCalcNames.thruster,
+                WAIT_TO_CYCLE: true,
             }
         }
     ]
@@ -145,7 +147,7 @@ Class.minimissile = {
             POSITION: [14, 6, 1, 0, 0, 180, 0],
             PROPERTIES: {
                 AUTOFIRE: true,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { recoil: 1.35 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, { recoil: 0.5 }, g.lowPower]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
             },
@@ -154,24 +156,26 @@ Class.minimissile = {
 }
 Class.spinmissile = {
     PARENT: "missile",
-    FACING_TYPE: ["spin", {speed: 0.1}],
+    CONTROLLERS: [["spin2", {speed: 0.1}]],
     GUNS: [
         {
             POSITION: [14, 8, 1, 0, 0, 0, 0],
             PROPERTIES: {
                 AUTOFIRE: !0,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { reload: 0.75 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {size: 1.1}]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
+                WAIT_TO_CYCLE: true,
             },
         },
         {
             POSITION: [14, 8, 1, 0, 0, 180, 0],
             PROPERTIES: {
                 AUTOFIRE: !0,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { reload: 0.75 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {size: 1.1}]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
+                WAIT_TO_CYCLE: true,
             },
         },
     ],
@@ -183,7 +187,7 @@ Class.hyperspinmissile = {
             POSITION: [14, 8, 1, 0, 0, 0, 0],
             PROPERTIES: {
                 AUTOFIRE: !0,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { reload: 0.75 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {size: 1.1}]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
             },
@@ -192,7 +196,7 @@ Class.hyperspinmissile = {
             POSITION: [14, 8, 1, 0, 0, 180, 0],
             PROPERTIES: {
                 AUTOFIRE: !0,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { reload: 0.75 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {size: 1.1}]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
             },
@@ -201,7 +205,7 @@ Class.hyperspinmissile = {
             POSITION: [14, 8, 1, 0, 0, 90, 0],
             PROPERTIES: {
                 AUTOFIRE: !0,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { reload: 0.75 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {size: 1.1}]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
             },
@@ -210,7 +214,7 @@ Class.hyperspinmissile = {
             POSITION: [14, 8, 1, 0, 0, 270, 0],
             PROPERTIES: {
                 AUTOFIRE: !0,
-                SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, { reload: 0.5 }, g.lowPower, { reload: 0.75 }, { speed: 1.3, maxSpeed: 1.3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {size: 1.1}]),
                 TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
                 STAT_CALCULATOR: gunCalcNames.thruster,
             },

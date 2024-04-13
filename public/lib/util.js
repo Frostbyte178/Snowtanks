@@ -141,7 +141,7 @@ const util = {
             positionData = [],
             rerootUpgradeTree = [],
             allRoots = [],
-            trueColor = mainMockup.color.compiled ? mainMockup.color.compiled.split(" ") : mainMockup.color.split(" ");
+            trueColor = mainMockup.color.split(" ");
         if ((trueColor[0] == '-1' || trueColor[0] == 'mirror') && color) trueColor[0] = color.split(' ')[0];
         let finalColor = trueColor.join(' ');
         
@@ -171,7 +171,7 @@ const util = {
             color: finalColor,
             borderless: mainMockup.borderless,
             drawFill: mainMockup.drawFill,
-            upgradeColor: mainMockup.upgradeColor ? mainMockup.upgradeColor.compiled ? mainMockup.upgradeColor.compiled : mainMockup.upgradeColor : null,
+            upgradeColor: mainMockup.upgradeColor ? mainMockup.upgradeColor : null,
             glow: mainMockup.glow,
             render: {
                 status: {

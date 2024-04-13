@@ -2609,8 +2609,6 @@ Class.frostBoss = {
 const divide = 600;
 const arraySize = 10;
 const colorArray = [];
-const max_damage = 4;
-const min_reload = 16;
 for (let i = 0; i < arraySize; i++) {
     const rgb = Math.round(255 * i / (arraySize - 1));
     colorArray.push('#' + ((1 << 24) + (rgb << 16) + (rgb << 8) + rgb).toString(16).slice(1));
@@ -2626,15 +2624,10 @@ Class.toothlessBase = {
         RECURSION: 6,
     },
 	BODY: {
-        ACCEL: 1.6,
-        SPEED: 1.4,
-        HEALTH: 250,
-        DAMAGE: 20,
-        RESIST: 1,
-        PENETRATION: 2,
-        SHIELD: 40,
-        FOV: 1.5,
-        DENSITY: 3,
+        SPEED: 0.85 * base.SPEED,
+        FOV: 1.4 * base.FOV,
+        HEALTH: 7 * base.HEALTH,
+        DAMAGE: 2.5 * base.DAMAGE,
     },
     LEVEL_SKILL_POINT_FUNCTION: level => {
         if (level < 2) return 0;
@@ -2646,7 +2639,7 @@ Class.toothlessBase = {
     COLOR: "purple",
     DANGER: 10,
 	SHAPE: 3,
-	SIZE: 30,
+	SIZE: 28,
 	SKILL_CAP: Array(10).fill(smshskl + 3),
     VALUE: 10e+6,
 }
@@ -2654,9 +2647,9 @@ Class.toothlessBossTurret = {
     PARENT: "genericTank",
     LABEL: "",
     BODY: {
-        FOV: 1.8,
+        FOV: 2,
     },
-    CONTROLLERS: [[ "nearestDifferentMaster", { lookAtDanger: false } ], "onlyAcceptInArc"],
+    CONTROLLERS: [[ "nearestDifferentMaster", { lookAtDanger: false, timeout: 10 } ], "onlyAcceptInArc"],
     COLOR: "grey",
     INDEPENDENT: true,
     GUNS: [
@@ -2664,9 +2657,7 @@ Class.toothlessBossTurret = {
             POSITION: [32, 8, 1, 0, 0, 0, 0.4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, {
-                    pen: 1.25,
-                    damage: 1.2,
-                    reload: 0.7,
+                    reload: 0.8,
                     recoil: 0,
                 }]),
                 TYPE: "bullet",
@@ -2688,8 +2679,8 @@ Class.toothlessBossTurret = {
                     body._damage[i] = gun.settings.damage;
                     body._reload[i] = gun.settings.reload;
 
-                    _temp += max_damage / body._damage[i];
-                    _temp += body._reload[i] / min_reload;
+                    _temp += (body._damage[i] * 3) / body._damage[i];
+                    _temp += body._reload[i] / (body._reload[i] / 3);
                     _temp /= 2;
                 });
 
@@ -2715,10 +2706,42 @@ Class.toothlessBossTurret = {
             body.guns.forEach((gun, i) => {
                 let _1 = body._damage[i] * (master._mode ? power : 1);
                 let _2 = body._reload[i] / (master._mode ? power : 1);
+                let max_damage = body._damage[i] * 3;
+                let min_reload = body._reload[i] / 3;
 
                 gun.settings.damage = _1 > max_damage ? max_damage : _1;
                 gun.settings.reload = _2 < min_reload ? min_reload : _2;
             });
+        },
+    }],
+};
+Class.toothlessBossDeco = {
+    PARENT: "triangle",
+    LABEL: "",
+    GUNS: [{
+        POSITION: { LENGTH: 0, WIDTH: 0 },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([ g.basic, {
+                range: 0.1,
+                speed: 0.1,
+                maxSpeed: 0.1,
+                recoil: 0,
+            }]),
+            TYPE: "bullet",
+            AUTOFIRE: true,
+        },
+    }],
+    ON: [{
+        event: "fire",
+        handler: ({ body }) => {
+            const master = body.master;
+            if (master._maxPower)
+                body.color.base = colorArray[
+                    Math.floor(master._power / (master._maxPower / arraySize)) > arraySize - 1
+                        ? arraySize - 1
+                        : Math.floor(master._power / (master._maxPower / arraySize)
+                    )
+                ];
         },
     }],
 };
@@ -2727,35 +2750,7 @@ Class.toothlessBoss = {
     UPGRADE_COLOR: "magenta",
     TURRETS: [{
         POSITION: { SIZE: 15, LAYER: 1 },
-        TYPE: ["triangle", {
-            MIRROR_MASTER_ANGLE: true,
-            GUNS: [{
-                POSITION: { LENGTH: 0, WIDTH: 0 },
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([ g.basic, {
-                        range: 0.1,
-                        speed: 0.1,
-                        maxSpeed: 0.1,
-                        recoil: 0,
-                    }]),
-                    TYPE: "bullet",
-                    AUTOFIRE: true,
-                },
-            }],
-            ON: [{
-                event: "fire",
-                handler: ({ body }) => {
-                    const master = body.master;
-                    if (master._maxPower)
-                        body.color.base = colorArray[
-                            Math.floor(master._power / (master._maxPower / arraySize)) > arraySize - 1
-                                ? arraySize - 1
-                                : Math.floor(master._power / (master._maxPower / arraySize)
-                            )
-                        ];
-                },
-            }],
-        }],
+        TYPE: ["toothlessBossDeco", { MIRROR_MASTER_ANGLE: true }],
     }, {
         POSITION: { SIZE: 23 },
         TYPE: ["triangle", { COLOR: "black", MIRROR_MASTER_ANGLE: true }],

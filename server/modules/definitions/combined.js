@@ -22,7 +22,7 @@ for (let filename of addons) {
     if ('function' === typeof result) {
         result({ Config: c, Events: events });
     }
-    global.loadedAddons.push(filename.replace(".js", ""));
+    global.loadedAddons.push(filename.replace(/\.js$/, ""));
 }
 definitionCount = Object.keys(Class).length;
 

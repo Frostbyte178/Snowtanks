@@ -1,21 +1,43 @@
 const { combineStats, makeAuto } = require('../facilitators.js');
-const { gunCalcNames, smshskl } = require('../constants.js');
+const { gunCalcNames, smshskl, base } = require('../constants.js');
 const g = require('../gunvals.js');
 const dreadnoughtBody = {
-    ACCEL: 1.6,
-    SPEED: 1.4,
-    HEALTH: 400,
-    DAMAGE: 10,
-    RESIST: 1,
-    PENETRATION: 2,
-    SHIELD: 40,
-    REGEN: 0.025,
-    FOV: 1.5,
-    DENSITY: 3,
+    SPEED: base.SPEED * 0.5,
+    HEALTH: base.HEALTH * 5,
+    DAMAGE: base.DAMAGE * 2.5,
+    PENETRATION: base.PENETRATION * 2,
+    SHIELD: base.SHIELD * 2.5,
+    FOV: base.FOV * 1.4,
+    DENSITY: base.DENSITY * 6,
 };
+g.dreadv1Generic = {
+	health: 1.4,
+	range: 0.8,
+	recoil: 0,
+}
+g.dreadv1Slow = {
+	health: 1.5,
+	speed: 0.65,
+	maxSpeed: 0.65,
+};
+g.dreadv1Drone = {
+	health: 1.3,
+	speed: 0.9,
+	maxSpeed: 0.9,
+	reload: 1.4,
+	size: 1.2
+}
+g.dreadv1Trap = {
+	range: 0.9,
+	shudder: 0.2,
+	reload: 1.75
+}
 
 // Comment out the line below to enable this addon, uncomment it to disable this addon.
-//return console.log('--- Dreadnoughts v1 addon [dreadv1.js] is disabled. See lines 32-33 to enable it. ---');;
+//return console.log('--- Dreadnoughts v1 addon [dreadv1.js] is disabled. See lines 32-33 to enable it. ---');
+
+// Set the below variable to true to enable the Medicare and Medicaid healing bodies.
+const enableHealers = true;
 
 // Misc
 Class.genericDreadnought1 = {
@@ -23,7 +45,7 @@ Class.genericDreadnought1 = {
 	BODY: dreadnoughtBody,
 	SHAPE: 6,
 	COLOR: 'hexagon',
-	SIZE: 30,
+	SIZE: 27.5,
 	SKILL_CAP: Array(10).fill(smshskl+3),
 	REROOT_UPGRADE_TREE: "dreadOfficialV1",
 };
@@ -39,7 +61,7 @@ Class.mechanismMainTurret = {
 	GUNS: [{
 		POSITION: [22, 10, 1, 0, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.15 }, g.turret, g.pounder, { speed: 1.3, maxSpeed: 1.3 }, { reload: 0.75 }, { reload: 0.5 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 1.8, speed: 0.4, maxSpeed: 0.4, reload: 0.5 }]),
 			TYPE: "bullet"
 		}
 	}]
@@ -56,7 +78,7 @@ Class.automationMainTurret = {
 	GUNS: [{
 		POSITION: [22, 10, 1, 0, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.15 }, g.turret, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 1.55, speed: 0.4, maxSpeed: 0.4, reload: 0.5 }]),
 			TYPE: "bullet"
 		}
 	}]
@@ -73,7 +95,7 @@ Class.automationSecondaryTurret = {
 	GUNS: [{
 		POSITION: [22, 10, 1, 0, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.15 }, g.turret, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 1.4, speed: 0.4, maxSpeed: 0.4, reload: 0.5 }]),
 			TYPE: "bullet"
 		}
 	}]
@@ -128,7 +150,21 @@ for(let i = 0; i < 5; i++) {
 		},
 	})
 }
-Class.turretedTrap = makeAuto(Class.trap);
+Class.turretedTrap = makeAuto(Class.trap, "Auto-Trap", {size: 7.5, type: 'droneAutoTurret'});
+Class.turretedTrap.BODY.RECOIL_MULTIPLIER = 0;
+Class.weakMinion = {
+    PARENT: "minion",
+    GUNS: [
+        {
+            POSITION: [17, 9, 1, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.minionGun, {health: 0.4, speed: 0.8, maxSpeed: 0.8}]),
+                WAIT_TO_CYCLE: true,
+                TYPE: "bullet",
+            },
+        },
+    ],
+}
 
 // T0
 Class.dreadOfficialV1 = {
@@ -148,9 +184,9 @@ Class.swordOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.swordOfficialV1.GUNS.push({
-		POSITION: [18, 7, 1, 0, 0, 120*i, 0],
+		POSITION: [19, 7, 1, 0, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.sniper, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.dreadv1Generic]),
 			TYPE: "bullet"
 		}
 	});
@@ -166,7 +202,7 @@ for (let i = 0; i < 3; i++) {
 	Class.pacifierOfficialV1.GUNS.push({
 		POSITION: [15, 7, 1, 0, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.dreadv1Generic, g.dreadv1Slow]),
 			TYPE: "bullet"
 		}
 	});
@@ -182,7 +218,7 @@ for (let i = 0; i < 3; i++) {
 	Class.invaderOfficialV1.GUNS.push({
 		POSITION: [5.5, 7.5, 1.3, 7.5, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { speed: 1.3, maxSpeed: 1.3 }]),
+			SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.dreadv1Drone]),
 			TYPE: "drone",
 			AUTOFIRE: true,
 			SYNCS_SKILLS: true,
@@ -201,11 +237,11 @@ Class.centaurOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.centaurOfficialV1.GUNS.push({
-		POSITION: [12, 7, 1, 0, 0, 120*i, 0],
+		POSITION: [12.5, 7, 1, 0, 0, 120*i, 0],
 	}, {
-		POSITION: [2.5, 7, 1.6, 12, 0, 120*i, 0],
+		POSITION: [2.5, 7, 1.6, 12.5, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.trap, g.pounder, { reload: 0.75 }, {range: 3}]),
+			SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, {reload: 0.55}]),
 			TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 			STAT_CALCULATOR: gunCalcNames.trap,
 		},
@@ -220,12 +256,12 @@ Class.automationOfficialV1 = {
 }
 for (let i = 0; i < 6; i++) {
 	Class.automationOfficialV1.TURRETS.push({
-		POSITION: [4, 8.7, 0, 60*i+30, 180, 1],
+		POSITION: [3.5, 8.25, 0, 60*i+30, 180, 1],
 		TYPE: "automationSecondaryTurret",
 	});
 }
 Class.automationOfficialV1.TURRETS.push({
-	POSITION: [7, 0, 0, 0, 360, 1],
+	POSITION: [9, 0, 0, 0, 360, 1],
 	TYPE: "automationMainTurret",
 });
 
@@ -234,14 +270,14 @@ Class.juggernautOfficialV1 = {
 	LABEL: "Juggernaut",
 	UPGRADE_TOOLTIP: "Health Buff",
 	BODY: {
-		HEALTH: 2,
-		SHIELD: 3,
+		HEALTH: 1.7,
+		SHIELD: 2.2,
 		REGEN: 1.5,
-		SPEED: 0.7,
+		SPEED: 1.25,
 	},
 	TURRETS: [{
 		POSITION: [22, 0, 0, 0, 0, 0],
-		TYPE: ["smasherBody", {INDEPENDENT: false} ]
+		TYPE: 'hexagon'
 	}]
 }
 Class.medicareOfficialV1 = {
@@ -263,13 +299,13 @@ Class.sabreOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.sabreOfficialV1.GUNS.push({
-		POSITION: [25, 7, 1, 0, 0, 120*i, 0],
+		POSITION: [26, 7, 1, 0, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.sniper, g.assassin, { speed: 1.3, maxSpeed: 1.3 }, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, g.dreadv1Generic]),
 			TYPE: "bullet"
 		}
 	}, {
-		POSITION: [5, 7, -1.4, 9, 0, 120*i, 0]
+		POSITION: [4, 7, -1.4, 9, 0, 120*i, 0]
 	});
 }
 Class.gladiusOfficialV1 = {
@@ -280,11 +316,11 @@ Class.gladiusOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.gladiusOfficialV1.GUNS.push({
-		POSITION: [16, 8, 1, 0, 0, 120*i, 0]
+		POSITION: [17, 9, 1, 0, 0, 120*i, 0]
 	}, {
 		POSITION: [20, 6, 1, 0, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.sniper, g.rifle, { speed: 1.3, maxSpeed: 1.3 }, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle, g.dreadv1Generic]),
 			TYPE: "bullet"
 		}
 	});
@@ -300,13 +336,13 @@ for (let i = 0; i < 3; i++) {
 	Class.appeaserOfficialV1.GUNS.push({
 		POSITION: [6, 8, 1.3, 7, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.pounder, { reload: 0.5 }, { speed: 0.7, maxSpeed: 0.7 }, { speed: 0.93, maxSpeed: 0.93 }, {size: 0.55}]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {speed: 0.8, maxSpeed: 0.8, range: 0.75, size: 0.55}]),
 			TYPE: "bullet"
 		}
 	}, {
 		POSITION: [6, 7.5, 1.2, 9, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.pounder, { reload: 0.5 }, { speed: 0.7, maxSpeed: 0.7 }, { speed: 0.93, maxSpeed: 0.93 }, {size: 0.55 * 8 / 7.5}]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {speed: 0.8, maxSpeed: 0.8, range: 0.75, size: 0.55 * 8 / 7.5}]),
 			TYPE: "bullet"
 		}
 	});
@@ -319,9 +355,9 @@ Class.peacekeeperOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.peacekeeperOfficialV1.GUNS.push({
-		POSITION: [17, 10, 1, 0, 0, 120*i, 0],
+		POSITION: [16.5, 10, 1, 0, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.destroyer, { reload: 0.75 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.dreadv1Generic, g.dreadv1Slow, {reload: 1.3, health: 1.3}]),
 			TYPE: "bullet",
 		}
 	});
@@ -334,21 +370,21 @@ Class.diplomatOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.diplomatOfficialV1.GUNS.push({
-		POSITION: [13.5, 6, 1, 0, 2.2, 120*i, 0.5],
+		POSITION: [14, 5, 1, 0, 2.5, 120*i, 0.5],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, { speed: 0.7, maxSpeed: 0.7 }, g.pounder, { reload: 0.5 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow]),
 			TYPE: "bullet"
 		}
 	}, {
-		POSITION: [13.5, 6, 1, 0, -2.2, 120*i, 0.5],
+		POSITION: [14, 5, 1, 0, -2.5, 120*i, 0.5],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, { speed: 0.7, maxSpeed: 0.7 }, g.pounder, { reload: 0.5 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow]),
 			TYPE: "bullet"
 		}
 	}, {
-		POSITION: [15, 6, 1, 0, 0, 120*i, 0],
+		POSITION: [15, 5, 1, 0, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, { speed: 0.7, maxSpeed: 0.7 }, g.pounder, { reload: 0.5 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow]),
 			TYPE: "bullet"
 		}
 	});
@@ -362,9 +398,9 @@ Class.inquisitorOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.inquisitorOfficialV1.GUNS.push({
-		POSITION: [7, 8.5, 1.3, 7.5, 0, 120*i, 0],
+		POSITION: [7, 7.5, 1.3, 7.5, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, g.weak, g.battleship, {SIZE: 1.25}]),
+			SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.dreadv1Drone, {health: 1.25, reload: 1.1}]),
 			TYPE: "drone",
 			AUTOFIRE: true,
 			SYNCS_SKILLS: true,
@@ -387,8 +423,8 @@ for (let i = 0; i < 3; i++) {
 		POSITION: [1.5, 10, 1, 13.5, 0, 120*i, 0],
 		PROPERTIES: {
 			MAX_CHILDREN: 4,
-			SHOOT_SETTINGS: combineStats([g.factory, g.weak, g.weak, g.weak, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, { reload: 0.5 }, { reload: 0.5 }]),
-			TYPE: "minion",
+			SHOOT_SETTINGS: combineStats([g.factory, g.overseer, g.dreadv1Drone, {health: 0.65, reload: 0.7}]),
+			TYPE: "weakMinion",
 			STAT_CALCULATOR: gunCalcNames.drone,
 			AUTOFIRE: true,
 			SYNCS_SKILLS: true
@@ -407,21 +443,21 @@ for (let i = 0; i < 3; i++) {
 	Class.infiltratorOfficialV1.GUNS.push({
 		POSITION: [7, 6, 0.6, 5.5, 2.8, 120*i, 0.5],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.swarm, g.weak, g.carrier, { speed: 1.3, maxSpeed: 1.3 }, {speed: 0.75, range: 1.9}]),
+			SHOOT_SETTINGS: combineStats([g.swarm, g.carrier, { reload: 2, speed: 0.5, range: 0.9, health: 0.85}]),
 			TYPE: "swarm",
 			STAT_CALCULATOR: gunCalcNames.swarm
 		}
 	}, {
 		POSITION: [7, 6, 0.6, 5.5, -2.8, 120*i, 0.5],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.swarm, g.weak, g.carrier, { speed: 1.3, maxSpeed: 1.3 }, {speed: 0.75, range: 1.9}]),
+			SHOOT_SETTINGS: combineStats([g.swarm, g.carrier, { reload: 2, speed: 0.5, range: 0.9, health: 0.85}]),
 			TYPE: "swarm",
 			STAT_CALCULATOR: gunCalcNames.swarm
 		}
 	}, {
 		POSITION: [7, 6, 0.6, 8, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.swarm, g.weak, g.carrier, { speed: 1.3, maxSpeed: 1.3 }, {speed: 0.75, range: 1.9}]),
+			SHOOT_SETTINGS: combineStats([g.swarm, g.carrier, { reload: 2, speed: 0.5, range: 0.9, health: 0.85}]),
 			TYPE: "swarm",
 			STAT_CALCULATOR: gunCalcNames.swarm
 		}
@@ -436,29 +472,29 @@ Class.cerberusOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.cerberusOfficialV1.GUNS.push({
-		POSITION: [11.5, 2.5, 1, 0, 4, 120*i, 0]
+		POSITION: [13.5, 2.25, 1, 0, 4, 120*i, 0]
 	}, {
-		POSITION: [1.75, 2.5, 1.7, 11.5, 4, 120*i, 0],
+		POSITION: [1.75, 2.25, 1.7, 13.5, 4, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper, { speed: 1.2 }, g.pounder, { reload: 0.75 }, {range: 3}]),
+			SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
 			TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 			STAT_CALCULATOR: gunCalcNames.trap,
 		},
 	}, {
-		POSITION: [11.5, 2.5, 1, 0, -4, 120*i, 0]
+		POSITION: [13.5, 2.25, 1, 0, -4, 120*i, 0]
 	}, {
-		POSITION: [1.75, 2.5, 1.7, 11.5, -4, 120*i, 0],
+		POSITION: [1.75, 2.25, 1.7, 13.5, -4, 120*i, 1/3],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper, { speed: 1.2 }, g.pounder, { reload: 0.75 }, {range: 3}]),
+			SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
 			TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 			STAT_CALCULATOR: gunCalcNames.trap
 		}
 	}, {
-		POSITION: [13.5, 3.2, 1, 0, 0, 120*i, 0.5]
+		POSITION: [15, 3, 1, 0, 0, 120*i, 0]
 	}, {
-		POSITION: [1.75, 3.2, 1.7, 13.5, 0, 120*i, 0.5],
+		POSITION: [2, 3, 1.7, 15, 0, 120*i, 2/3],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper, { speed: 1.2 }, g.pounder, { reload: 0.75 }, {range: 3}]),
+			SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
 			TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 			STAT_CALCULATOR: gunCalcNames.trap
 		}
@@ -476,7 +512,7 @@ for (let i = 0; i < 3; i++) {
 	}, {
 		POSITION: [3, 9, 1.6, 13, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, { speed: 2.5 }, g.pounder, { reload: 0.75 }, {range: 3}]),
+			SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 1.4, size: 1.3 }]),
 			TYPE: ["unsetTrap", {HITS_OWN_TYPE: "never"} ],
 			STAT_CALCULATOR: gunCalcNames.block
 		}
@@ -489,11 +525,11 @@ Class.sirenOfficialV1 = {
 }
 for (let i = 0; i < 3; i++) {
 	Class.sirenOfficialV1.GUNS.push({
-		POSITION: [13, 7, -1.4, 0, 0, 120*i, 0],
+		POSITION: [13, 7, -1.5, 0, 0, 120*i, 0],
 	}, {
 		POSITION: [2.5, 7, 1.6, 13, 0, 120*i, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper, { speed: 1.2 }, g.pounder, { reload: 0.75 }, {range: 3}]),
+			SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
 			TYPE: ["turretedTrap", {HITS_OWN_TYPE: "never"} ],
 			STAT_CALCULATOR: gunCalcNames.trap,
 		}
@@ -508,12 +544,12 @@ Class.mechanismOfficialV1 = {
 }
 for (let i = 0; i < 6; i++) {
 	Class.mechanismOfficialV1.TURRETS.push({
-		POSITION: [4, 8.75, 0, 60*i+30, 180, 1],
+		POSITION: [4, 8.25, 0, 60*i+30, 180, 1],
 		TYPE: "automationMainTurret",
 	})
 }
 Class.mechanismOfficialV1.TURRETS.push({
-	POSITION: [9, 0, 0, 0, 360, 1],
+	POSITION: [9.5, 0, 0, 0, 360, 1],
 	TYPE: "mechanismMainTurret",
 })
 
@@ -522,14 +558,14 @@ Class.behemothOfficialV1 = {
 	LABEL: "Behemoth",
 	UPGRADE_TOOLTIP: "Health Buff",
 	BODY: {
-		HEALTH: 4,
-		SHIELD: 5,
-		REGEN: 2.25,
-		SPEED: 0.5,
+		HEALTH: 2.8,
+		SHIELD: 3.3,
+		REGEN: 2.1,
+		SPEED: 1.35,
 	},
 	TURRETS: [{
 		POSITION: [23.5, 0, 0, 0, 0, 0],
-		TYPE: ["smasherBody", {INDEPENDENT: false} ]
+		TYPE: 'hexagon'
 	}],
 }
 Class.medicaidOfficialV1 = {
@@ -552,12 +588,18 @@ Class.addons.UPGRADES_TIER_0.push("dreadOfficialV1");
 		Class.juggernautOfficialV1.UPGRADES_TIER_M1 = ["behemothOfficialV1"];
 		Class.medicareOfficialV1.UPGRADES_TIER_M1 = ["medicaidOfficialV1"];
 
+const t1Bodies = [ "swordOfficialV1", "pacifierOfficialV1", "invaderOfficialV1", "centaurOfficialV1", "medicareOfficialV1", "automationOfficialV1", "juggernautOfficialV1" ];
+if (!enableHealers) {
+	t1Bodies.splice(4, 1); // Remove Medicare if healers are disabled
+}
+
+// Build both tiers of dreads
 for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_1) {
 	let primaryName = primary;
 	primary = ensureIsClass(primary);
 	primary.UPGRADES_TIER_1 = [];
 
-	for (let secondary of [ "swordOfficialV1", "pacifierOfficialV1", "invaderOfficialV1", "centaurOfficialV1", "medicareOfficialV1", "automationOfficialV1", "juggernautOfficialV1" ]) {
+	for (let secondary of t1Bodies) {
 		let secondaryName = secondary;
 		secondary = ensureIsClass(secondary);
 

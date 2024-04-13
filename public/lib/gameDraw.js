@@ -95,7 +95,7 @@ var gameDraw = {
     colorCache: {},
     modifyColor: (color, base = "16 0 1 0 false") => {
         // Split into array
-        let colorDetails = color.compiled ? color.compiled.split(" ") : color.split(" "),
+        let colorDetails = color.split(" "),
             baseDetails = base.split(" ");
 
         // Color mirroring
