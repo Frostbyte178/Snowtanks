@@ -20,8 +20,7 @@ const nameMap = {
     tag: "TAG",
     opentdm: `Open ${output.TEAMS}TDM`,
     //clanwars: "Clan Wars",
-    trainwars: "Train Wars",
-    theFrontier: "The Frontier"
+    trainwars: "Train Wars"
 };
 
 module.exports.gameModeName = output.GAMEMODE_NAME_PREFIXES.join(' ') + ' ' + output.GAME_MODES.map(x => nameMap[x] || (x[0].toUpperCase() + x.slice(1))).join(' ');

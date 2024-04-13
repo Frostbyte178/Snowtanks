@@ -152,13 +152,6 @@ var gameDraw = {
                 .padStart(6, "0")
         );
     },
-    evalBlinker: (onColor, blinker) => {
-        if (!blinker) return onColor;
-
-        let time = Date.now() % blinker.repeat;
-        if (blinker.start <= time && time < blinker.end) return onColor;
-        return blinker.offColor;
-    },
     animatedColor: {
         lesbian: "",
         gay: "",

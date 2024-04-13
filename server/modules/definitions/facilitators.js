@@ -159,28 +159,6 @@ exports.makeSplit = (type, name = -1) => {
     output.LABEL = name == -1 ? "Split " + type.LABEL : name;
     return output;
 }
-exports.makeFighter = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let cannons = [{
-        POSITION: [16, 8, 1, 0, -1, 90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.triAngleFront]),
-            TYPE: "bullet",
-            LABEL: "Side",
-        },
-    }, {
-        POSITION: [16, 8, 1, 0, 1, -90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.triAngleFront]),
-            TYPE: "bullet",
-            LABEL: "Side",
-        },
-    }];
-    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-    output.LABEL = name == -1 ? "Fighter " + type.LABEL : name;
-    return output;
-}
 exports.addBackGunner = (type, name = -1) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);

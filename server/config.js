@@ -20,13 +20,13 @@ module.exports = {
 
     // The \modules\setup\gamemodeconfigs\ files to load.
     // To change specific things about specific gamemodes (such as team count for tdm), edit their config file in \modules\setup\gamemodeconfigs\.
-    GAME_MODES: ['theFrontier'],
+    GAME_MODES: ['tdm', 'domination'],
 
     // The room files to load in the setup/rooms folder.
     // NOTE: If a /gamemodeconfig/ file "replaces" the value of ROOM_SETUP, it just adds its own ROOM_SETUP's content to this array.
     // NOTE: Files starting with `map_` are maps. files starting with `overlay_` are overlays that get added on.
     // NOTE: These prefixes are only for categorisation, a room file would work the same regardless of its prefix. APS++ does nothing based on file name prefixes.
-    ROOM_SETUP: ['map_the_frontier'],
+    ROOM_SETUP: ['map_apspp_default'],
 
     // The dimensions of a single tile on the map.
     TILE_WIDTH: 400,
@@ -77,7 +77,7 @@ module.exports = {
     GLASS_HEALTH_FACTOR: 2,
 
     // How strong the force is that confines entities to the map and portals apply to entities.
-    ROOM_BOUND_FORCE: 1,
+    ROOM_BOUND_FORCE: 0.01,
 
 
 
@@ -136,14 +136,6 @@ module.exports = {
     FOOD_SPAWN_CHANCE_NEST: 0.25, // Likeliness of nest food spawn attempts succeeding.
     FOOD_SPAWN_COOLDOWN_NEST: 45, // Cooldown (in game ticks) of nest food spawn attempts being made.
 
-    FOOD_CAP_UNDERGROUND: 2, // Max underground food per underground tile.
-    FOOD_SPAWN_CHANCE_UNDERGROUND: 0.2, // Likeliness of underground food spawn attempts succeeding.
-    FOOD_SPAWN_COOLDOWN_UNDERGROUND: 30, // Cooldown (in game ticks) of underground food spawn attempts being made.
-
-    FOOD_CAP_INK: 2, // Max ink food per ink tile.
-    FOOD_SPAWN_CHANCE_INK: 0.1, // Likeliness of ink food spawn attempts succeeding.
-    FOOD_SPAWN_COOLDOWN_INK: 45, // Cooldown (in game ticks) of ink food spawn attempts being made.
-
     ENEMY_CAP_NEST: 1, // Max nest enemies per nest tile.
     ENEMY_SPAWN_CHANCE_NEST: 0.9, // Likeliness of nest enemies spawn attempts succeeding.
     ENEMY_SPAWN_COOLDOWN_NEST: 60, // Cooldown (in game ticks) of nest enemies spawn attempts being made.
@@ -194,38 +186,6 @@ module.exports = {
         [1, [
             [1, 'sentryGun'], [1, 'sentrySwarm'], [1, 'sentryTrap']
         ]]
-    ],
-
-    // The possible underground food types that can spawn.
-    FOOD_TYPES_UNDERGROUND: [
-        [16384, [ // 92.3% - 11 in every 12
-            [16, 'egg'], [32, 'square'], [64, 'triangle'], [16, 'pentagon'], [4, 'betaPentagon'], [1, 'alphaPentagon']
-        ]],
-        [1024, [ // 5.77% - 1 in every 17
-            [25, 'gem'], [56, 'shinySquare'], [125, 'shinyTriangle'], [25, 'shinyPentagon'], [5, 'shinyBetaPentagon'], [1, 'shinyAlphaPentagon']
-        ]],
-        [256, [ // 1.44% - 1 in every 69
-            [36, 'jewel'], [88, 'legendarySquare'], [216, 'legendaryTriangle'], [36, 'legendaryPentagon'], [6, 'legendaryBetaPentagon'], [1, 'legendaryAlphaPentagon']
-        ]],
-        [64, [ // 0.361% - 1 in every 277
-            /*[16807, 'egg'], */[130, 'shadowSquare'], [343, 'shadowTriangle'], [49, 'shadowPentagon'], [7, 'shadowBetaPentagon'], [1, 'shadowAlphaPentagon']
-        ]],
-        [16, [ // 0.090% - 1 in every 1109
-            /*[65536, 'egg'], */[181, 'rainbowSquare'], [512, 'rainbowTriangle'], [64, 'rainbowPentagon'], [8, 'rainbowBetaPentagon'], [1, 'rainbowAlphaPentagon']
-        ]],
-        [4, [ // 0.0225% - 1 in every 4437
-            /*[59549, 'egg'], */[243, 'transSquare'], [729, 'transTriangle'], [81, 'transPentagon'], [9, 'transBetaPentagon'], [1, 'transAlphaPentagon']
-        ]],
-        [1, [ // 0.0056% - 1 in every 17749
-            [100000, 'sphere'], [10000, 'cube'], [1000, 'tetrahedron'], [100, 'octahedron'], [10, 'dodecahedron'], [1, 'icosahedron']
-        ]]
-    ],
-
-    // The possible ink food types that can spawn.
-    FOOD_TYPES_INK: [
-        [1, [
-            [3, 'jewel'], [6, 'legendarySquare'], [15, 'legendaryTriangle'], [36, 'legendaryPentagon'], [6, 'legendaryBetaPentagon'], [1, 'legendaryAlphaPentagon']
-        ]],
     ],
 
     // The possible boss types that can spawn.

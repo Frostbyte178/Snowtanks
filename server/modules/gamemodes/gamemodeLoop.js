@@ -10,7 +10,6 @@ if (c.HUNT) hunt = new ManHunt();
 if (c.MOTHERSHIP_LOOP) mothershipLoop.spawn();
 if (c.SPECIAL_BOSS_SPAWNS) bossRush.init();
 if (c.MAZE > 0) generateMaze(c.MAZE);
-if (c.UNDERGROUND_WIDTH > 0 && c.UNDERGROUND_HEIGHT > 0) generateFrontierMaze(c.UNDERGROUND_WIDTH, c.UNDERGROUND_HEIGHT);
 
 let logger = new LagLogger();
 const gamemodeLoop = function() {
