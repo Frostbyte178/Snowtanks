@@ -180,6 +180,7 @@ const requires = [
     "./gamemodes/manhunt.js", // The Manhunt mode
     "./gamemodes/trainwars.js", // The Train Wars mode
     "./gamemodes/moon.js", // The Space mode
+    "./gamemodes/theFrontier.js", // The Frontier
     "./gamemodes/gamemodeLoop.js", // The gamemode loop.
     "./gamemodes/groups.js", // Duos/Trios/Squads
     "./gamemodes/tag.js", // Tag

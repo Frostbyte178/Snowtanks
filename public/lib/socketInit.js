@@ -353,6 +353,7 @@ const GunContainer = n => {
                 strokeWidth: g.strokeWidth,
                 borderless: g.borderless, 
                 drawFill: g.drawFill,
+                blinker: g.blinker,
                 drawAbove: g.drawAbove,
                 length: g.length,
                 width: g.width,
@@ -371,6 +372,7 @@ const GunContainer = n => {
                 g.strokeWidth = c.strokeWidth
                 g.borderless = c.borderless; 
                 g.drawFill = c.drawFill;
+                g.blinker = c.blinker;
                 g.drawAbove = c.drawAbove;
                 g.length = c.length;
                 g.width = c.width;
@@ -554,6 +556,7 @@ const process = (z = {}) => {
             strokeWidth = get.next(),
             borderless = get.next(),
             drawFill = get.next(),
+            blinker = JSON.parse(get.next()),
             drawAbove = get.next(),
             length = get.next(),
             width = get.next(),
@@ -561,7 +564,7 @@ const process = (z = {}) => {
             angle = get.next(),
             direction = get.next(),
             offset = get.next();
-        z.guns.setConfig(i, {color, alpha, strokeWidth, borderless, drawFill, drawAbove, length, width, aspect, angle, direction, offset}); // Load gun config into container
+        z.guns.setConfig(i, {color, alpha, strokeWidth, borderless, drawFill, blinker, drawAbove, length, width, aspect, angle, direction, offset}); // Load gun config into container
         if (time > global.player.lastUpdate - global.metrics.rendergap) z.guns.fire(i, power); // Shoot it
     }
     // Update turrets
@@ -615,6 +618,11 @@ const convert = {
         global.entities = output;
         global.entities.sort((a, b) => {
             let sort = a.layer - b.layer;
+            if (!sort) {
+                let d1 = (a.render.x - global.player.renderx) ** 2 + (a.render.y - global.player.rendery) ** 2,
+                    d2 = (b.render.x - global.player.renderx) ** 2 + (b.render.y - global.player.rendery) ** 2;
+                sort = d2 - d1;
+            }
             if (!sort) sort = b.id - a.id;
             if (!sort) throw new Error('tha fuq is up now');
             return sort;

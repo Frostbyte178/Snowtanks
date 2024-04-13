@@ -78,6 +78,64 @@ let animations = window.animations = {
     error: new Animation(1, 0),
 };
 
+let particles = [];
+class Particle {
+    constructor(color, initFov, strokeWidth, x, y, size, speedX, speedY, lifetime, alpha = 1, friction = 0) {
+        this.color = color;
+        this.initFov = initFov;
+        this.strokeWidth = strokeWidth;
+        this.x = x;
+        this.y = y;
+        this.initSize = size;
+        this.size = this.initSize;
+        this.initSpeedX = speedX;
+        this.initSpeedY = speedY;
+        this.speedX = this.initSpeedX;
+        this.speedY = this.initSpeedY;
+        this.lifetime = lifetime;
+        this.alpha = alpha;
+        this.friction = friction;
+        this.index = particles.length;
+        this.active = true;
+
+        particles.push(this);
+    }
+    iterate (ratio, vx, vy) {
+        this.size = this.initSize * this.initFov / global.player.renderv;
+        this.speedX = this.initSpeedX * ratio;
+        this.speedY = this.initSpeedY * ratio;
+        this.speedX = util.lerp(this.speedX, 0, this.friction);
+        this.speedY = util.lerp(this.speedY, 0, this.friction);
+
+        this.x += this.speedX - vx;
+        this.y += this.speedY - vy;
+        this.lifetime--;
+        if (this.lifetime < 0) this.alpha -= 0.086
+        if (this.alpha <= 0) this.delete();
+    }
+    draw (context) {
+        gameDraw.setColor(context, this.color);
+        context.lineWidth = this.strokeWidth / 2;
+        let fillcolor = context.fillStyle;
+        let strokecolor = context.strokeStyle;
+        context.globalAlpha = Math.max(0, this.alpha);
+        context.beginPath();
+        context.arc(this.x, this.y, this.size + context.lineWidth / 2, 0, 2 * Math.PI);
+        context.fillStyle = strokecolor;
+        context.stroke();
+        context.closePath();
+        
+        context.beginPath();
+        context.fillStyle = fillcolor;
+        context.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+        context.fill();
+        context.closePath();
+    }
+    delete () {
+        this.active = false;
+    }
+}
+
 // Mockup functions
 // Prepare stuff
 global.player = {
@@ -617,7 +675,8 @@ function isImageURL(url) {
 }
 // Sub-drawing functions
 const drawPolyImgs = [];
-function drawPoly(context, centerX, centerY, radius, sides, angle = 0, borderless, fill, imageInterpolation) {
+const fourSidedScale = 1 / 0.88623;
+function drawPoly(context, centerX, centerY, radius, sides, angle = 0, borderless, fill, imageInterpolation, borderFirst = false, heightScale = 1) {
     // Start drawing
     context.beginPath();
     if (sides instanceof Array) {
@@ -687,9 +746,10 @@ function drawPoly(context, centerX, centerY, radius, sides, angle = 0, borderles
                 context.scale(radius, radius);
                 context.lineWidth /= radius;
                 context.rotate(angle);
-                context.lineWidth *= fill ? 1 : 0.5; // Maintain constant border width
-                if (!borderless) context.stroke(path);
+                context.lineWidth *= fill && !borderFirst ? 1 : 0.5; // Maintain constant border width
+                if (!borderless && !borderFirst) context.stroke(path);
                 if (fill) context.fill(path);
+                if (!borderless && borderFirst) context.stroke(path);
                 context.restore();
                 return;
             }
@@ -740,14 +800,54 @@ function drawPoly(context, centerX, centerY, radius, sides, angle = 0, borderles
         angle += (sides % 1) * Math.PI * 2;
         sides = Math.floor(sides);
         context.lineWidth *= fill ? 1 : 0.5; // Maintain constant border width
+        let bottomPoints = [];
+        let topPoints = [];
+        let ratio = heightScale != 1 ? fourSidedScale : 1;
+        context.lineWidth *= fill && !borderFirst ? 1 : 0.5; // Maintain constant border width
         for (let i = 0; i < sides; i++) {
             let theta = (i / sides) * 2 * Math.PI + angle;
-            context.lineTo(centerX + radius * Math.cos(theta), centerY + radius * Math.sin(theta));
+            context.lineTo(centerX + radius * Math.cos(theta) * ratio, centerY + radius * Math.sin(theta) * ratio);
+            bottomPoints.push([centerX + radius * Math.cos(theta) * fourSidedScale, centerY + radius * Math.sin(theta) * fourSidedScale]);
+        }
+        if (heightScale != 1 && sides == 4) {
+            context.closePath();
+            if (!borderless) context.stroke();
+            if (fill) context.fill();
+            context.beginPath();
+            for (let i = 0; i < sides; i++) {
+                let theta = (i / sides) * 2 * Math.PI + angle;
+                topPoints.push([
+                    (centerX + radius * Math.cos(theta) * fourSidedScale - global.screenWidth / 2) * heightScale + global.screenWidth / 2, 
+                    (centerY + radius * Math.sin(theta) * fourSidedScale - global.screenHeight / 2) * heightScale + global.screenHeight / 2
+                ]);
+            }
+            let wallToggles = Array(4).fill(true);
+            if (centerY < (global.screenHeight / 2 + radius * Math.SQRT1_2 * fourSidedScale)) wallToggles[2] = false;
+            if (centerY > (global.screenHeight / 2 - radius * Math.SQRT1_2 * fourSidedScale)) wallToggles[0] = false;
+            if (centerX < (global.screenWidth / 2 + radius * Math.SQRT1_2 * fourSidedScale)) wallToggles[1] = false;
+            if (centerX > (global.screenWidth / 2 - radius * Math.SQRT1_2 * fourSidedScale)) wallToggles[3] = false;
+            for (let i = 0; i < sides; i++) {
+                if (!wallToggles[i]) continue;
+                context.lineTo(...bottomPoints[i]);
+                context.lineTo(...bottomPoints[(i + 1) % sides]);
+                context.lineTo(...topPoints[(i + 1) % sides]);
+                context.lineTo(...topPoints[i]);
+                context.closePath();
+                if (!borderless && !borderFirst) context.stroke();
+                if (fill) context.fill();
+                if (!borderless && borderFirst) context.stroke();
+                context.beginPath();
+            }
+            for (let i = 0; i < sides; i++) {
+                context.lineTo(...topPoints[i]);
+            }
         }
     }
     context.closePath();
-    if (!borderless) context.stroke();
+    if (!borderless && !borderFirst) context.stroke();
     if (fill) context.fill();
+    if (!borderless && borderFirst) context.stroke();
+    context.lineWidth *= fill && !borderFirst ? 1 : 2; // Maintain constant border width
     context.lineJoin = "round";
 }
 function drawTrapezoid(context, x, y, length, height, aspect, angle, borderless, fill, alpha, strokeWidth, position) {
@@ -839,7 +939,7 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
         if (!g.drawAbove) {
             let gx = g.offset * Math.cos(g.direction + g.angle + rot),
                 gy = g.offset * Math.sin(g.direction + g.angle + rot),
-                gunColor = g.color == null ? color.grey : gameDraw.modifyColor(g.color, baseColor),
+                gunColor = g.color == null ? color.grey : gameDraw.modifyColor(turretsObeyRot ? g.color : gameDraw.evalBlinker(g.color, g.blinker), baseColor),
                 alpha = g.alpha,
                 strokeWidth = g.strokeWidth,
                 borderless = g.borderless,
@@ -852,6 +952,18 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
     context.globalAlpha = 1;
     context.lineWidth = initStrokeWidth * m.strokeWidth
     gameDraw.setColor(context, gameDraw.mixColors(gameDraw.modifyColor(instance.color, baseColor), render.status.getColor(), blend));
+
+    // Spawn particles
+    if (render.status.getFade() === 1 && !global.disconnected && m.particleEmitter && !turretsObeyRot && (Date.now() % (1000 / m.particleEmitter.rate)) <= 25) {
+        let color = gameDraw.modifyColor(instance.color, baseColor);
+        let angleMin = m.particleEmitter.angle.min;
+        let angleMax = m.particleEmitter.angle.max;
+        let angle = rot + Math.random() * (angleMax - angleMin) + angleMin;
+        let speedX = m.particleEmitter.speed * Math.cos(angle);
+        let speedY = m.particleEmitter.speed * Math.sin(angle);
+
+        new Particle(color, global.player.renderv, initStrokeWidth, x, y, drawSize / m.size * m.realSize * m.particleEmitter.size, speedX, speedY, m.particleEmitter.range, m.particleEmitter.alpha, 0.01);
+    }
     
     //just so you know, the glow implimentation is REALLY bad and subject to change in the future
     context.shadowColor = m.glow.color!=null ? gameDraw.modifyColor(m.glow.color) : gameDraw.mixColors(
@@ -872,8 +984,7 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
     context.shadowOffsetY = 0;
-
-    drawPoly(context, xx, yy, (drawSize / m.size) * m.realSize, m.shape, rot, instance.borderless, instance.drawFill, m.imageInterpolation);
+    drawPoly(context, xx, yy, (drawSize / m.size) * m.realSize, m.shape, rot, instance.borderless, instance.drawFill, m.imageInterpolation, m.borderFirst, m.heightScale);
     
     // Draw guns above us
     for (let i = 0; i < source.guns.length; i++) {
@@ -882,7 +993,7 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
         if (g.drawAbove) {
             let gx = g.offset * Math.cos(g.direction + g.angle + rot),
                 gy = g.offset * Math.sin(g.direction + g.angle + rot),
-                gunColor = g.color == null ? color.grey : gameDraw.modifyColor(g.color, baseColor),
+                gunColor = g.color == null ? color.grey : gameDraw.modifyColor(turretsObeyRot ? g.color : gameDraw.evalBlinker(g.color, g.blinker), baseColor),
                 alpha = g.alpha,
                 strokeWidth = g.strokeWidth,
                 borderless = g.borderless,
@@ -1225,6 +1336,7 @@ function drawFloor(px, py, ratio) {
 
             //draw it
             let tile = row[j];
+            if (tile.split(' ')[0] == 'none') continue;
             ctx.globalAlpha = 1;
             ctx.fillStyle = settings.graphical.screenshotMode ? color.guiwhite : color.white;
             ctx.fillRect(left, top, right - left, bottom - top);
@@ -1250,7 +1362,23 @@ function drawFloor(px, py, ratio) {
     ctx.globalAlpha = 1;
 }
 
+let oldpx = 0;
+let oldpy = 0;
 function drawEntities(px, py, ratio) {
+    // Iterate particles
+    if (global.disconnected) {
+        for (let p of particles) {
+            p.delete();
+        }
+    }
+    for (let p of particles) {
+        p.iterate(ratio, px - oldpx, py - oldpy);
+        p.draw(ctx);
+    }
+    particles = particles.filter(p => p.active);
+    oldpx = px;
+    oldpy = py;
+
     // Draw things
     for (let instance of global.entities) {
         if (!instance.render.draws) {
@@ -1602,6 +1730,7 @@ function drawMinimapAndDebug(spacing, alcoveSize) {
         for (let xcell = 0; xcell < W; xcell++) {
             let cell = global.roomSetup[ycell][xcell];
             ctx.fillStyle = gameDraw.modifyColor(cell);
+            if (cell.split(' ')[0] == 'none') ctx.fillStyle = color.white;
             if (gameDraw.modifyColor(cell) !== color.white) {
                 drawGuiRect(x + (j * len) / W, y + (i * height) / H, len / W, height / H);
             }

@@ -81,6 +81,34 @@ class Gun {
             if (info.PROPERTIES.COLOR != null) {
                 this.color.interpret(info.PROPERTIES.COLOR);
             }
+            if (info.PROPERTIES.BLINKER != null) {
+                this.blinker = {
+                    repeat: info.PROPERTIES.BLINKER.REPEAT ?? 1000,
+                    start: info.PROPERTIES.BLINKER.START ?? 0,
+                    end: info.PROPERTIES.BLINKER.END ?? 500,
+                    offColor: "17 0 1 0 false",
+                }
+                // Color defining
+                let blinkerOffUnboxed = {
+                    base: 17,
+                    hueShift: 0,
+                    saturationShift: 1,
+                    brightnessShift: 0,
+                    allowBrightnessInvert: false,
+                }
+                if (typeof info.PROPERTIES.BLINKER.OFF_COLOR === "number" || typeof info.PROPERTIES.BLINKER.OFF_COLOR === "string") {
+                    blinkerOffUnboxed.base = info.PROPERTIES.BLINKER.OFF_COLOR;
+                }
+                else if (typeof info.PROPERTIES.BLINKER.OFF_COLOR === "object")
+                    blinkerOffUnboxed = {
+                        base: info.PROPERTIES.BLINKER.OFF_COLOR.BASE ?? 17,
+                        hueShift: info.PROPERTIES.BLINKER.OFF_COLOR.HUE_SHIFT ?? 0,
+                        saturationShift: info.PROPERTIES.BLINKER.OFF_COLOR.SATURATION_SHIFT ?? 1,
+                        brightnessShift: info.PROPERTIES.BLINKER.OFF_COLOR.BRIGHTNESS_SHIFT ?? 0,
+                        allowBrightnessInvert: info.PROPERTIES.BLINKER.OFF_COLOR.ALLOW_BRIGHTNESS_INVERT ?? false,
+                    };
+                this.blinker.offColor = blinkerOffUnboxed.base + " " + blinkerOffUnboxed.hueShift + " " + blinkerOffUnboxed.saturationShift + " " + blinkerOffUnboxed.brightnessShift + " " + blinkerOffUnboxed.allowBrightnessInvert;
+            }
             this.alpha = info.PROPERTIES.ALPHA == null ? 1 : info.PROPERTIES.ALPHA
             this.strokeWidth = info.PROPERTIES.STROKE_WIDTH == null ? 1 : info.PROPERTIES.STROKE_WIDTH
             this.borderless = info.PROPERTIES.BORDERLESS == null ? false : info.PROPERTIES.BORDERLESS;
@@ -177,6 +205,7 @@ class Gun {
             strokeWidth: this.strokeWidth,
             borderless: this.borderless, 
             drawFill: this.drawFill, 
+            blinker: this.blinker ? JSON.stringify(this.blinker) : 0,
             drawAbove: this.drawAbove,
             length: this.length,
             width: this.width,
@@ -603,7 +632,7 @@ class antiNaN {
         if (this.amNaN(this.me)) {
             this.nansInARow++;
             if (this.nansInARow > 50) {
-                console.log("NaN instance found. (Repeated)\nDebug:", [
+                console.log("NaN instance found with entity labeled " + this.me.label + " with type " + this.me.type + ". (Repeated)\nDebug:", [
                     ["x"         , isNaN(this.me.x)],
                     ["y"         , isNaN(this.me.y)],
                     ["velocity.x", isNaN(this.me.velocity.x)],
@@ -1088,6 +1117,7 @@ class Entity extends EventEmitter {
             this.shape = typeof set.SHAPE === "number" ? set.SHAPE : 0;
             this.shapeData = set.SHAPE;
         }
+        if (set.HEIGHT_SCALE != null) this.heightScale = set.HEIGHT_SCALE;
         this.imageInterpolation = set.IMAGE_INTERPOLATION != null ? set.IMAGE_INTERPOLATION : 'bilinear'
         if (set.COLOR != null) {
             if (this.color === undefined) {
@@ -1103,6 +1133,23 @@ class Entity extends EventEmitter {
                 alpha: set.GLOW.ALPHA ?? 1,
                 recursion: set.GLOW.RECURSION ?? 1
             };
+        }
+        if (set.PARTICLE_EMITTER != null) {
+            this.particleEmitter = {
+                rate: set.PARTICLE_EMITTER.RATE ?? 1,
+                rateVariance: set.PARTICLE_EMITTER.RATE_VARIANCE ?? 0,
+                size: (set.PARTICLE_EMITTER.SIZE ?? 10) / 20,
+                sizeVariance: set.PARTICLE_EMITTER.SIZE_VARIANCE ?? 0,
+                alpha: set.PARTICLE_EMITTER.ALPHA ?? 0.7,
+                alphaVariance: set.PARTICLE_EMITTER.ALPHA_VARIANCE ?? 0,
+                speed: set.PARTICLE_EMITTER.SPEED ?? 7.5,
+                speedVariance: set.PARTICLE_EMITTER.SPEED_VARIANCE ?? 0,
+                range: set.PARTICLE_EMITTER.RANGE ?? 50,
+                rangeVariance: set.PARTICLE_EMITTER.RANGE_VARIANCE ?? 0,
+                angle: set.PARTICLE_EMITTER.ANGLE ? {min: set.PARTICLE_EMITTER.ANGLE.MIN ?? -180, max: set.PARTICLE_EMITTER.ANGLE.MAX ?? 180} : {min: -180, max: 180},
+            }
+            this.particleEmitter.angle.min *= Math.PI / 180;
+            this.particleEmitter.angle.max *= Math.PI / 180;
         }
         if (set.CONTROLLERS != null) {
             let toAdd = [];
@@ -1174,6 +1221,7 @@ class Entity extends EventEmitter {
         if (set.DANGER != null) this.dangerValue = set.DANGER;
         if (set.SHOOT_ON_DEATH != null) this.shootOnDeath = set.SHOOT_ON_DEATH;
         if (set.BORDERLESS != null) this.borderless = set.BORDERLESS;
+        if (set.BORDER_FIRST != null) this.borderFirst = set.BORDER_FIRST;
         if (set.DRAW_FILL != null) this.drawFill = set.DRAW_FILL;
         if (set.TEAM != null) {
             this.team = set.TEAM;
@@ -1949,6 +1997,9 @@ class Entity extends EventEmitter {
             case "autospin":
                 this.facing += (args.speed ?? 0.02) / c.runSpeed;
                 break;
+            case "auraspin":
+                this.facing += (args.speed ?? -0.04) / c.runSpeed;
+                break;
             case "turnWithSpeed":
                 this.facing += ((this.velocity.length / 90) * Math.PI) / c.runSpeed;
                 break;
@@ -2083,8 +2134,14 @@ class Entity extends EventEmitter {
                     this.y = lerp(this.y, centerPoint.y, strength);
                 }
             } else {
-                let padding = this.realSize - 50;
-                this.accel.x -= Math.max(this.x + padding - room.width, Math.min(this.x - padding, 0)) * c.ROOM_BOUND_FORCE / c.runSpeed;
+                let padding = this.realSize;
+                // Frontier middle barrier
+                let leftEdge = 0, 
+                    rightEdge = room.width,
+                    dividerX = (c.UNDERGROUND_START + c.TDM_END) / 2 * c.TILE_WIDTH;
+                if (c.UNDERGROUND_START && this.x < dividerX) rightEdge = c.TDM_END * c.TILE_WIDTH;
+                else if (c.UNDERGROUND_START && this.x > dividerX) leftEdge = c.UNDERGROUND_START * c.TILE_WIDTH;
+                this.accel.x -= Math.max(this.x + padding - rightEdge, Math.min(this.x - padding - leftEdge, 0)) * c.ROOM_BOUND_FORCE / c.runSpeed;
                 this.accel.y -= Math.max(this.y + padding - room.height, Math.min(this.y - padding, 0)) * c.ROOM_BOUND_FORCE / c.runSpeed;
             }
         }
