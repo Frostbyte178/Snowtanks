@@ -454,56 +454,6 @@ Class.healerBullet = {
     PARENT: "bullet",
     HEALER: true,
 };
-Class.surgeonPillboxTurret = {
-    PARENT: "genericTank",
-    LABEL: "",
-    COLOR: "grey",
-    BODY: {
-        FOV: 3,
-    },
-    HAS_NO_RECOIL: true,
-    CONTROLLERS: [["spin", { independent: true, speed: 0.08 }]],
-    TURRETS: [
-        {
-            POSITION: [13, 0, 0, 0, 360, 1],
-            TYPE: "healerSymbol",
-        },
-    ],
-    GUNS: [
-        {
-            POSITION: [17, 11, 1, 0, 0, 90, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.turret]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-        {
-            POSITION: [14, 11, 1, 0, 0, 90, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.turret]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-        {
-            POSITION: [17, 11, 1, 0, 0, 270, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.turret]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-        {
-            POSITION: [14, 11, 1, 0, 0, 270, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.turret]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-    ],
-}
 Class.surgeonPillbox = {
     PARENT: "trap",
     LABEL: "Pillbox",

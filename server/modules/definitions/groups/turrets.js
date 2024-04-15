@@ -1049,6 +1049,56 @@ Class.sanctuaryHealer = {
         TYPE: ['healerSymbol', { CONTROLLERS: [["spin", { startAngle: Math.PI / 2, speed: 0, independent: true }]] }]
     }],
 };
+Class.surgeonPillboxTurret = {
+    PARENT: "genericTank",
+    LABEL: "",
+    COLOR: "grey",
+    BODY: {
+        FOV: 3,
+    },
+    HAS_NO_RECOIL: true,
+    CONTROLLERS: [["spin", { independent: true, speed: 0.08 }]],
+    TURRETS: [
+        {
+            POSITION: [13, 0, 0, 0, 360, 1],
+            TYPE: "healerSymbol",
+        },
+    ],
+    GUNS: [
+        {
+            POSITION: [17, 11, 1, 0, 0, 90, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
+                TYPE: "healerBullet",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [14, 11, 1, 0, 0, 90, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
+                TYPE: "healerBullet",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [17, 11, 1, 0, 0, 270, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
+                TYPE: "healerBullet",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [14, 11, 1, 0, 0, 270, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
+                TYPE: "healerBullet",
+                AUTOFIRE: true,
+            },
+        },
+    ],
+}
 
 // Miscellaneous
 Class.baseSwarmTurret = {

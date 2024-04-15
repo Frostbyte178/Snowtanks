@@ -103,7 +103,7 @@ module.exports = {
     fake: { recoil: 0.00001, size: 0.00001, health: 0.0001, speed: 0, maxSpeed: 0, shudder: 0, spray: 0, recoil: 0, range: 0 },
     op: { reload: 0.5, recoil: 1.3, health: 4, damage: 4, pen: 4, speed: 3, maxSpeed: 2, density: 5, spray: 2 },
     arenaCloser: { reload: 1.25, recoil: 0.25, health: 1000, damage: 1000, pen: 1000, speed: 2.5, maxSpeed: 2.25, range: 1.4, density: 4, spray: 0.25 },
-    healer: { damage: -1, speed: 0.4, maxSpeed: 0.4, recoil: 0.4 },
+    healer: { damage: -1, speed: 0.5, maxSpeed: 0.5, recoil: 0.5 },
     lowPower: { shudder: 2, health: 0.5, damage: 0.5, pen: 0.7, spray: 0.5, resist: 0.7 },
     halfrange: { range: 0.5 },
     aura: { reload: 0.001, recoil: 0.001, shudder: 0.001, size: 6, speed: 0.001, maxSpeed: 0.001, spray: 0.001 },
