@@ -17,7 +17,7 @@ Class.genericEntity = {
         ALLOW_BRIGHTNESS_INVERT: true, // Toggles offset invert if exceeding normal color bounds
     },
     INDEPENDENT: false,
-    CONTROLLERS: ["doNothing"],
+    CONTROLLERS: [],
     HAS_NO_MASTER: false,
     MOTION_TYPE: "glide",
     FACING_TYPE: "toTarget",

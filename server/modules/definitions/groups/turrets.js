@@ -600,6 +600,26 @@ Class.artilleryTurret = { // This one has half the dps of the one above
         },
     ],
 };
+Class.legionaryTwin = {
+    PARENT: ["auto4gun"],
+    COLOR: "grey",
+    INDEPENDENT: true,
+    GUNS: [
+        {
+            POSITION: [17.5, 5, 1, 0, -4.5, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
+                TYPE: "bullet",
+            },
+        }, {
+            POSITION: [17.5, 5, 1, 0, 4.5, 0, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
+                TYPE: "bullet",
+            },
+        },
+    ],
+}
 Class.nailgunTurret = {
     PARENT: ["genericTank"],
     LABEL: "Nailgun",

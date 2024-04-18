@@ -5,8 +5,51 @@ let calculatePoints = wave => 5 + wave * 3;
 // It picks a boss to buy by filtering the list of boss choices by if they are affordable.
 // Then it picks a boss at random, with all choices being equally likely.
 
+let oldGroups = {
+    elites: [ "eliteDestroyer", "eliteGunner", "eliteSprayer", "eliteBattleship", "eliteSpawner" ],
+    mysticals: [ "summoner", "eliteSkimmer", "nestKeeper", "roguePalisade" ],
+    celestials: [ "paladin", "freyja", "zaphkiel", "nyx", "theia" ],
+    eternals: [ "legionaryCrasher", "kronos", "odin" ],
+};
+
 class BossRush {
     constructor() {
+        this.waveCodes = [
+            ran.chooseN(oldGroups.elites, 1),
+            ran.chooseN(oldGroups.elites, 2),
+            ran.chooseN(oldGroups.elites, 3),
+            ran.chooseN(oldGroups.elites, 4),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 1)),
+            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.mysticals, 2)),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 3)),
+            ran.chooseN(oldGroups.mysticals, 4),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 4)),
+            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.mysticals, 4)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 4)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)),
+            [ oldGroups.celestials[0] ],
+            [ oldGroups.celestials[1] ],
+            [ oldGroups.celestials[2] ],
+            [ oldGroups.celestials[3] ],
+            [ oldGroups.celestials[4] ],
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 1)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 1)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 3)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.celestials, 2),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 2)).concat(ran.chooseN(oldGroups.celestials, 2)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 3)).concat(ran.chooseN(oldGroups.celestials, 2)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 2)),
+            ran.chooseN(oldGroups.celestials, 3),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 3)).concat(ran.chooseN(oldGroups.celestials, 3)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 3)),
+            ran.chooseN(oldGroups.celestials, 4),
+            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.mysticals, 2)).concat(ran.chooseN(oldGroups.celestials, 4)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 4)),
+            ran.chooseN(oldGroups.celestials, 5),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 5)),
+            ran.chooseN(oldGroups.eternals, 1),
+        ];
         this.bossChoices = [
             // [ cost , definition reference ],
 
@@ -54,16 +97,17 @@ class BossRush {
         this.friendlyBossChoices = ["roguePalisade", "rogueArmada", "julius", "genghis", "napoleon"];
         this.bigFodderChoices = ["sentryGun", "sentrySwarm", "sentryTrap", "shinySentryGun"];
         this.smallFodderChoices = ["crasher"];
+        this.length = c.CLASSIC_SIEGE ? this.waveCodes.length : c.WAVES;
         this.waves = this.generateWaves();
         this.waveId = -1;
         this.gameActive = true;
         this.timer = 0;
-        this.remainingEnemies = 0;;
+        this.remainingEnemies = 0;
     }
 
     generateWaves() {
         let waves = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < this.length; i++) {
             let wave = [],
                 points = calculatePoints(i),
                 choices = this.bossChoices;
@@ -75,7 +119,7 @@ class BossRush {
                 wave.push(boss);
             }
 
-            waves.push(wave);
+            waves.push(c.CLASSIC_SIEGE ? this.waveCodes[i] : wave);
         }
         return waves;
     }
@@ -166,17 +210,19 @@ class BossRush {
             enemy.isBoss = true;
         }
 
-        //spawn fodder enemies
-        for (let i = 0; i < this.waveId / 5; i++) {
-            this.spawnEnemyWrapper(getSpawnableArea(TEAM_ENEMIES), ran.choose(this.bigFodderChoices));
-        }
-        for (let i = 0; i < this.waveId / 2; i++) {
-            this.spawnEnemyWrapper(getSpawnableArea(TEAM_ENEMIES), ran.choose(this.smallFodderChoices));
-        }
+        if (!c.CLASSIC_SIEGE) {
+            //spawn fodder enemies
+            for (let i = 0; i < this.waveId / 5; i++) {
+                this.spawnEnemyWrapper(getSpawnableArea(TEAM_ENEMIES), ran.choose(this.bigFodderChoices));
+            }
+            for (let i = 0; i < this.waveId / 2; i++) {
+                this.spawnEnemyWrapper(getSpawnableArea(TEAM_ENEMIES), ran.choose(this.smallFodderChoices));
+            }
 
-        //spawn a friendly boss every 20 waves
-        if (waveId % 20 == 19) {
-            setTimeout(() => this.spawnFriendlyBoss(), 5000);
+            //spawn a friendly boss every 20 waves
+            if (waveId % 20 == 19) {
+                setTimeout(() => this.spawnFriendlyBoss(), 5000);
+            }
         }
     }
 

@@ -1048,19 +1048,19 @@ class Entity extends EventEmitter {
         if (needsBodyAttribRefresh) this.refreshBodyAttributes();
     }
     addController(newIO) {
-        let listenToPlayer;
-        if (this.controllers && this.controllers[0] instanceof ioTypes.listenToPlayer) {
-            listenToPlayer = this.controllers.shift();
-        }
         if (!Array.isArray(newIO)) newIO = [newIO];
-        for (let io of newIO) {
-            for (let i in this.controllers) {
-                let oldIO = this.controllers[i];
-                if (io.constructor === oldIO.constructor) this.controllers.splice(i, 1);
+        for (let oldId = 0; oldId < this.controllers.length; oldId++) {
+            for (let newId = 0; newId < newIO.length; newId++) {
+                let oldIO = this.controllers[oldId];
+                let io = newIO[newId];
+
+                if (io.constructor === oldIO.constructor) {
+                    this.controllers[oldId] = io;
+                    newIO.splice(newId, 1);
+                }
             }
         }
-        this.controllers = (this.controllers ?? []).concat(newIO);
-        if (listenToPlayer) this.controllers.unshift(listenToPlayer);
+        this.controllers = this.controllers.concat(newIO);
     }
     become(player, dom = false) {
         this.addController(new ioTypes.listenToPlayer(this, { player, static: dom }));

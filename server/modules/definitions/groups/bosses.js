@@ -368,25 +368,6 @@ Class.oldEliteSprayer = {
 };
 
 // Legionary Crasher
-Class.legionaryTwin = {
-    PARENT: ["auto4gun"],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [17.5, 5, 1, 0, -4.5, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [17.5, 5, 1, 0, 4.5, 0, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "bullet",
-            },
-        },
-    ],
-}
 Class.legionaryCrasherTop = {
     PARENT: ["elite"],
     AI: { STRAFE: false, NO_LEAD: false },
@@ -400,7 +381,7 @@ for (let i = 0; i < 3; i++) {
         {
             POSITION: [4, 9.5, 0.7, 7, 5, 120*i+60, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.pounder, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, {size: 0.7, speed: 5, maxSpeed: 2, shudder: 5, range: 1.5}]),
+                SHOOT_SETTINGS: combineStats([g.swarm, g.pounder, { speed: 3, maxSpeed: 1.7, size: 0.6, range: 2.8}]),
                 TYPE: [ "swarm", { INDEPENDENT: true } ],
                 STAT_CALCULATOR: gunCalcNames.swarm,
                 AUTOFIRE: true,
@@ -409,7 +390,7 @@ for (let i = 0; i < 3; i++) {
         }, {
             POSITION: [4, 9.5, 0.7, 7, -5, 120*i+60, 0.5],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.pounder, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, {size: 0.7, speed: 5, maxSpeed: 2, shudder: 5, range: 1.5}]),
+                SHOOT_SETTINGS: combineStats([g.swarm, g.pounder, { speed: 3, maxSpeed: 1.7, size: 0.6, range: 2.8}]),
                 TYPE: [ "swarm", { INDEPENDENT: true } ],
                 STAT_CALCULATOR: gunCalcNames.swarm,
                 AUTOFIRE: true,
@@ -430,7 +411,7 @@ Class.legionaryCrasher = {
     AI: { STRAFE: false, NO_LEAD: false },
     HAS_NO_RECOIL: true,
     VALUE: 5e6,
-    SIZE: 80,
+    SIZE: 75,
     BODY: {
         FOV: 1.5,
         SPEED: 0.1 * base.SPEED,
@@ -452,7 +433,7 @@ for (let i = 0; i < 3; i++) {
         }, {
             POSITION: [3, 13, 1.7, 14.5, 0, 120*i, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, g.destroyer, { speed: 2.5 }, { size: 0.6, maxSpeed: 3 }]),
+                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, g.destroyer, { speed: 2.5, size: 0.6, maxSpeed: 3 }]),
                 TYPE: "legionaryPillbox",
                 STAT_CALCULATOR: gunCalcNames.trap,
             },
@@ -2620,13 +2601,13 @@ Class.toothlessBase = {
     GLOW: {
         RADIUS: 2,
         COLOR: 42,
-        ALPHA: 0.3,
+        ALPHA: 0.6,
         RECURSION: 6,
     },
 	BODY: {
         SPEED: 0.85 * base.SPEED,
         FOV: 1.4 * base.FOV,
-        HEALTH: 7 * base.HEALTH,
+        HEALTH: 4.5 * base.HEALTH,
         DAMAGE: 2.5 * base.DAMAGE,
     },
     LEVEL_SKILL_POINT_FUNCTION: level => {
@@ -2639,7 +2620,7 @@ Class.toothlessBase = {
     COLOR: "purple",
     DANGER: 10,
 	SHAPE: 3,
-	SIZE: 28,
+	SIZE: 20,
 	SKILL_CAP: Array(10).fill(smshskl + 3),
     VALUE: 10e+6,
 }

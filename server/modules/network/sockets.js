@@ -881,7 +881,6 @@ const spawn = (socket, name) => {
         util.remove(disconnections, disconnections.indexOf(recover));
         clearTimeout(recover.timeout);
         body = recover.body;
-        body.controllers = body.controllers.filter(con => !(con instanceof ioTypes.listenToPlayer));
         body.become(player);
         player.team = body.team;
     } else {
