@@ -154,7 +154,7 @@ function generateFrontierMaze(width, height) {
             let d = {};
             let scale = room.height / height;
             // Convert to big walls
-            for (let size = 5; size >= 1; size--) {
+            for (let size = 10; size >= 1; size--) {
                 if (maze[y][x] === size) {
                     d = {
                         x: (x * scale) + (scale * size / 2),
