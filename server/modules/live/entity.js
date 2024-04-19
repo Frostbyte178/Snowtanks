@@ -1165,6 +1165,7 @@ class Entity extends EventEmitter {
         if (typeof this.motionType == "string") this.motionType = [this.motionType];
         if (set.FACING_TYPE != null) this.facingType = set.FACING_TYPE;
         if (typeof this.facingType == "string") this.facingType = [this.facingType];
+        if (set.FORCE_FACING_TYPE != null) this.forceFacingType = set.FORCE_FACING_TYPE;
         if (set.MIRROR_MASTER_ANGLE != null) this.settings.mirrorMasterAngle = set.MIRROR_MASTER_ANGLE
         if (set.DRAW_HEALTH != null) this.settings.drawHealth = set.DRAW_HEALTH;
         if (set.DRAW_SELF != null) this.settings.drawShape = set.DRAW_SELF;
@@ -1695,7 +1696,9 @@ class Entity extends EventEmitter {
         // Initalize.
         this.activation.update();
         this.facing = this.bond.facing + this.bound.angle;
-        this.facingType = ["bound"];
+        if (!this.forceFacingType) {
+            this.facingType = ["bound"];
+        }
         this.motionType = ["bound"];
         this.move();
     }
