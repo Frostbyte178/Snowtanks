@@ -19,7 +19,7 @@ function setNatural(natural, type) {
     }
 }
 let lerp = (a, b, x) => a + x * (b - a);
-class Gun {
+class Gun extends EventEmitter {
     constructor(body, info) {
         this.id = entitiesIdLog++;
         this.ac = false;
@@ -358,7 +358,15 @@ class Gun {
             o.team = this.body.team;
             o.refreshBodyAttributes();
             o.life();
-            this.master.ON(undefined, this.altFire ? 'altFire' : 'fire', { gun: this, store: this.store, globalStore: this.globalStore, child: o });
+            this.master.emit(this.altFire ? 'altFire' : 'fire', {
+                body: this.master,
+                gun: this,
+                child: o,
+                masterStore: this.master.store,
+                globalMasterStore: this.master.globalStore,
+                gunStore: this.store,
+                globalGunStore: this.globalStore
+            });
             return;
         }
 
@@ -378,7 +386,15 @@ class Gun {
         this.bulletInit(o);
         o.coreSize = o.SIZE;
 
-        this.master.ON(undefined, this.altFire ? 'altFire' : 'fire', { gun: this, store: this.store, globalStore: this.globalStore, child: o });
+        this.master.emit(this.altFire ? 'altFire' : 'fire', {
+            body: this.master,
+            gun: this,
+            child: o,
+            masterStore: this.master.store,
+            globalMasterStore: this.master.globalStore,
+            gunStore: this.store,
+            globalGunStore: this.globalStore
+        });
     }
     bulletInit(o) {
         // Define it by its natural properties
@@ -1385,18 +1401,26 @@ class Entity extends EventEmitter {
                 }
             }
         }
-        if (set.ON != null) this.onDef = set.ON;
+
+        if (this.definitionEvents) {
+            for (let [ event, handler, once ] of this.definitionEvents) {
+                this.removeListener(event, handler, once);
+            }
+        }
+        if (set.ON != null) {
+            this.definitionEvents = [];
+            for (let { event, handler, once = false } of set.ON) {
+                this.definitionEvents.push({ event, handler, once });
+                this.on(event, handler, once);
+            }
+        }
         this.reverseTargetWithTank = set.REVERSE_TARGET_WITH_TANK ?? false;
         if (set.mockup != null) {
             this.mockup = set.mockup;
         }
 
         if (emitEvent) {
-            this.emit('define', set);
-        }
-
-        if (this.onDef != null) {
-            this.ON(this.onDef, 'define')
+            this.emit('define', { body: this, set });
         }
 
         this.defs = [];
@@ -1551,55 +1575,6 @@ class Entity extends EventEmitter {
                 branchLabel: "",
                 redefineAll: true,
             });
-        }
-    }
-    ON(on = this.onDef, eventName, value) {
-        if (on == null) return
-        for (let onPairs of on) {
-            switch (onPairs.event) {
-                case 'fire':
-                    if (eventName == 'fire') onPairs.handler({
-                        body: this,
-                        gun: value.gun,
-                        child: value.child,
-                        masterStore: this.store,
-                        globalMasterStore: this.globalStore,
-                        gunStore: value.store,
-                        globalGunStore: value.globalStore
-                     })
-                    break;
-                case 'altFire':
-                    if (eventName == 'altFire') onPairs.handler({
-                        body: this,
-                        gun: value.gun,
-                        child: value.child,
-                        masterStore: this.store,
-                        globalMasterStore: this.globalStore,
-                        gunStore: value.store,
-                        globalGunStore: value.globalStore
-                     })
-                case 'death':
-                    if (eventName == 'death') onPairs.handler({ body: this, killers: value.killers, killTools: value.killTools })
-                    break;
-                case 'kill':
-                    if (eventName == 'kill') onPairs.handler({ body: this, entity: value.entity })
-                    break;
-                case 'collide':
-                    if (eventName == 'collide') onPairs.handler({ instance: value.instance, other: value.other })
-                    break;
-                case 'damage':
-                    if (eventName == 'damage') onPairs.handler({ body: this, damageInflictor: value.damageInflictor, damageTool: value.damageTool })
-                    break;
-                case 'upgrade':
-                    if (eventName == 'upgrade') onPairs.handler({ body: this, oldEntity: value.oldEntity })
-                    break;
-                case 'tick':
-                    if (eventName == 'tick') onPairs.handler({ body: this })
-                    break;
-                case 'define':
-                    if (eventName == 'define') onPairs.handler({ body: this })
-                    break;
-            }
         }
     }
     refreshBodyAttributes() {
@@ -1794,13 +1769,12 @@ class Entity extends EventEmitter {
                 }
                 this.upgrades = [];
                 this.define(upgradeClass);
-                this.ON(this.onDef, "upgrade", { oldEntity: old })
             } else {
                 this.defs.splice(upgradeBranch, 1, ...upgradeClass);
                 this.upgrades = [];
                 this.define(this.defs);
-                this.ON(this.onDef, "upgrade", { oldEntity: old })
             }
+            this.emit("upgrade", { body: this });
             if (this.color.base == '-1' || this.color.base == 'mirror') {
                 this.color.base = getTeamColor((c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) ? TEAM_RED : this.team);
             }
@@ -2164,7 +2138,7 @@ class Entity extends EventEmitter {
                 damageInflictor.push(instance.master)
                 damageTool.push(instance)
             }
-            this.onDef != null ? this.ON(undefined, 'damage', { damageInflictor, damageTool }) : null
+            this.emit('damage', { body: this, damageInflictor, damageTool });
             // TODO: find out how to fix 'collide' and 'damage'
         }
         // Life-limiting effects
@@ -2246,10 +2220,8 @@ class Entity extends EventEmitter {
             }
             // Remove duplicates
             killers = killers.filter((elem, index, self) => index == self.indexOf(elem));
-            this.onDef != null ? this.ON(this.onDef, 'death', { killers, killTools }) : null
-            killers.forEach((e) => {
-                e.onDef != null ? e.ON(e.onDef, 'kill', { entity: this }) : null;
-            });
+            this.emit('death', { body: this, killers, killTools });
+            killers.forEach((e) => e.emit('kill', { body: e, entity: this }));
             // If there's no valid killers (you were killed by food), change the message to be more passive
             let killText = notJustFood ? "" : "You have been killed by ",
                 dothISendAText = this.settings.givesKillMessage;

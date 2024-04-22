@@ -58,11 +58,26 @@ exports.dice = sides => exports.random(sides) < 1
 
 exports.choose = (arr) => arr[exports.irandom(arr.length - 1)]
 
-exports.chooseN = (arr, n) => {
-    let o = []
-    for (let i = 0; i < n; i++) o.push(arr.splice(exports.irandom(arr.length - 1), 1)[0])
-    return o
-}
+exports.chooseN = (arr, num) => {
+    let result = [],
+        extendedArr = [];
+    while (extendedArr.length < num) {
+        extendedArr.push(...exports.shuffle(arr));
+    }
+    for (var i = 0; i < num; i++) {
+        result.push(extendedArr[i]);
+    }
+    return result;
+};
+
+exports.shuffle = (arr) => {
+    arr = arr.slice(); //avoid changing the original array
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * i);
+        [arr[j], arr[i]] = [arr[i], arr[j]];
+    }
+    return arr;
+};
 
 exports.chooseChance = (...arg) => {
     let totalProb = 0

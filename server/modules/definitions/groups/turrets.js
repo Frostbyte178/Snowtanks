@@ -1247,14 +1247,14 @@ Class.healerSymbol = {
 // Bodies
 Class.smasherBody = {
     LABEL: "",
-    CONTROLLERS: [["spin", { independent: true }]],
+    CONTROLLERS: [["spin", { independent: true, speed: 0.1 }]],
     COLOR: "black",
     SHAPE: 6,
     INDEPENDENT: true
 }
 Class.landmineBody = {
     LABEL: "",
-    CONTROLLERS: [["spin", { independent: true, speed: 0.08 }]],
+    CONTROLLERS: [["spin", { independent: true, speed: 0.2 }]],
     COLOR: 9,
     SHAPE: 6,
     INDEPENDENT: true

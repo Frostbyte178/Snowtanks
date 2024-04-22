@@ -314,29 +314,7 @@ Class.protoHive = {
     ],
 }
 Class.snake = {
-    PARENT: "missile",
-    LABEL: "Snake",
-    GUNS: [
-        {
-            POSITION: [6, 12, 1.4, 8, 0, 180, 0],
-            PROPERTIES: {
-                AUTOFIRE: true,
-                STAT_CALCULATOR: gunCalcNames.thruster,
-                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.hunterSecondary, g.snake, g.snakeskin]),
-                TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
-            },
-        },
-        {
-            POSITION: [10, 12, 0.8, 8, 0, 180, 0.5],
-            PROPERTIES: {
-                AUTOFIRE: true,
-                NEGATIVE_RECOIL: true,
-                STAT_CALCULATOR: gunCalcNames.thruster,
-                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.hunterSecondary, g.snake]),
-                TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
-            },
-        },
-    ],
+    PARENT: "bullet"
 }
 Class.rocketeerMissile = {
     PARENT: "missile",

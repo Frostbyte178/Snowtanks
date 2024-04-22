@@ -955,6 +955,74 @@ Class.testing = menu("Testing")
 Class.addons = menu("Addon Entities")
 Class.addons.UPGRADES_TIER_0 = []
 
+Class.volute = {
+    PARENT: "genericTank",
+    LABEL: "Volute",
+    DANGER: 6,
+    STAT_NAMES: statnames.desmos,
+    GUNS: [
+        {
+            POSITION: [20, 13, 0.8, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.pounder]),
+                TYPE: ["bullet", {MOTION_TYPE: "desmos"}]
+            },
+        },
+        {
+            POSITION: [5, 10, 2.125, 1, -6.375, 90, 0],
+        },
+        {
+            POSITION: [5, 10, 2.125, 1, 6.375, -90, 0],
+        },
+    ],
+}
+Class.snakeOld = {
+    PARENT: "missile",
+    LABEL: "Snake",
+    GUNS: [
+        {
+            POSITION: [6, 12, 1.4, 8, 0, 180, 0],
+            PROPERTIES: {
+                AUTOFIRE: true,
+                STAT_CALCULATOR: gunCalcNames.thruster,
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.hunterSecondary, g.snake, g.snakeskin]),
+                TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
+            },
+        },
+        {
+            POSITION: [10, 12, 0.8, 8, 0, 180, 0.5],
+            PROPERTIES: {
+                AUTOFIRE: true,
+                NEGATIVE_RECOIL: true,
+                STAT_CALCULATOR: gunCalcNames.thruster,
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.hunterSecondary, g.snake]),
+                TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true }],
+            },
+        },
+    ],
+}
+Class.sidewinderOld = {
+    PARENT: "genericTank",
+    LABEL: "Sidewinder (old)",
+    DANGER: 7,
+    BODY: {
+        SPEED: 0.8 * base.SPEED,
+        FOV: 1.3 * base.FOV,
+    },
+    GUNS: [
+        {
+            POSITION: [10, 11, -0.5, 14, 0, 0, 0],
+        },
+        {
+            POSITION: [21, 12, -1.1, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder]),
+                TYPE: "snakeOld",
+                STAT_CALCULATOR: gunCalcNames.sustained,
+            },
+        },
+    ],
+}
 Class.whirlwindDeco = makeDeco(6)
 Class.whirlwindDeco.CONTROLLERS = [["spin", { independent: true, speed: 0.128 }]]
 Class.whirlwind = {
@@ -1114,9 +1182,10 @@ Class.tripleFlail = {
 
 Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "teams", "eggGenerator", "testing", "addons"]
     Class.tanks.UPGRADES_TIER_0 = ["basic", "unavailable", "arenaCloser", "dominators", "sanctuaries", "mothership", "baseProtector", "antiTankMachineGun"]
-        Class.unavailable.UPGRADES_TIER_0 = ["flail", "healer", "whirlwind"]
+        Class.unavailable.UPGRADES_TIER_0 = ["flail", "healer", "volute", "whirlwind"]
             Class.flail.UPGRADES_TIER_2 = ["doubleFlail"]
                 Class.doubleFlail.UPGRADES_TIER_3 = ["tripleFlail"]
+            Class.volute.UPGRADES_TIER_3 = ["sidewinderOld"]
         Class.dominators.UPGRADES_TIER_0 = ["destroyerDominator", "gunnerDominator", "trapperDominator"]
         Class.sanctuaries.UPGRADES_TIER_0 = ["sanctuaryTier1", "sanctuaryTier2", "sanctuaryTier3", "sanctuaryTier4", "sanctuaryTier5", "sanctuaryTier6"]
 

@@ -418,9 +418,7 @@ class io_stackGuns extends IO {
 class io_nearestDifferentMaster extends IO {
     constructor(body, opts = {}) {
         super(body);
-        this.lookAtDanger = opts.lookAtDanger || true;
-        this.timeout = opts.timeout || 90;
-        this.accountForMovement = opts.accountForMovement || true;
+        this.accountForMovement = opts.accountForMovement ?? true;
         this.targetLock = undefined;
         this.tick = ran.irandom(30);
         this.lead = 0;
@@ -440,6 +438,7 @@ class io_nearestDifferentMaster extends IO {
         (this.body.aiSettings.BLIND || ((e.x - m.x) * (e.x - m.x) < sqrRange && (e.y - m.y) * (e.y - m.y) < sqrRange)) &&
         (this.body.aiSettings.SKYNET || ((e.x - mm.x) * (e.x - mm.x) < sqrRangeMaster && (e.y - mm.y) * (e.y - mm.y) < sqrRangeMaster));
     }
+    wouldHitWall = (me, enemy) => wouldHitWall(me, enemy); // Override
     buildList(range) {
         // Establish whom we judge in reference to
         let mostDangerous = 0,
@@ -456,14 +455,10 @@ class io_nearestDifferentMaster extends IO {
             }
         }).filter((e) => {
             // Even more expensive
-            return !wouldHitWall(this.body, e);
+            return !this.wouldHitWall(this.body, e);
         }).filter((e) => {
             // Only return the highest tier of danger
-            if (
-                this.body.aiSettings.farm ||
-                e.dangerValue === mostDangerous &&
-                this.lookAtDanger
-            ) {
+            if (this.body.aiSettings.farm || e.dangerValue === mostDangerous) {
                 if (this.targetLock && e.id === this.targetLock.id) keepTarget = true;
                 return true;
             }
@@ -500,7 +495,7 @@ class io_nearestDifferentMaster extends IO {
         // Check if my target's alive
         if (this.targetLock && (
             !this.validate(this.targetLock, this.body, this.body.master.master, range * range, range * range * 4 / 3) ||
-            wouldHitWall(this.body, this.targetLock) // Very expensive
+            this.wouldHitWall(this.body, this.targetLock) // Very expensive
         )) {
             this.targetLock = undefined;
             this.tick = 100;
@@ -519,15 +514,17 @@ class io_nearestDifferentMaster extends IO {
                     x: this.body.x,
                     y: this.body.y
                 });
-                this.tick = -this.timeout;
+                this.tick = -90;
             }
         }
         // Lock onto whoever's shooting me.
-        // let damageRef = (this.body.bond == null) ? this.body : this.body.bond
+        // let damageRef = (this.body.bond == null) ? this.body : this.body.bond;
         // if (damageRef.collisionArray.length && damageRef.health.display() < this.oldHealth) {
-        //     this.oldHealth = damageRef.health.display()
+        //     this.oldHealth = damageRef.health.display();
         //     if (this.validTargets.indexOf(damageRef.collisionArray[0]) === -1) {
-        //         this.targetLock = (damageRef.collisionArray[0].master.id === -1) ? damageRef.collisionArray[0].source : damageRef.collisionArray[0].master
+        //         let a = (damageRef.collisionArray[0].master.id === -1)
+        //             ? damageRef.collisionArray[0].source
+        //             : damageRef.collisionArray[0].master;
         //     }
         // }
         // Consider how fast it's moving and shoot at it
@@ -602,9 +599,12 @@ class io_avoid extends IO {
     }
 }
 class io_minion extends IO {
-    constructor(body) {
+    constructor(body, opts = {}) {
         super(body)
-        this.turnwise = 1
+        this.turnwise = 1;
+        this.leashRange = opts.leash ?? 82;
+        this.orbitRange = opts.orbit ?? 140;
+        this.repelRange = opts.repel ?? 142;
     }
     think(input) {
         if (this.body.aiSettings.reverseDirection && ran.chance(0.005)) {
@@ -612,9 +612,9 @@ class io_minion extends IO {
         }
         if (input.target != null && (input.alt || input.main)) {
             let sizeFactor = Math.sqrt(this.body.master.size / this.body.master.SIZE)
-            let leash = 82 * sizeFactor
-            let orbit = 140 * sizeFactor
-            let repel = 142 * sizeFactor
+            let leash = this.leashRange * sizeFactor
+            let orbit = this.orbitRange * sizeFactor
+            let repel = this.repelRange * sizeFactor
             let goal
             let power = 1
             let target = new Vector(input.target.x, input.target.y)
