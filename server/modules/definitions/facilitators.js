@@ -762,10 +762,12 @@ exports.menu = (name = -1, color = -1, shape = 0) => {
     };
 }
 
-exports.weaponArray = (weapons, count, isTurret = false) => {
+exports.weaponArray = (weapons, count) => {
     if (!Array.isArray(weapons)) {
         weapons = [weapons]
     }
+    let isTurret = weapons[0].PROPERTIES == undefined;
+    let angleIndex = isTurret ? 3 : 5;
 
     let output = [];
     for (let weapon of weapons) {
@@ -773,7 +775,7 @@ exports.weaponArray = (weapons, count, isTurret = false) => {
             let angle = 360 / count * i;
             let newWeapon = exports.dereference(weapon);
             if (Array.isArray(newWeapon.POSITION)) {
-                newWeapon.POSITION[5 - (isTurret ? 2 : 0)] += angle;
+                newWeapon.POSITION[angleIndex] += angle;
             } else {
                 newWeapon.POSITION.ANGLE = (newWeapon.POSITION.ANGLE ?? 0) + angle;
             }

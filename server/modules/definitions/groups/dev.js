@@ -931,7 +931,7 @@ Class.weaponArrayTest = {
             POSITION: [7, 10, 0, -11, 180, 0],
             TYPE: 'autoTankGun'
         }
-    , 5, true),
+    , 5),
 }
 
 Class.levels = menu("Levels")
