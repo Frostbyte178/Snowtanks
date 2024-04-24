@@ -1457,12 +1457,12 @@ global.scrollX = global.scrollY = global.fixedScrollX = global.fixedScrollY = -1
 global.scrollVelocityY = global.scrollVelocityX = 0;
 let lastGuiType = null;
 function drawUpgradeTree(spacing, alcoveSize) {
-    if (global.died) {
+    /*if (global.died) {
         global.showTree = false;
         global.scrollX = global.scrollY = global.fixedScrollX = global.fixedScrollY = global.scrollVelocityY = global.scrollVelocityX = 0;
         global.treeScale = 1;
         return;
-    }
+    }*/ // Hide the tree on death
 
     if (lastGuiType != gui.type) {
         let m = util.getEntityImageFromMockup(gui.type), // The mockup that corresponds to the player's tank

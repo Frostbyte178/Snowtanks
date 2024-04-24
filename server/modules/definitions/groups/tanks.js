@@ -3105,7 +3105,25 @@ Class.sidewinder = {
     LABEL: "Sidewinder",
     DANGER: 6,
     STAT_NAMES: statnames.desmos,
-    UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!"
+    UPGRADE_TOOLTIP: "[DEV NOTE] This tank does not function as intended yet!",
+    GUNS: [
+        {
+            POSITION: [10, 8.5, 1.4, 7, 0, 0, 0]
+        },
+        {
+            POSITION: [20, 10, 0.8, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
+                TYPE: ["bullet", {MOTION_TYPE: "desmos"}]
+            }
+        },
+        {
+            POSITION: [4.25, 11, 2, 2.25, -4.25, 92.5, 0]
+        },
+        {
+            POSITION: [4.25, 11, 2, 2.25, 4.25, -92.5, 0]
+        }
+    ]
 }
 Class.undertow = {
     PARENT: "genericTank",
@@ -3263,7 +3281,38 @@ Class.coil = {
     LABEL: "Coil",
     DANGER: 7,
     STAT_NAMES: statnames.desmos,
-    UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!"
+    UPGRADE_TOOLTIP: "[DEV NOTE] This tank does not function as intended yet!",
+    GUNS: [
+        {
+            POSITION: [20, 8, 0.75, 0, -5, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
+                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: false}]}]
+            },
+        },
+        {
+            POSITION: [20, 8, 0.75, 0, 5, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
+                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: true}]}]
+            },
+        },
+        {
+            POSITION: [21, 4, 0.75, 0, -5, 0, 0]
+        },
+        {
+            POSITION: [21, 4, 0.75, 0, 5, 0, 0]
+        },
+        {
+            POSITION: [3.625, 7.5, 2.75, 5.75, -6.75, 90, 0],
+        },
+        {
+            POSITION: [3.625, 7.5, 2.75, 5.75, 6.75, -90, 0],
+        },
+        {
+            POSITION: [6, 8, 0.25, 10.5, 0, 0, 0],
+        }
+    ]
 }
 Class.python = {
     PARENT: "genericTank",
@@ -3276,8 +3325,37 @@ Class.ranch = {
     PARENT: "genericTank",
     LABEL: "Ranch",
     DANGER: 7,
-    STAT_NAMES: statnames.desmos,
-    UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!"
+    STAT_NAMES: statnames.drone,
+    UPGRADE_TOOLTIP: "[DEV NOTE] This tank does not function as intended yet!",
+    BODY: {
+        SPEED: base.SPEED * 0.8,
+        FOV: 1.1,
+    },
+    GUNS: [
+        {
+            POSITION: [4.5, 10, 1, 10.5, 0, 0, 0],
+        },
+        {
+            POSITION: [1, 12, 1, 15, 0, 0, 0],
+            PROPERTIES: {
+                MAX_CHILDREN: 3,
+                SHOOT_SETTINGS: combineStats([g.factory, g.babyfactory]),
+                TYPE: "minion",
+                STAT_CALCULATOR: gunCalcNames.drone,
+                AUTOFIRE: true,
+                SYNCS_SKILLS: true,
+            },
+        },
+        {
+            POSITION: [11.5, 12, 1, 0, 0, 0, 0],
+        },
+        {
+            POSITION: [5, 7.5, 2.5, 1, -4.5, 95, 0],
+        },
+        {
+            POSITION: [5, 7.5, 2.5, 1, 4.5, -95, 0],
+        },
+    ],
 }
 Class.oroboros = {
     PARENT: "genericTank",
@@ -3391,10 +3469,10 @@ Class.duplicator = {
             POSITION: [3.75, 10, 2.125, 0, -4.75, 30, 0]
         },
         {
-            POSITION: [18, 8, 0.65, 0, 0, 0, 0]
+            POSITION: [17, 8, 0.65, 0, 0, 0, 0]
         },
         {
-            POSITION: [19, 6, 0.45, 0, 0, 0, 0]
+            POSITION: [18, 8, 0.25, 0, 0, 0, 0]
         },
     ]
 }
@@ -3634,14 +3712,14 @@ Class.vulture = makeBird({
             }
         },
         {
-            POSITION: [20, 7.5, -1.5, 0, 0, 0, 0.333],
+            POSITION: [20, 7.5, -1.5, 0, 0, 0, 1/3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.minigun, {size: 7/7.5}]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [18, 8, -1.5, 0, 0, 0, 0.667],
+            POSITION: [18, 8, -1.5, 0, 0, 0, 2/3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.minigun, {size: 7/8}]),
                 TYPE: "bullet"
@@ -3765,7 +3843,7 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.overseer.UPGRADES_TIER_3 = ["overlord", "overtrapper", "overgunner", "banshee", "autoOverseer", "overdrive", "commander"]
         Class.cruiser.UPGRADES_TIER_3 = ["carrier", "battleship", "fortress", "autoCruiser", "commander"]
         Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "infestor"]
-        Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner"]
+        Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "ranch"]
 
     Class.pounder.UPGRADES_TIER_2 = ["destroyer", "builder", "artillery", "launcher"]
         Class.pounder.UPGRADES_TIER_3 = ["shotgun", "eagle"]

@@ -840,7 +840,7 @@ const socketInit = port => {
                 global.roomSetup = JSON.parse(m[2]);
                 serverStart = JSON.parse(m[3]);
                 settings.roomSpeed = m[4];
-                console.log('Room data recieved. Commencing syncing process.');
+                console.log('Room data received. Commencing syncing process.');
                 // Start the syncing process
                 socket.talk('S', getNow());
                 break;

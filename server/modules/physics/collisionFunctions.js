@@ -229,14 +229,14 @@ function advancedcollide(my, n, doDamage, doInelastic, nIsFirmCollide = false) {
             deathFactor._n = (stuff > n.health.amount) ? n.health.amount / stuff : 1;
             reductionFactor = Math.min(deathFactor._me, deathFactor._n);
             // Now apply it
-            // my.damageRecieved += damage._n * deathFactor._n;
-            // n.damageRecieved += damage._me * deathFactor._me;
+            // my.damageReceived += damage._n * deathFactor._n;
+            // n.damageReceived += damage._me * deathFactor._me;
             const __my = damage._n * deathFactor._n;
             const __n = damage._me * deathFactor._me;
-            my.damageRecieved += __my * Number(__my > 0
+            my.damageReceived += __my * Number(__my > 0
                 ? my.team != n.team
                 : n.healer && n.team == my.team && my.type == "tank" && n.master.id != my.id);
-            n.damageRecieved += __n * Number(__n > 0
+            n.damageReceived += __n * Number(__n > 0
                 ? my.team != n.team
                 : my.healer && n.team == my.team && n.type == "tank" && my.master.id != n.id);
         }

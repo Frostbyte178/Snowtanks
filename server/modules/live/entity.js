@@ -919,7 +919,7 @@ class Entity extends EventEmitter {
         this.vfacing = 0;
         this.range = 0;
         this.angle = 0;
-        this.damageRecieved = 0;
+        this.damageReceived = 0;
         this.recoilMultiplier = 1;
         this.stepRemaining = 1;
         this.x = position.x;
@@ -2126,10 +2126,10 @@ class Entity extends EventEmitter {
     }
     contemplationOfMortality() {
         if (this.invuln) {
-            this.damageRecieved = 0;
+            this.damageReceived = 0;
             return 0;
         }
-        if (this.damageRecieved > 0) {
+        if (this.damageReceived > 0) {
             let damageInflictor = []
             let damageTool = []
 
@@ -2140,7 +2140,6 @@ class Entity extends EventEmitter {
                 damageTool.push(instance)
             }
             this.emit('damage', { body: this, damageInflictor, damageTool });
-            // TODO: find out how to fix 'collide' and 'damage'
         }
         // Life-limiting effects
         if (this.settings.diesAtRange) {
@@ -2159,19 +2158,19 @@ class Entity extends EventEmitter {
         }
         // Shield regen and damage
         if (this.shield.max) {
-            if (this.damageRecieved) {
-                let shieldDamage = this.shield.getDamage(this.damageRecieved);
-                this.damageRecieved -= shieldDamage;
+            if (this.damageReceived) {
+                let shieldDamage = this.shield.getDamage(this.damageReceived);
+                this.damageReceived -= shieldDamage;
                 this.shield.amount -= shieldDamage;
             }
         }
         // Health damage
-        if (this.damageRecieved) {
-            let healthDamage = this.health.getDamage(this.damageRecieved);
+        if (this.damageReceived) {
+            let healthDamage = this.health.getDamage(this.damageReceived);
             this.blend.amount = 1;
             this.health.amount -= healthDamage;
         }
-        this.damageRecieved = 0;
+        this.damageReceived = 0;
         // Check for death
         if (this.isDead()) {
 

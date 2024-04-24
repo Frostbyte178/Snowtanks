@@ -743,6 +743,46 @@ exports.addAura = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) =
     };
 }
 
+exports.menu = (name = -1, color = -1, shape = 0) => {
+    let gun = {
+        POSITION: [18, 10, -1.4, 0, 0, 0, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: exports.combineStats([g.basic]),
+            TYPE: "bullet",
+        },
+    };
+    return {
+        PARENT: "genericTank",
+        LABEL: name == -1 ? undefined : name,
+        GUNS: [gun],
+        COLOR: color,
+        UPGRADE_COLOR: color == -1 ? undefined : color,
+        SHAPE: shape,
+        IGNORED_BY_AI: true,
+    };
+}
+
+exports.weaponArray = (weapons, count, isTurret = false) => {
+    if (!Array.isArray(weapons)) {
+        weapons = [weapons]
+    }
+
+    let output = [];
+    for (let weapon of weapons) {
+        for (let i = 0; i < count; i++) {
+            let angle = 360 / count * i;
+            let newWeapon = exports.dereference(weapon);
+            if (Array.isArray(newWeapon.POSITION)) {
+                newWeapon.POSITION[5 - (isTurret ? 2 : 0)] += angle;
+            } else {
+                newWeapon.POSITION.ANGLE = (newWeapon.POSITION.ANGLE ?? 0) + angle;
+            }
+            output.push(newWeapon);
+        }
+    }
+    return output;
+}
+
 class LayeredBoss {
     constructor(identifier, NAME, PARENT = "celestial", SHAPE = 9, COLOR = 0, trapTurretType = "baseTrapTurret", trapTurretSize = 6.5, layerScale = 5, BODY, SIZE, VALUE) {
         this.identifier = identifier ?? NAME.charAt(0).toLowerCase() + NAME.slice(1);
@@ -807,22 +847,4 @@ exports.makeLabyrinthShape = (type) => {
     let output = exports.dereference(type);
     let downscale = Math.max(output.SHAPE, 3);
     return output;
-}
-exports.menu = (name = -1, color = -1, shape = 0) => {
-    let gun = {
-        POSITION: [18, 10, -1.4, 0, 0, 0, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic]),
-            TYPE: "bullet",
-        },
-    };
-    return {
-        PARENT: "genericTank",
-        LABEL: name == -1 ? undefined : name,
-        GUNS: [gun],
-        COLOR: color,
-        UPGRADE_COLOR: color == -1 ? undefined : color,
-        SHAPE: shape,
-        IGNORED_BY_AI: true,
-    };
 }
