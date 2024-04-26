@@ -49,7 +49,7 @@ const hexnoughtBody = {
 };
 
 // Comment out the line below to enable this addon, uncomment it to disable this addon.
-// return console.log('--- Dreadnoughts v2 addon [dreadv2.js] is disabled. See lines 60-61 to enable it. ---');
+return console.log('--- Dreadnoughts v2 addon [dreadv2.js] is disabled. See lines 60-61 to enable it. ---');
 
 // Set the below variable to true to enable hex dreadnought building.
 const buildHexnoughts = true;

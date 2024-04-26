@@ -34,7 +34,7 @@ g.dreadv1Trap = {
 }
 
 // Comment out the line below to enable this addon, uncomment it to disable this addon.
-//return console.log('--- Dreadnoughts v1 addon [dreadv1.js] is disabled. See lines 32-33 to enable it. ---');
+return console.log('--- Dreadnoughts v1 addon [dreadv1.js] is disabled. See lines 32-33 to enable it. ---');
 
 // Set the below variable to true to enable the Medicare and Medicaid healing bodies.
 const enableHealers = true;
