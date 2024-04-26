@@ -269,7 +269,7 @@ Class.crasher = {
     DRAW_HEALTH: true,
 };
 Class.crasherSpawner = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Spawned",
     STAT_NAMES: statnames.drone,
     CONTROLLERS: ["nearestDifferentMaster"],
@@ -343,7 +343,7 @@ Class.sentry = {
     GIVE_KILL_MESSAGE: true,
 };
 Class.sentrySwarm = {
-    PARENT: ["sentry"],
+    PARENT: "sentry",
     UPGRADE_LABEL: "Swarm Sentry",
     UPGRADE_COLOR: "pink",
     GUNS: [
@@ -357,18 +357,18 @@ Class.sentrySwarm = {
         },
     ],
 };
-Class.sentryGun = makeAuto(Class.sentry, "Sentry", {
+Class.sentryGun = makeAuto("sentry", "Sentry", {
     type: "megaAutoTankGun",
     size: 12,
 });
 Class.sentryGun.UPGRADE_LABEL = "Gun Sentry";
-Class.sentryTrap = makeAuto(Class.sentry, "Sentry", {
+Class.sentryTrap = makeAuto("sentry", "Sentry", {
     type: "trapTurret",
     size: 12,
 });
 Class.sentryTrap.UPGRADE_LABEL = "Trap Sentry";
 Class.shinySentry = {
-    PARENT: ["sentry"],
+    PARENT: "sentry",
     COLOR: "lightGreen",
     UPGRADE_COLOR: "lightGreen",
     DANGER: 4,
@@ -380,7 +380,7 @@ Class.shinySentry = {
     },
 };
 Class.shinySentrySwarm = {
-    PARENT: ["shinySentry"],
+    PARENT: "shinySentry",
     UPGRADE_LABEL: "Shiny Swarm Sentry",
     UPGRADE_COLOR: "lightGreen",
     GUNS: [
@@ -394,12 +394,12 @@ Class.shinySentrySwarm = {
         },
     ],
 };
-Class.shinySentryGun = makeAuto(Class.shinySentry, "Sentry", {
+Class.shinySentryGun = makeAuto("shinySentry", "Sentry", {
     type: Class.artilleryAutoTankgun,
     size: 12,
 });
 Class.shinySentryGun.UPGRADE_LABEL = "Shiny Gun Sentry";
-Class.shinySentryTrap = makeAuto(Class.shinySentry, "Sentry", {
+Class.shinySentryTrap = makeAuto("shinySentry", "Sentry", {
     type: "barricadeTurret",
     size: 12,
 });
@@ -407,7 +407,7 @@ Class.shinySentryTrap.UPGRADE_LABEL = "Shiny Trap Sentry";
 
 // SENTINELS (by ranar)
 Class.sentinel = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     TYPE: "crasher",
     LABEL: "Sentinel",
     DANGER: 7,
@@ -555,7 +555,7 @@ Class.sentinelMinigun = {
 
 // MISCELLANEOUS TANKS
 Class.baseProtector = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Base",
     UPGRADE_LABEL: "Base Protector",
     ON_MINIMAP: false,

@@ -106,7 +106,7 @@ let checkMazeForBlocks = (initX, initY, size, maze) => {
                             x: d.x,
                             y: d.y
                         });
-                        o.define(Class.wall);
+                        o.define("wall");
                         o.SIZE = d.s * 0.5 - 2;
                         o.team = TEAM_ENEMIES;
                         o.protect();

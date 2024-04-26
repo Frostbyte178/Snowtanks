@@ -718,7 +718,7 @@ exports.addAura = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) =
     let symbolType = isHeal ? "healerSymbol" : "auraSymbol";
     auraColor = auraColor ?? (isHeal ? 12 : 0);
     return {
-        PARENT: ["genericTank"],
+        PARENT: "genericTank",
         INDEPENDENT: true,
         LABEL: "",
         COLOR: 17,

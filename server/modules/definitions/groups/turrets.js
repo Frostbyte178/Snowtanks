@@ -147,7 +147,7 @@ Class.trapTurret = {
     ],
 };
 Class.baseTrapTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Turret",
     INDEPENDENT: true,
     COLOR: "grey",
@@ -166,7 +166,7 @@ Class.baseTrapTurret = {
     ],
 }
 Class.terrestrialTrapTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Turret",
     INDEPENDENT: true,
     COLOR: "grey",
@@ -191,7 +191,7 @@ let makeshottrapTurretProps = () => ({
     STAT_CALCULATOR: gunCalcNames.block,
 });
 Class.shottrapTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: 'Turret',
     BODY: {
         FOV: 0,
@@ -240,7 +240,7 @@ Class.shottrapTurret = {
     } ]
 }
 Class.machineTripleTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Machine Gun",
     BODY: { FOV: 2 },
     CONTROLLERS: [ ["spin", {speed: 0.04}] ],
@@ -272,7 +272,7 @@ Class.machineTripleTurret = {
     ],
 };
 Class.launcherTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Launcher",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -292,7 +292,7 @@ Class.launcherTurret = {
     ],
 };
 Class.skimmerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Skimmer",
     BODY: { FOV: 2 * base.FOV },
     COLOR: -1,
@@ -311,7 +311,7 @@ Class.skimmerTurret = {
     ],
 };
 Class.kronosSkimmerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Skimmer",
     BODY: { FOV: 10 },
     COLOR: "grey",
@@ -330,7 +330,7 @@ Class.kronosSkimmerTurret = {
     ],
 }
 Class.autosmashTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Launcher",
     BODY: { FOV: 10 },
     COLOR: "grey",
@@ -349,7 +349,7 @@ Class.autosmashTurret = {
     ],
 }
 Class.twisterTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Twister",
     BODY: { FOV: 2 },
     COLOR: -1,
@@ -368,7 +368,7 @@ Class.twisterTurret = {
     ],
 };
 Class.hyperTwisterTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Twister",
     BODY: { FOV: 2 },
     COLOR: -1,
@@ -387,7 +387,7 @@ Class.hyperTwisterTurret = {
     ],
 };
 Class.rocketeerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Rocketeer",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -406,7 +406,7 @@ Class.rocketeerTurret = {
     ],
 };
 Class.boomerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Boomer",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -430,7 +430,7 @@ Class.boomerTurret = {
     ],
 };
 Class.triTrapGuardTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     COLOR: -1,
     CONTROLLERS: [["spin", { independent: true }]],
     GUNS: [],
@@ -456,7 +456,7 @@ for(let i = 0; i < 3; i++) {
     )
 };
 Class.eliteSpinnerCyclone = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     COLOR: -1,
     CONTROLLERS: [["spin", { speed: 0.1, independent: true }]],
     GUNS: [],
@@ -488,7 +488,7 @@ for (let i = 0; i < 12; i++) {
     )
 };
 Class.barricadeTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Turret",
     BODY: {
         FOV: 0.5,
@@ -531,7 +531,7 @@ Class.barricadeTurret = {
     ],
 };
 Class.artilleryAutoTankgun = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Artillery",
     BODY: {
         FOV: 2,
@@ -570,7 +570,7 @@ Class.artilleryAutoTankgun = {
     ],
 }
 Class.artilleryTurret = { // This one has half the dps of the one above
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Artillery",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -601,7 +601,7 @@ Class.artilleryTurret = { // This one has half the dps of the one above
     ],
 };
 Class.legionaryTwin = {
-    PARENT: ["auto4gun"],
+    PARENT: "auto4gun",
     COLOR: "grey",
     INDEPENDENT: true,
     GUNS: [
@@ -621,7 +621,7 @@ Class.legionaryTwin = {
     ],
 }
 Class.nailgunTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Nailgun",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -651,7 +651,7 @@ Class.nailgunTurret = {
     ],
 };
 Class.crowbarTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     COLOR: "grey",
     LABEL: "Crowbar",
     BODY: { FOV: 2 },
@@ -679,7 +679,7 @@ Class.crowbarTurret = {
     ],
 };
 Class.wrenchTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     COLOR: "grey",
     LABEL: "Wrench",
     BODY: { FOV: 2 },
@@ -706,7 +706,7 @@ Class.wrenchTurret = {
     ],
 };
 Class.protoSwarmerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Swarmer",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -724,7 +724,7 @@ Class.protoSwarmerTurret = {
     ],
 }
 Class.swarmTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Swarm",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -741,7 +741,7 @@ Class.swarmTurret = {
     ],
 };
 Class.napoleonLowerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -765,7 +765,7 @@ Class.napoleonLowerTurret = {
     ],
 };
 Class.genghisLowerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "",
     MAX_CHILDREN: 4,
     BODY: { FOV: 2 },
@@ -787,7 +787,7 @@ Class.genghisLowerTurret = {
 };
 
 Class.cruiserTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Cruiser",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -811,7 +811,7 @@ Class.cruiserTurret = {
     ],
 };
 Class.carrierTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Carrier",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -843,7 +843,7 @@ Class.carrierTurret = {
     ],
 }
 Class.gunnerCruiserTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Launcher",
     BODY: { FOV: 10 },
     COLOR: "grey",
@@ -880,7 +880,7 @@ Class.gunnerCruiserTurret = {
     ],
 }
 Class.juliusLowerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "",
     MAX_CHILDREN: 3,
     BODY: { FOV: 2 },
@@ -898,7 +898,7 @@ Class.juliusLowerTurret = {
     ],
 };
 Class.swarmerTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Swarmer",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -916,7 +916,7 @@ Class.swarmerTurret = {
     ],
 };
 Class.basicTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Turret",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -932,7 +932,7 @@ Class.basicTurret = {
     ],
 };
 Class.napoleonUpperTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -1026,7 +1026,7 @@ Class.pillboxTurret = {
     ],
 }
 Class.tripletTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Triplet",
     BODY: { FOV: 2 },
     CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
@@ -1122,7 +1122,7 @@ Class.surgeonPillboxTurret = {
 
 // Miscellaneous
 Class.baseSwarmTurret = {
-    PARENT: ["genericTank"],
+    PARENT: "genericTank",
     LABEL: "Protector",
     COLOR: "grey",
     BODY: {
@@ -1238,7 +1238,6 @@ Class.assemblerDot = {
     INDEPENDENT: true
 }
 Class.healerSymbol = {
-    PARENT: ["genericEntity"],
     SHAPE: [[0.3, -0.3],[1,-0.3],[1,0.3],[0.3,0.3],[0.3,1],[-0.3,1],[-0.3,0.3],[-1,0.3],[-1,-0.3],[-0.3,-0.3],[-0.3,-1],[0.3,-1]],
     SIZE: 13,
     COLOR: "red",

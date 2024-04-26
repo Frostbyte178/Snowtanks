@@ -49,15 +49,15 @@ Class.superSplitterBullet = {
 }
 Class.turretedBullet = makeAuto('bullet', "Auto-Bullet", {size: 14, color: "veryLightGrey", angle: 0});
 Class.speedBullet = {
-    PARENT: ["bullet"],
+    PARENT: "bullet",
     MOTION_TYPE: "accel",
 }
 Class.growBullet = {
-    PARENT: ["bullet"],
+    PARENT: "bullet",
     MOTION_TYPE: "grow",
 }
 Class.flare = {
-    PARENT: ["growBullet"],
+    PARENT: "growBullet",
     LABEL: "Flare",
     SHAPE: 4,
 }
@@ -278,7 +278,7 @@ Class.hive = {
     ],
 }
 Class.protoHive = {
-    PARENT: ["bullet"],
+    PARENT: "bullet",
     LABEL: "Proto-Hive",
     BODY: {
         RANGE: 90,
@@ -456,7 +456,7 @@ Class.surgeonPillbox = {
 // Drones
 Class.turretedDrone = makeAuto('drone', "Auto-Drone", {type: 'droneAutoTurret'})
 Class.gemDrone = {
-    PARENT: ["drone"],
+    PARENT: "drone",
     COLOR: "aqua",
     DRAW_HEALTH: true,
     SHAPE: 6,

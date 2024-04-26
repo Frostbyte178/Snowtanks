@@ -2908,7 +2908,7 @@ Class.architect = {
 }
 
 // Trap Guard upgrades
-Class.bushwhacker = makeGuard(Class.sniper, "Bushwhacker")
+Class.bushwhacker = makeGuard("sniper", "Bushwhacker")
 Class.gunnerTrapper = {
     PARENT: "genericTank",
     LABEL: "Gunner Trapper",
@@ -3787,14 +3787,14 @@ Class.overtrapper = makeOver({
 })
 
 // Auto tanks
-Class.autoDouble = makeAuto(Class.doubleTwin, "Auto-Double")
-Class.autoAssassin = makeAuto(Class.assassin)
-Class.autoGunner = makeAuto(Class.gunner)
-Class.autoTriAngle = makeAuto(Class.triAngle)
-Class.autoOverseer = makeAuto(Class.overseer)
-Class.autoCruiser = makeAuto(Class.cruiser)
-Class.autoSpawner = makeAuto(Class.spawner)
-Class.autoBuilder = makeAuto(Class.builder)
+Class.autoDouble = makeAuto("doubleTwin", "Auto-Double")
+Class.autoAssassin = makeAuto("assassin")
+Class.autoGunner = makeAuto("gunner")
+Class.autoTriAngle = makeAuto("triAngle")
+Class.autoOverseer = makeAuto("overseer")
+Class.autoCruiser = makeAuto("cruiser")
+Class.autoSpawner = makeAuto("spawner")
+Class.autoBuilder = makeAuto("builder")
 Class.autoSmasher = makeAuto({
     PARENT: "genericSmasher",
     DANGER: 6,

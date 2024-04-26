@@ -15,7 +15,7 @@ Class.ramMiniboss = {
 
 // ELITE CRASHERS
 Class.elite = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Elite Crasher",
     COLOR: "pink",
     SHAPE: 3,
@@ -30,7 +30,7 @@ Class.elite = {
     },
 };
 Class.eliteDestroyer = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Destroyer",
     UPGRADE_COLOR: "pink",
     GUNS: [
@@ -74,7 +74,7 @@ Class.eliteDestroyer = {
     ],
 };
 Class.eliteGunner = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Gunner",
     UPGRADE_COLOR: "pink",
     FACING_TYPE: "toTarget",
@@ -106,7 +106,7 @@ Class.eliteGunner = {
     ],
 };
 Class.eliteSprayer = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Sprayer",
     UPGRADE_COLOR: "pink",
     SKILL: [0, 9, 3, 9, 2, 9, 9, 9, 9, 0],
@@ -139,7 +139,7 @@ Class.eliteSprayer = {
     ],
 };
 Class.eliteBattleship = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Battleship",
     UPGRADE_COLOR: "pink",
     GUNS: [
@@ -222,7 +222,7 @@ Class.eliteBattleship = {
     ],
 };
 Class.eliteSpawner = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Spawner",
     UPGRADE_COLOR: "pink",
     MAX_CHILDREN: 9,
@@ -272,7 +272,7 @@ Class.eliteSpawner = {
     ],
 };
 Class.eliteTrapGuard = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Trap Guard",
     UPGRADE_COLOR: "pink",
     AI: { STRAFE: false },
@@ -308,7 +308,7 @@ for (let i = 0; i < 3; i++) {
     )
 };
 Class.eliteSpinner = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Spinner",
     UPGRADE_COLOR: "pink",
     AI: { STRAFE: false },
@@ -349,7 +349,7 @@ for (let i = 0; i < 3; i++) {
 
 // OLD ELITE
 Class.oldEliteSprayer = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Elite Sprayer (Old)",
     UPGRADE_COLOR: "pink",
     AI: { NO_LEAD: false },
@@ -369,7 +369,7 @@ Class.oldEliteSprayer = {
 
 // Legionary Crasher
 Class.legionaryCrasherTop = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     AI: { STRAFE: false, NO_LEAD: false },
     CONTROLLERS: [ ["spin", { independent: true, speed: -0.005 }] ],
     INDEPENDENT: true,
@@ -405,7 +405,7 @@ for (let i = 0; i < 3; i++) {
     )
 }
 Class.legionaryCrasher = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     LABEL: "Legionary Crasher",
     UPGRADE_COLOR: "pink",
     AI: { STRAFE: false, NO_LEAD: false },
@@ -455,7 +455,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.sprayerLegion = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     UPGRADE_LABEL: "Sprayer Legion",
     UPGRADE_COLOR: "pink",
     AI: { NO_LEAD: false },
@@ -475,7 +475,7 @@ Class.sprayerLegion = {
 
 // STRANGE BOSSES
 Class.sorcerer = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Sorcerer",
     DANGER: 7,
     SHAPE: 0,
@@ -503,7 +503,7 @@ Class.sorcerer = {
     }))
 };
 Class.summoner = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Summoner",
     DANGER: 8,
     SHAPE: 4,
@@ -531,7 +531,7 @@ Class.summoner = {
     }))
 };
 Class.enchantress = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Enchantress",
     DANGER: 8,
     SHAPE: 3.5,
@@ -559,7 +559,7 @@ Class.enchantress = {
     }))
 };
 Class.exorcistor = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Exorcistor",
     DANGER: 8,
     SHAPE: 5.5,
@@ -615,7 +615,7 @@ Class.shaman = {
     }))
 };
 Class.eliteSkimmer = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     LABEL: "Elite Skimmer",
     COLOR: "orange",
     UPGRADE_COLOR: "orange",
@@ -635,7 +635,7 @@ Class.eliteSkimmer = {
 
 // Nesters
 Class.nestKeeper = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Nest Keeper",
     COLOR: "purple",
     UPGRADE_COLOR: "purple",
@@ -722,7 +722,7 @@ Class.nestKeeper = {
     ],
 };
 Class.nestWarden = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Nest Warden",
     COLOR: "purple",
     UPGRADE_COLOR: "purple",
@@ -766,7 +766,7 @@ for(let i = 0; i < 5; i++) {
     );
 };
 Class.nestGuardian = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Nest Guardian",
     COLOR: "purple",
     UPGRADE_COLOR: "purple",
@@ -810,7 +810,7 @@ for(let i = 0; i < 5; i++) {
 
 // Rogues
 Class.roguePalisade = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Rogue Palisade",
     COLOR: "darkGrey",
     UPGRADE_COLOR: "darkGrey",
@@ -873,7 +873,7 @@ Class.rogueArmada = (() => {
         });
     }
     return {
-        PARENT: ["miniboss"],
+        PARENT: "miniboss",
         LABEL: 'Rogue Armada',
         COLOR: "darkGrey",
         UPGRADE_COLOR: "darkGrey",
@@ -894,7 +894,7 @@ Class.rogueArmada = (() => {
 
 // Bob.
 Class.bob = {
-    PARENT: ["ramMiniboss"],
+    PARENT: "ramMiniboss",
     LABEL: "Bob",
     SHAPE: 0,
     COLOR: "aqua",
@@ -924,7 +924,7 @@ Class.bob = {
     ],
 };
 Class.nemesis = {
-    PARENT: ["bob"],
+    PARENT: "bob",
     LABEL: "Nemesis",
     COLOR: "red",
     UPGRADE_COLOR: "red",
@@ -939,7 +939,7 @@ Class.nemesis = {
 
 // DIEP BOSSES
 Class.guardian = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     LABEL: "Guardian of the Pentagons",
     UPGRADE_LABEL: "Guardian",
     UPGRADE_COLOR: "pink",
@@ -957,7 +957,7 @@ Class.guardian = {
     AI: { NO_LEAD: false },
 };
 Class.defenderAutoTankGun = {
-    PARENT: ["autoTankGun"],
+    PARENT: "autoTankGun",
     GUNS: [
         {
             POSITION: [22, 10, 1, 0, 0, 0, 0],
@@ -969,7 +969,7 @@ Class.defenderAutoTankGun = {
     ],
 };
 Class.defender = {
-    PARENT: ["elite"],
+    PARENT: "elite",
     LABEL: "Defender",
     COLOR: "orange",
     UPGRADE_COLOR: "orange",
@@ -1020,7 +1020,7 @@ Class.defender = {
 
 // CELESTIALS
 Class.terrestrial = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Terrestrial",
     SKILL: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
     VALUE: 5e5,
@@ -1036,7 +1036,7 @@ Class.terrestrial = {
     },
 };
 Class.celestial = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Celestial",
     SKILL: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
     VALUE: 1e6,
@@ -1052,12 +1052,12 @@ Class.celestial = {
     },
 };
 Class.rogueCelestial = {
-    PARENT: ["celestial"],
+    PARENT: "celestial",
     LABEL: "Rogue Celestial",
     COLOR: "darkGrey",
 };
 Class.eternal = {
-    PARENT: ["miniboss"],
+    PARENT: "miniboss",
     LABEL: "Eternal",
     SKILL: [9, 9, 9, 9, 9, 9, 9, 9, 9, 9],
     VALUE: 4e6,
@@ -2341,7 +2341,7 @@ Class.frostAuraLargeOutline = {
         "M 0 0 L 0.293 0.902 M 0 0 L -0.768 0.558 M 0 0 L -0.768 -0.558 M 0 0 L 0.293 -0.902",
 }
 Class.frostAuraSymbol = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	CONTROLLERS: [["spin", { speed: -0.04 }]],
 	INDEPENDENT: true,
     BORDERLESS: true,

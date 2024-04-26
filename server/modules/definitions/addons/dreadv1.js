@@ -41,7 +41,7 @@ const enableHealers = true;
 
 // Misc
 Class.genericDreadnought1 = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	BODY: dreadnoughtBody,
 	SHAPE: 6,
 	COLOR: 'hexagon',
@@ -50,7 +50,7 @@ Class.genericDreadnought1 = {
 	REROOT_UPGRADE_TREE: "dreadOfficialV1",
 };
 Class.mechanismMainTurret = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	LABEL: "Turret",
 	CONTROLLERS: ["nearestDifferentMaster"],
 	INDEPENDENT: true,
@@ -67,7 +67,7 @@ Class.mechanismMainTurret = {
 	}]
 };
 Class.automationMainTurret = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	LABEL: "Turret",
 	CONTROLLERS: ["onlyAcceptInArc", "nearestDifferentMaster"],
 	INDEPENDENT: true,
@@ -84,7 +84,7 @@ Class.automationMainTurret = {
 	}]
 };
 Class.automationSecondaryTurret = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	LABEL: "Turret",
 	CONTROLLERS: ["onlyAcceptInArc", "nearestDifferentMaster"],
 	INDEPENDENT: true,
@@ -101,7 +101,7 @@ Class.automationSecondaryTurret = {
 	}]
 };
 Class.medicareTurret = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	LABEL: "Turret",
 	CONTROLLERS: [ ["spin", {speed: 0.04}] ],
 	INDEPENDENT: true,
@@ -126,7 +126,7 @@ for(let i = 0; i < 3; i++) {
 	})
 }
 Class.medicaidTurret = {
-	PARENT: ["genericTank"],
+	PARENT: "genericTank",
 	LABEL: "Turret",
 	CONTROLLERS: [ ["spin", {speed: 0.04}] ],
 	INDEPENDENT: true,
@@ -150,7 +150,7 @@ for(let i = 0; i < 5; i++) {
 		},
 	})
 }
-Class.turretedTrap = makeAuto(Class.trap, "Auto-Trap", {size: 7.5, type: 'droneAutoTurret'});
+Class.turretedTrap = makeAuto("trap", "Auto-Trap", {size: 7.5, type: 'droneAutoTurret'});
 Class.turretedTrap.BODY.RECOIL_MULTIPLIER = 0;
 Class.weakMinion = {
     PARENT: "minion",
@@ -168,7 +168,7 @@ Class.weakMinion = {
 
 // T0
 Class.dreadOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Dreadnought",
 	UPGRADE_LABEL: "Dreads V1",
 	LEVEL: 150,
@@ -177,7 +177,7 @@ Class.dreadOfficialV1 = {
 
 // T1
 Class.swordOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Sword",
 	UPGRADE_TOOLTIP: "Snipers",
 	GUNS: [],
@@ -193,7 +193,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.pacifierOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Pacifier",
 	UPGRADE_TOOLTIP: "Bullet Spam",
 	GUNS: [],
@@ -209,7 +209,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.invaderOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Invader",
 	UPGRADE_TOOLTIP: "Drones",
 	GUNS: [],
@@ -230,7 +230,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.centaurOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Centaur",
 	UPGRADE_TOOLTIP: "Traps",
 	GUNS: [],
@@ -249,7 +249,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.automationOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Automation",
 	UPGRADE_TOOLTIP: "Auto Turrets",
 	TURRETS: [],
@@ -266,7 +266,7 @@ Class.automationOfficialV1.TURRETS.push({
 });
 
 Class.juggernautOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Juggernaut",
 	UPGRADE_TOOLTIP: "Health Buff",
 	BODY: {
@@ -281,7 +281,7 @@ Class.juggernautOfficialV1 = {
 	}]
 }
 Class.medicareOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Medicare",
 	UPGRADE_TOOLTIP: "Healing",
 	TURRETS: [{
@@ -292,7 +292,7 @@ Class.medicareOfficialV1 = {
 
 // T2
 Class.sabreOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Sabre",
 	UPGRADE_TOOLTIP: "Assassins",
 	GUNS: [],
@@ -309,7 +309,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.gladiusOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Gladius",
 	UPGRADE_TOOLTIP: "Rifles",
 	GUNS: [],
@@ -327,7 +327,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.appeaserOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Appeaser",
 	UPGRADE_TOOLTIP: "Machine Guns",
 	GUNS: [],
@@ -348,7 +348,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.peacekeeperOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Peacekeeper",
 	UPGRADE_TOOLTIP: "Heavy Bullets",
 	GUNS: [],
@@ -363,7 +363,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.diplomatOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Diplomat",
 	UPGRADE_TOOLTIP: "Triplets",
 	GUNS: [],
@@ -391,7 +391,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.inquisitorOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Inquisitor",
 	UPGRADE_TOOLTIP: "Drones",
 	GUNS: [],
@@ -411,7 +411,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.assailantOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Assailant",
 	UPGRADE_TOOLTIP: "Minions",
 	GUNS: [],
@@ -434,7 +434,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.infiltratorOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Infiltrator",
 	UPGRADE_TOOLTIP: "Swarms",
 	GUNS: [],
@@ -465,7 +465,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.cerberusOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Cerberus",
 	UPGRADE_TOOLTIP: "Trap Spam",
 	GUNS: [],
@@ -501,7 +501,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.minotaurOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Minotaur",
 	UPGRADE_TOOLTIP: "Blocks",
 	GUNS: [],
@@ -519,7 +519,7 @@ for (let i = 0; i < 3; i++) {
 	});
 }
 Class.sirenOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Siren",
 	GUNS: [],
 }
@@ -537,7 +537,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 Class.mechanismOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Mechanism",
 	UPGRADE_TOOLTIP: "Auto Turrets",
 	TURRETS: [],
@@ -554,7 +554,7 @@ Class.mechanismOfficialV1.TURRETS.push({
 })
 
 Class.behemothOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Behemoth",
 	UPGRADE_TOOLTIP: "Health Buff",
 	BODY: {
@@ -569,7 +569,7 @@ Class.behemothOfficialV1 = {
 	}],
 }
 Class.medicaidOfficialV1 = {
-	PARENT: ["genericDreadnought1"],
+	PARENT: "genericDreadnought1",
 	LABEL: "Medicaid",
 	UPGRADE_TOOLTIP: "Healing",
 	TURRETS: [{
@@ -635,7 +635,7 @@ for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_1) {
 
 		// Actually make that guy
 		Class[definitionName] = {
-			PARENT: ["genericDreadnought1"],
+			PARENT: "genericDreadnought1",
 			UPGRADES_TIER_2: [],
 			BODY, LABEL, UPGRADE_TOOLTIP, GUNS, TURRETS,
 		};
@@ -682,7 +682,7 @@ for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_1) {
 
 				// Actually make that guy
 				Class[definitionName2] = {
-					PARENT: ["genericDreadnought1"],
+					PARENT: "genericDreadnought1",
 					BODY, LABEL, UPGRADE_TOOLTIP, GUNS, TURRETS
 				};
 				Class[definitionName].UPGRADES_TIER_2.push(definitionName2);

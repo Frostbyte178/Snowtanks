@@ -662,7 +662,7 @@ Class.ghoster = {
         {
             event: 'fire',
             handler: ({ body }) => {
-                body.define(Class.ghoster_ghosted)
+                body.define("ghoster_ghosted")
                 setTimeout(() => {
                     body.SPEED = 1e-99
                     body.ACCEL = 1e-99
@@ -671,7 +671,7 @@ Class.ghoster = {
                 }, 2000)
                 setTimeout(() => {
                     body.SPEED = base.SPEED
-                    body.define(Class.ghoster)
+                    body.define("ghoster")
                 }, 2500)
             }
         }
