@@ -87,4 +87,4 @@ wall = new Tile({
     }
 });
 
-module.exports = { normal, nest, wall, nestNoBoss };
+module.exports = { normal, nest, wall, nestNoBoss, pickFromChanceSet, spawnNatural };
