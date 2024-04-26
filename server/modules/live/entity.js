@@ -42,7 +42,13 @@ class Gun extends EventEmitter {
             alt: false,
             fire: false,
         };
-        this.color = new Color('16 0 1 0 false');
+        this.color = new Color({
+            BASE: "grey",
+            HUE_SHIFT: 0,
+            SATURATION_SHIFT: 1,
+            BRIGHTNESS_SHIFT: 0,
+            ALLOW_BRIGHTNESS_INVERT: false,
+        });
         this.alpha = 1;
         this.strokeWidth = 1;
         this.canShoot = false;
@@ -885,6 +891,7 @@ class Entity extends EventEmitter {
         this.autoOverride = false;
         this.healer = false;
         this.controllers = [];
+        this.definitionEvents = [];
         this.blend = {
             color: "#FFFFFF",
             amount: 0,
@@ -936,7 +943,7 @@ class Entity extends EventEmitter {
         this.alpha = 1;
         this.strokeWidth = 1;
         this.levelCap = undefined;
-        this.autospinBoost = 0;
+        this.autospinBoost = 1;
         this.antiNaN = new antiNaN(this);
         // Get a new unique id
         this.id = entitiesIdLog++;
@@ -1022,9 +1029,9 @@ class Entity extends EventEmitter {
         b = {
             target: remapTarget(faucet, this.source, this),
             goal: undefined,
-            fire: faucet.fire,
-            main: faucet.main,
-            alt: faucet.alt,
+            fire: faucet.fire ?? false,
+            main: faucet.main ?? false,
+            alt: faucet.alt ?? false,
             power: undefined,
         };
         // Seek attention
@@ -1179,10 +1186,9 @@ class Entity extends EventEmitter {
         }
         if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
         if (set.MOTION_TYPE != null) this.motionType = set.MOTION_TYPE;
-        if (typeof this.motionType == "string") this.motionType = [this.motionType];
+        if (typeof this.motionType == "string") this.motionType = [this.motionType, {}];
         if (set.FACING_TYPE != null) this.facingType = set.FACING_TYPE;
-        if (typeof this.facingType == "string") this.facingType = [this.facingType];
-        if (set.FORCE_FACING_TYPE != null) this.forceFacingType = set.FORCE_FACING_TYPE;
+        if (typeof this.facingType == "string") this.facingType = [this.facingType, {}];
         if (set.MIRROR_MASTER_ANGLE != null) this.settings.mirrorMasterAngle = set.MIRROR_MASTER_ANGLE
         if (set.DRAW_HEALTH != null) this.settings.drawHealth = set.DRAW_HEALTH;
         if (set.DRAW_SELF != null) this.settings.drawShape = set.DRAW_SELF;
@@ -1365,6 +1371,12 @@ class Entity extends EventEmitter {
             this.refreshBodyAttributes();
         }
         if (set.SPAWN_ON_DEATH) this.spawnOnDeath = set.SPAWN_ON_DEATH;
+        if (set.RESET_EVENTS) {
+            for (let { event, handler, once } of this.definitionEvents) {
+                this.removeListener(event, handler, once);
+            }
+            this.definitionEvents = [];
+        }
         if (set.REROOT_UPGRADE_TREE) this.rerootUpgradeTree = set.REROOT_UPGRADE_TREE;
         if (Array.isArray(this.rerootUpgradeTree)) {
             let finalRoot = "";
@@ -1403,13 +1415,7 @@ class Entity extends EventEmitter {
             }
         }
 
-        if (this.definitionEvents) {
-            for (let { event, handler, once } of this.definitionEvents) {
-                this.removeListener(event, handler, once);
-            }
-        }
         if (set.ON != null) {
-            this.definitionEvents = [];
             for (let { event, handler, once = false } of set.ON) {
                 this.definitionEvents.push({ event, handler, once });
                 this.on(event, handler, once);
@@ -1672,10 +1678,10 @@ class Entity extends EventEmitter {
         // Initalize.
         this.activation.update();
         this.facing = this.bond.facing + this.bound.angle;
-        if (!this.forceFacingType) {
-            this.facingType = ["bound"];
+        if (this.facingType[0].includes('Target')) {
+            this.facingType = ["bound", {}];
         }
-        this.motionType = ["bound"];
+        this.motionType = ["bound", {}];
         this.move();
     }
     get level() {
@@ -1827,7 +1833,7 @@ class Entity extends EventEmitter {
             this.damp = 100;
         }
         let type = this.motionType[0],
-            args = this.motionType[1] ?? {};
+            args = this.motionType[1];
         switch (type) {
             case "grow":
                 this.SIZE += args.growSpeed ?? 1;
@@ -1970,7 +1976,7 @@ class Entity extends EventEmitter {
             oldFacing = this.facing,
             oldVFacing = this.vfacing;
         let type = this.facingType[0],
-            args = this.facingType[1] ?? {};
+            args = this.facingType[1];
         switch (type) {
             case "autospin":
                 this.facing += (args.speed ?? 0.02) / c.runSpeed;

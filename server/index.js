@@ -332,6 +332,7 @@ let maintainloop = () => {
         o.define('bot');
         o.define(c.SPAWN_CLASS);
         o.refreshBodyAttributes();
+        o.skill.score = c.BOT_START_XP;
         o.isBot = true;
         o.name = Config.BOT_NAME_PREFIX + ran.chooseBotName();
         o.leftoverUpgrades = ran.chooseChance(...c.BOT_CLASS_UPGRADE_CHANCES);

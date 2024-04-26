@@ -175,6 +175,10 @@ class io_listenToPlayer extends IO {
         this.player = opts.player;
         this.static = opts.static;
         this.acceptsFromTop = false;
+
+        this.normalFacingType = null;
+        this.wasAutospinning = false;
+        this.isAutospinning = false;
     }
     // THE PLAYER MUST HAVE A VALID COMMAND AND TARGET OBJECT
     think() {
@@ -189,19 +193,24 @@ class io_listenToPlayer extends IO {
             target.y *= this.body.reverseTank;
         }
         this.body.facingLocked = this.player.command.spinlock;
-        if (this.player.command.autospin) {
-            let kk = Math.atan2(this.body.control.target.y, this.body.control.target.x) + (this.player.command.rmb ? 0.02 * -1 : 0.02);
-            if (this.body.autospinBoost) {
-                let thing = (0.02 * (this.body.autospinBoost * ((this.body.skill.spd / 4) + 0.5)));
-                if (this.player.command.lmb) thing = thing * 2;
-                if (this.player.command.rmb) thing = thing * -1;
-                kk += thing / c.gameSpeed;
-            }
-            target = {
-                x: 100 * Math.cos(kk),
-                y: 100 * Math.sin(kk),
-            };
+        
+        // Autospin logic
+        this.isAutospinning = this.player.command.autospin;
+        if (this.isAutospinning && !this.wasAutospinning) {
+            // Save facing type for later
+            this.normalFacingType = [...this.body.facingType];
+            this.wasAutospinning = true;
+        } else if (!this.isAutospinning && this.wasAutospinning) {
+            // Restore facing type from earlier
+            this.body.facingType = [...this.normalFacingType];
+            this.wasAutospinning = false;
         }
+        // Define autospin facingType
+        if (this.isAutospinning) {
+            let speed = 0.05 * (alt ? -1 : 1) * this.body.autospinBoost;
+            this.body.facingType = ["spin", {speed}];
+        }
+
         this.body.autoOverride = this.player.command.override;
         if (this.body.invuln && (fire || alt)) this.body.invuln = false;
         return {
@@ -212,7 +221,7 @@ class io_listenToPlayer extends IO {
                 x: this.body.x + this.player.command.right - this.player.command.left,
                 y: this.body.y + this.player.command.down - this.player.command.up,
             },
-            main: fire || this.player.command.autospin
+            main: fire,
         };
     }
 }

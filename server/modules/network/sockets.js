@@ -907,18 +907,13 @@ const spawn = (socket, name) => {
     socket.rememberedTeam = player.team;
     player.body = body;
     body.socket = socket;
-    if (c.MODE == "tdm" || c.TAG) {
-        if (body.color.base == '-1' || body.color.base == 'mirror') {
-            body.color.base = getTeamColor(body.team);
-        }
-    } else {
-        let color = c.RANDOM_COLORS ? ran.choose([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]) : 12;
-        if (body.color.base == '-1' || body.color.base == 'mirror') {
-            body.color.base = color;
-        }
+    if (body.color.base == '-1' || body.color.base == 'mirror') {
+        body.color.base = getTeamColor(c.GROUPS || (c.MODE == 'ffa' && !c.TAG)
+            ? c.RANDOM_COLORS ? ran.choose([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]) : TEAM_RED
+            : player.body.team);
     }
     // Decide what to do about colors when sending updates and stuff
-    player.teamColor = (!c.RANDOM_COLORS && (c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) ? 10 : getTeamColor(body.team)) + ' 0 1 0 false'; // blue
+    player.teamColor = new Color(!c.RANDOM_COLORS && (c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) ? 10 : getTeamColor(body.team)).compiled; // blue
     player.target = { x: 0, y: 0 };
     player.command = {
         up: false,
@@ -1034,7 +1029,11 @@ function perspective(e, player, data) {
                 data[10] = 1;
             }
         }
-        if (player.body.team === e.source.team && (c.GROUPS || (c.MODE == 'ffa' && !c.TAG))) {
+        if (
+            player.body.team === e.source.team &&
+            (c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) &&
+            player.body.color.base == 12
+        ) {
             // GROUPS
             data = data.slice();
             data[13] = player.teamColor;
@@ -1186,23 +1185,16 @@ const eyes = (socket) => {
     return o;
 };
 
-// Util
-let getBarColor = (entry) => {
-    // What even is the purpose of all of this?
-    if (c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) return '11 0 1 0 false';
-    return entry.color.compiled;
-};
-
 // Delta Calculator
 const Delta = class {
     constructor(dataLength, finder) {
         this.dataLength = dataLength;
         this.finder = finder;
-        this.now = finder();
+        this.now = finder([]);
     }
-    update() {
+    update(...args) {
         let old = this.now;
-        let now = this.finder();
+        let now = this.finder(args);
         this.now = now;
         let oldIndex = 0;
         let nowIndex = 0;
@@ -1255,7 +1247,7 @@ const Delta = class {
 };
 
 // Deltas
-let minimapAll = new Delta(5, () => {
+let minimapAll = new Delta(5, args => {
     let all = [];
     for (let my of entities) {
         if (my.allowedOnMinimap && (
@@ -1281,7 +1273,7 @@ let minimapAll = new Delta(5, () => {
 let teamIDs = [1, 2, 3, 4];
 if (c.GROUPS) for (let i = 0; i < 100; i++) teamIDs.push(i + 5);
 let minimapTeams = teamIDs.map((team) =>
-    new Delta(3, () => {
+    new Delta(3, args => {
         let all = [];
         for (let my of entities)
             if (my.type === "tank" && my.team === -team && my.master === my && my.allowedOnMinimap) {
@@ -1297,7 +1289,7 @@ let minimapTeams = teamIDs.map((team) =>
         return all;
     })
 );
-let leaderboard = new Delta(7, () => {
+let leaderboard = new Delta(7, args => {
     let list = [];
     if (c.TAG)
         for (let id = 0; id < c.TEAMS; id++) {
@@ -1343,14 +1335,15 @@ let leaderboard = new Delta(7, () => {
         }
         if (is === 0) break;
         let entry = list[top];
+        let color = args.length && args[0] == entry.id && entry.color.base == 12 ? '10 0 1 0 false' : entry.color.compiled;
         topTen.push({
             id: entry.id,
             data: [
                 c.MOTHERSHIP_LOOP ? Math.round(entry.health.amount) : Math.round(entry.skill.score),
                 entry.index,
                 entry.name,
-                entry.color.compiled,
-                getBarColor(entry),
+                color,
+                color,
                 entry.nameColor || "#FFFFFF",
                 entry.label,
             ],
@@ -1361,16 +1354,15 @@ let leaderboard = new Delta(7, () => {
     return topTen.sort((a, b) => a.id - b.id);
 });
 
-
 // Periodically give out updates
 let subscribers = [];
 setInterval(() => {
     logs.minimap.set();
     let minimapUpdate = minimapAll.update();
     let minimapTeamUpdates = minimapTeams.map((r) => r.update());
-    let leaderboardUpdate = leaderboard.update();
     for (let socket of subscribers) {
         if (!socket.status.hasSpawned) continue;
+        let leaderboardUpdate = leaderboard.update(socket.player.body ? socket.player.body.id : null);
         let team = minimapTeamUpdates[-socket.player.team - 1];
         if (socket.status.needsNewBroadcast) {
             socket.talk("b", ...minimapUpdate.reset, ...(team ? team.reset : [0, 0]), ...(socket.anon ? [0, 0] : leaderboardUpdate.reset));

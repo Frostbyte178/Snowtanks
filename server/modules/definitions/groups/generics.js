@@ -124,6 +124,7 @@ Class.genericTank = {
     ARENA_CLOSER: false, // don't remove this, it stops dev basics going through walls
     GIVE_KILL_MESSAGE: true,
     DRAW_HEALTH: true,
+    RESET_EVENTS: true,
     HITS_OWN_TYPE: "hardOnlyTanks"
 }
 Class.genericSmasher = {

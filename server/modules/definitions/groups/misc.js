@@ -221,7 +221,7 @@ for (let tier of sancTiers) {
                 }, {
                     POSITION: {LENGTH: 1.5, WIDTH: 4, ASPECT: 1.7, X: 12, ANGLE: (360/tier)*i},
                     PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.trap, {shudder: 0.15, spray: 1.2, speed: 0.8, reload: 1.5}]),
+                        SHOOT_SETTINGS: combineStats([g.trap, {shudder: 0.15, speed: 0.8, health: 3, reload: 1.5}]),
                         TYPE: "trap",
                         STAT_CALCULATOR: gunCalcNames.trap,
                         AUTOFIRE: true,
@@ -824,4 +824,5 @@ Class.bot = {
 Class.tagMode = {
     PARENT: "bullet",
     LABEL: "Players",
+    SHAPE: ""
 };
