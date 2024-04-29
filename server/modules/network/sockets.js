@@ -460,6 +460,7 @@ function incoming(message, socket) {
         case "H":
             if (player.body == null) return 1;
             let body = player.body;
+            body.emit("control", { body })
             if (body.underControl) {
                 if (c.DOMINATOR_LOOP) {
                     player.body.sendMessage("You have relinquished control of the dominator.");
@@ -887,7 +888,6 @@ const spawn = (socket, name) => {
         body = new Entity(loc);
         body.protect();
         body.isPlayer = true;
-        body.name = name;
         if (player.team != null) {
             body.team = player.team;
         } else {
@@ -902,6 +902,7 @@ const spawn = (socket, name) => {
         socket.spectateEntity = null;
         body.invuln = true;
     }
+    body.name = name;
     body.sendMessage = (content, displayTime = c.MESSAGE_DISPLAY_TIME) => socket.talk("m", displayTime, content);
 
     socket.rememberedTeam = player.team;
@@ -1335,14 +1336,16 @@ let leaderboard = new Delta(7, args => {
         }
         if (is === 0) break;
         let entry = list[top];
-        let color = args.length && args[0] == entry.id && entry.color.base == 12 ? '10 0 1 0 false' : entry.color.compiled;
+        let color = args.length && args[0]
+            ? args[0]
+            : entry.color.compiled;
         topTen.push({
             id: entry.id,
             data: [
                 c.MOTHERSHIP_LOOP ? Math.round(entry.health.amount) : Math.round(entry.skill.score),
                 entry.index,
                 entry.name,
-                color,
+                entry.color.compiled,
                 color,
                 entry.nameColor || "#FFFFFF",
                 entry.label,
@@ -1360,9 +1363,9 @@ setInterval(() => {
     logs.minimap.set();
     let minimapUpdate = minimapAll.update();
     let minimapTeamUpdates = minimapTeams.map((r) => r.update());
+    let leaderboardUpdate = leaderboard.update(c.GROUPS || (c.MODE == 'ffa' && !c.TAG) ? '11 0 1 0 false' : false);
     for (let socket of subscribers) {
         if (!socket.status.hasSpawned) continue;
-        let leaderboardUpdate = leaderboard.update(socket.player.body ? socket.player.body.id : null);
         let team = minimapTeamUpdates[-socket.player.team - 1];
         if (socket.status.needsNewBroadcast) {
             socket.talk("b", ...minimapUpdate.reset, ...(team ? team.reset : [0, 0]), ...(socket.anon ? [0, 0] : leaderboardUpdate.reset));
@@ -1515,7 +1518,7 @@ const sockets = {
             util.log("[ERROR]:");
             util.error(e);
         });
-        
+
         //account for proxies
         //very simplified reimplementation of what the forwarded-for npm package does
         let store = req.headers['fastly-client-ip'] || req.headers["cf-connecting-ip"] || req.headers['x-forwarded-for'] || req.headers['z-forwarded-for'] ||

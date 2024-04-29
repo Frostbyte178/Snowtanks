@@ -1,4 +1,4 @@
-const { combineStats, makeAuto, makeHybrid, makeOver, makeDeco, makeGuard, makeBird, makeMulti } = require('../facilitators.js');
+const { combineStats, makeAuto, makeHybrid, makeOver, makeDeco, makeGuard, makeBird, makeMulti, makeRadialAuto, weaponArray } = require('../facilitators.js');
 const { base, statnames, gunCalcNames, dfltskl, smshskl } = require('../constants.js');
 require('./generics.js');
 const g = require('../gunvals.js');
@@ -89,21 +89,20 @@ Class.machineGun = {
         }
     ]
 }
-Class.flankGuard = makeMulti({
+Class.flankGuard = {
     PARENT: "genericTank",
+    LABEL: "Flank Guard",
     BODY: {
         SPEED: 1.1 * base.SPEED
     },
-    GUNS: [
-        {
-            POSITION: [18, 8, 1, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard]),
-                TYPE: "bullet"
-            }
+    GUNS: weaponArray({
+        POSITION: [18, 8, 1, 0, 0, 0, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard]),
+            TYPE: "bullet"
         }
-    ]
-}, 3, "Flank Guard")
+    }, 3)
+}
 Class.director = {
     PARENT: "genericTank",
     LABEL: "Director",
@@ -213,11 +212,11 @@ Class.healer = {
 }
 
 // Twin upgrades
-Class.doubleTwin = makeMulti({
+Class.doubleTwin = {
     PARENT: "genericTank",
-    LABEL: "Twin",
+    LABEL: "Double Twin",
     DANGER: 6,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [20, 8, 1, 0, 5.5, 0, 0],
             PROPERTIES: {
@@ -232,8 +231,8 @@ Class.doubleTwin = makeMulti({
                 TYPE: "bullet"
             }
         }
-    ]
-}, 2)
+    ], 2)
+}
 Class.tripleShot = {
     PARENT: "genericTank",
     LABEL: "Triple Shot",
@@ -267,11 +266,11 @@ Class.tripleShot = {
 }
 
 // Double Twin upgrades
-Class.tripleTwin = makeMulti({
+Class.tripleTwin = {
     PARENT: "genericTank",
-    LABEL: "Twin",
+    LABEL: "Triple Twin",
     DANGER: 7,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [20, 8, 1, 0, 5.5, 0, 0],
             PROPERTIES: {
@@ -286,8 +285,8 @@ Class.tripleTwin = makeMulti({
                 TYPE: "bullet"
             }
         }
-    ]
-}, 3)
+    ], 3)
+}
 Class.hewnDouble = {
     PARENT: "genericTank",
     LABEL: "Hewn Double",
@@ -478,10 +477,11 @@ Class.spreadshot = {
         }
     ]
 }
-Class.bentDouble = makeMulti({
+Class.bentDouble = {
     PARENT: "genericTank",
+    LABEL: "Bent Double",
     DANGER: 7,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [19, 8, 1, 0, -2, -17.5, 0.5],
             PROPERTIES: {
@@ -503,8 +503,8 @@ Class.bentDouble = makeMulti({
                 TYPE: "bullet"
             }
         }
-    ]
-}, 2, "Bent Double")
+    ], 2)
+}
 Class.triplet = {
     PARENT: "genericTank",
     DANGER: 7,
@@ -1192,10 +1192,11 @@ Class.focal = {
 }
 
 // Flank Guard upgrades
-Class.hexaTank = makeMulti({
+Class.hexaTank = {
     PARENT: "genericTank",
+    LABEL: "Hexa Tank",
     DANGER: 6,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [18, 8, 1, 0, 0, 0, 0],
             PROPERTIES: {
@@ -1210,8 +1211,8 @@ Class.hexaTank = makeMulti({
                 TYPE: "bullet"
             }
         }
-    ]
-}, 3, "Hexa Tank")
+    ], 3)
+}
 Class.triAngle = {
     PARENT: "genericTank",
     LABEL: "Tri-Angle",
@@ -1248,52 +1249,35 @@ Class.triAngle = {
         },
     ],
 }
-Class.auto3 = {
-    PARENT: "genericTank",
-    LABEL: "Auto-3",
-    DANGER: 6,
-    FACING_TYPE: ["spin", {speed: 0.02}],
-    TURRETS: [
-        {
-            POSITION: [11, 8, 0, 0, 190, 0],
-            TYPE: "autoTankGun",
-        },
-        {
-            POSITION: [11, 8, 0, 120, 190, 0],
-            TYPE: "autoTankGun",
-        },
-        {
-            POSITION: [11, 8, 0, 240, 190, 0],
-            TYPE: "autoTankGun",
-        },
-    ],
-}
+Class.auto3 = makeRadialAuto("autoTankGun", {isTurret: true, danger: 6, label: "Auto-3"})
 
 // Hexa Tank upgrades
-Class.octoTank = makeMulti({
+Class.octoTank = {
     PARENT: "genericTank",
-    DANGER: 6,
-    GUNS: [
-        {
-            POSITION: [18, 8, 1, 0, 0, 45, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard, g.spam]),
-                TYPE: "bullet"
-            }
-        },
+    LABEL: "Octo Tank",
+    DANGER: 7,
+    GUNS: weaponArray([
         {
             POSITION: [18, 8, 1, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard, g.spam]),
                 TYPE: "bullet"
             }
+        },
+        {
+            POSITION: [18, 8, 1, 0, 0, 45, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard, g.spam]),
+                TYPE: "bullet"
+            }
         }
-    ]
-}, 4, "Octo Tank")
-Class.cyclone = makeMulti({
+    ], 4)
+}
+Class.cyclone = {
     PARENT: "genericTank",
+    LABEL: "Cyclone",
     DANGER: 7,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [15, 3.5, 1, 0, 0, 0, 0],
             PROPERTIES: {
@@ -1322,8 +1306,8 @@ Class.cyclone = makeMulti({
                 TYPE: "bullet"
             }
         }
-    ]
-}, 3, "Cyclone")
+    ], 3)
+}
 
 // Tri-Angle upgrades
 Class.fighter = {
@@ -1480,147 +1464,27 @@ Class.surfer = {
 }
 
 // Auto-3 upgrades
-Class.auto5 = {
-    PARENT: "genericTank",
-    LABEL: "Auto-5",
-    DANGER: 7,
-    FACING_TYPE: ["spin", {speed: 0.02}],
-    TURRETS: [
-        {
-            POSITION: [11, 8, 0, 0, 190, 0],
-            TYPE: "autoTankGun",
-        },
-        {
-            POSITION: [11, 8, 0, 72, 190, 0],
-            TYPE: "autoTankGun",
-        },
-        {
-            POSITION: [11, 8, 0, 144, 190, 0],
-            TYPE: "autoTankGun",
-        },
-        {
-            POSITION: [11, 8, 0, 216, 190, 0],
-            TYPE: "autoTankGun",
-        },
-        {
-            POSITION: [11, 8, 0, 288, 190, 0],
-            TYPE: "autoTankGun",
-        },
-    ],
-}
-Class.mega3 = {
-    PARENT: "genericTank",
-    LABEL: "Mega-3",
-    BODY: {
-        SPEED: 0.95 * base.SPEED,
+Class.auto5 = makeRadialAuto("autoTankGun", {isTurret: true, danger: 7, label: "Auto-5", count: 5})
+Class.mega3 = makeRadialAuto("megaAutoTankGun", {isTurret: true, danger: 7, size: 14, label: "Mega-5", body: {SPEED: 0.95 * base.SPEED}})
+Class.auto4 = makeRadialAuto("auto4gun", {isTurret: true, danger: 7, size: 13, x: 6, angle: 45, label: "Auto-4", count: 4})
+Class.banshee = makeRadialAuto("bansheegun", {isTurret: true, danger: 7, size: 10, arc: 80, label: "Banshee", body: {SPEED: 0.8 * base.SPEED, FOV: 1.1 * base.FOV}})
+Class.banshee.GUNS = weaponArray({
+    POSITION: [6, 11, 1.2, 8, 0, 60, 0],
+    PROPERTIES: {
+        SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
+        TYPE: "drone",
+        AUTOFIRE: true,
+        SYNCS_SKILLS: true,
+        STAT_CALCULATOR: gunCalcNames.drone,
+        WAIT_TO_CYCLE: true,
+        MAX_CHILDREN: 2,
     },
-    DANGER: 7,
-    FACING_TYPE: ["spin", {speed: 0.02}],
-    TURRETS: [
-        {
-            POSITION: [14, 8, 0, 0, 190, 0],
-            TYPE: "megaAutoTankGun",
-        },
-        {
-            POSITION: [14, 8, 0, 120, 190, 0],
-            TYPE: "megaAutoTankGun",
-        },
-        {
-            POSITION: [14, 8, 0, 240, 190, 0],
-            TYPE: "megaAutoTankGun",
-        },
-    ],
-}
-Class.auto4 = {
-    PARENT: "genericTank",
-    LABEL: "Auto-4",
-    FACING_TYPE: ["spin", {speed: 0.02}],
-    DANGER: 7,
-    TURRETS: [
-        {
-            POSITION: [13, 6, 0, 45, 160, 0],
-            TYPE: "auto4gun",
-        },
-        {
-            POSITION: [13, 6, 0, 135, 160, 0],
-            TYPE: "auto4gun",
-        },
-        {
-            POSITION: [13, 6, 0, 225, 160, 0],
-            TYPE: "auto4gun",
-        },
-        {
-            POSITION: [13, 6, 0, 315, 160, 0],
-            TYPE: "auto4gun",
-        },
-    ],
-}
-Class.banshee = {
-    PARENT: "genericTank",
-    LABEL: "Banshee",
-    DANGER: 7,
-    BODY: {
-        SPEED: 0.8 * base.SPEED,
-        FOV: 1.1 * base.FOV,
-    },
-    FACING_TYPE: ["spin", {speed: 0.02}],
-    TURRETS: [
-        {
-            POSITION: [10, 8, 0, 0, 80, 0],
-            TYPE: "bansheegun",
-        },
-        {
-            POSITION: [10, 8, 0, 120, 80, 0],
-            TYPE: "bansheegun",
-        },
-        {
-            POSITION: [10, 8, 0, 240, 80, 0],
-            TYPE: "bansheegun",
-        },
-    ],
-    GUNS: [
-        {
-            POSITION: [6, 11, 1.2, 8, 0, 60, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-                TYPE: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
-                WAIT_TO_CYCLE: true,
-                MAX_CHILDREN: 2,
-            },
-        },
-        {
-            POSITION: [6, 11, 1.2, 8, 0, 180, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-                TYPE: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
-                WAIT_TO_CYCLE: true,
-                MAX_CHILDREN: 2,
-            },
-        },
-        {
-            POSITION: [6, 11, 1.2, 8, 0, 300, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-                TYPE: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
-                WAIT_TO_CYCLE: true,
-                MAX_CHILDREN: 2,
-            },
-        },
-    ],
-}
+}, 3)
 
 // Director upgrades
-Class.overseer = makeMulti({
+Class.overseer = {
     PARENT: "genericTank",
+    LABEL: "Overseer",
     DANGER: 6,
     STAT_NAMES: statnames.drone,
     BODY: {
@@ -1628,20 +1492,18 @@ Class.overseer = makeMulti({
         FOV: 1.1 * base.FOV,
     },
     MAX_CHILDREN: 8,
-    GUNS: [
-        {
-            POSITION: [6, 12, 1.2, 8, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-                TYPE: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
-                WAIT_TO_CYCLE: true
-            }
+    GUNS: weaponArray({
+        POSITION: [6, 12, 1.2, 8, 0, 90, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
+            TYPE: "drone",
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            STAT_CALCULATOR: gunCalcNames.drone,
+            WAIT_TO_CYCLE: true
         }
-    ]
-}, 2, "Overseer", 90)
+    }, 2)
+}
 Class.cruiser = {
     PARENT: "genericTank",
     LABEL: "Cruiser",
@@ -1670,8 +1532,9 @@ Class.cruiser = {
         },
     ],
 }
-Class.underseer = makeMulti({
+Class.underseer = {
     PARENT: "genericTank",
+    LABEL: "Underseer",
     DANGER: 6,
     STAT_NAMES: statnames.drone,
     BODY: {
@@ -1679,19 +1542,17 @@ Class.underseer = makeMulti({
     },
     SHAPE: 4,
     MAX_CHILDREN: 14,
-    GUNS: [
-        {
-            POSITION: [5.25, 12, 1.2, 8, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
-                TYPE: "sunchip",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.necro,
-            }
+    GUNS: weaponArray({
+        POSITION: [5.25, 12, 1.2, 8, 0, 90, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
+            TYPE: "sunchip",
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            STAT_CALCULATOR: gunCalcNames.necro,
         }
-    ]
-}, 2, "Underseer", 90)
+    }, 2)
+}
 Class.spawner = {
     PARENT: "genericTank",
     LABEL: "Spawner",
@@ -1770,8 +1631,9 @@ Class.bigCheese = {
 }
 
 // Overseer upgrades
-Class.overlord = makeMulti({
+Class.overlord = {
     PARENT: "genericTank",
+    LABEL: "Overlord",
     DANGER: 7,
     STAT_NAMES: statnames.drone,
     BODY: {
@@ -1779,22 +1641,21 @@ Class.overlord = makeMulti({
         FOV: 1.1 * base.FOV,
     },
     MAX_CHILDREN: 8,
-    GUNS: [
-        {
-            POSITION: [6, 12, 1.2, 8, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-                TYPE: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
-                WAIT_TO_CYCLE: true
-            }
+    GUNS: weaponArray({
+        POSITION: [6, 12, 1.2, 8, 0, 0, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
+            TYPE: "drone",
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            STAT_CALCULATOR: gunCalcNames.drone,
+            WAIT_TO_CYCLE: true
         }
-    ]
-}, 4, "Overlord", 90)
-Class.overdrive = makeMulti({
+    }, 4)
+}
+Class.overdrive = {
     PARENT: "genericTank",
+    LABEL: "Overdrive",
     DANGER: 7,
     STAT_NAMES: statnames.drone,
     BODY: {
@@ -1807,29 +1668,28 @@ Class.overdrive = makeMulti({
             TYPE: "overdriveDeco",
         },
     ],
-    GUNS: [
-        {
-            POSITION: [6, 12, 1.2, 8, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-                TYPE: "turretedDrone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
-                WAIT_TO_CYCLE: true,
-                MAX_CHILDREN: 4
-            }
+    GUNS: weaponArray({
+        POSITION: [6, 12, 1.2, 8, 0, 90, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
+            TYPE: "turretedDrone",
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            STAT_CALCULATOR: gunCalcNames.drone,
+            WAIT_TO_CYCLE: true,
+            MAX_CHILDREN: 4
         }
-    ]
-}, 2, "Overdrive", 90)
-Class.commander = makeMulti({
+    }, 2)
+}
+Class.commander = {
     PARENT: "genericTank",
+    LABEL: "Commander",
     STAT_NAMES: statnames.drone,
     DANGER: 7,
     BODY: {
         FOV: base.FOV * 1.15,
     },
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [8, 11, 1.3, 6, 0, 0, 0],
             PROPERTIES: {
@@ -1849,8 +1709,8 @@ Class.commander = makeMulti({
                 STAT_CALCULATOR: gunCalcNames.swarm,
             },
         }
-    ]
-}, 3, "Commander")
+    ], 3)
+}
 
 // Cruiser upgrades
 Class.carrier = {
@@ -1912,7 +1772,7 @@ Class.battleship = {
             POSITION: [7, 7.5, 0.6, 7, -4, 90, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: ["autoswarm"],
+                TYPE: "autoswarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
                 LABEL: "Autonomous"
             }
@@ -1921,7 +1781,7 @@ Class.battleship = {
             POSITION: [7, 7.5, 0.6, 7, 4, 270, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: ["autoswarm"],
+                TYPE: "autoswarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
                 LABEL: "Autonomous"
             }
@@ -1951,12 +1811,7 @@ Class.fortress = {
             POSITION: [7, 7.5, 0.6, 7, 0, 60, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: [
-                    "swarm",
-                    {
-                        CONTROLLERS: ["canRepel"],
-                    },
-                ],
+                TYPE: "swarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
             },
         },
@@ -1964,12 +1819,7 @@ Class.fortress = {
             POSITION: [7, 7.5, 0.6, 7, 0, 180, 1 / 3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: [
-                    "swarm",
-                    {
-                        CONTROLLERS: ["canRepel"],
-                    },
-                ],
+                TYPE: "swarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
             },
         },
@@ -1977,48 +1827,23 @@ Class.fortress = {
             POSITION: [7, 7.5, 0.6, 7, 0, 300, 2 / 3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: [
-                    "swarm",
-                    {
-                        CONTROLLERS: ["canRepel"],
-                    },
-                ],
+                TYPE: "swarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
             },
         },
-        {
-            POSITION: [14, 9, 1, 0, 0, 0, 0],
-        },
-        {
-            POSITION: [4, 9, 1.5, 14, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, { range: 0.5 }, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
+        ...weaponArray([
+            {
+                POSITION: [14, 9, 1, 0, 0, 0, 0],
             },
-        },
-        {
-            POSITION: [14, 9, 1, 0, 0, 120, 0],
-        },
-        {
-            POSITION: [4, 9, 1.5, 14, 0, 120, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, { range: 0.5 }, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-        {
-            POSITION: [14, 9, 1, 0, 0, 240, 0],
-        },
-        {
-            POSITION: [4, 9, 1.5, 14, 0, 240, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, { range: 0.5 }, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
+            {
+                POSITION: [4, 9, 1.5, 14, 0, 0, 0],
+                PROPERTIES: {
+                    SHOOT_SETTINGS: combineStats([g.trap, { range: 0.5, speed: 0.7, maxSpeed: 0.7 }]),
+                    TYPE: "trap",
+                    STAT_CALCULATOR: gunCalcNames.trap,
+                },
+            }
+        ], 3)
     ],
 }
 
@@ -2107,17 +1932,18 @@ Class.maleficitor = {
         },
     ],
 }
-Class.infestor = makeMulti({
+Class.infestor = {
     PARENT: "genericTank",
+    LABEL: "Infestor",
     DANGER: 7,
     STAT_NAMES: statnames.drone,
     BODY: {
         SPEED: base.SPEED * 0.9,
     },
     MAX_CHILDREN: 20,
-    GUNS: [
+    GUNS: weaponArray([
         {
-            POSITION: [7.25, 6, 1.2, 6, -5, 0, 0],
+            POSITION: [7.25, 6, 1.2, 6, -5, 90, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
                 TYPE: "eggchip",
@@ -2127,7 +1953,7 @@ Class.infestor = makeMulti({
             }
         },
         {
-            POSITION: [7.25, 6, 1.2, 6, 5, 0, 0],
+            POSITION: [7.25, 6, 1.2, 6, 5, 90, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
                 TYPE: "eggchip",
@@ -2136,8 +1962,8 @@ Class.infestor = makeMulti({
                 STAT_CALCULATOR: gunCalcNames.necro
             }
         }
-    ]
-}, 2, "Infestor", 90)
+    ], 2)
+}
 
 // Spawner upgrades
 Class.factory = {
@@ -2608,11 +2434,12 @@ Class.builder = {
         }
     ]
 }
-Class.triTrapper = makeMulti({
+Class.triTrapper = {
     PARENT: "genericTank",
+    LABEL: "Tri-Trapper",
     DANGER: 6,
     STAT_NAMES: statnames.trap,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [15, 7, 1, 0, 0, 0, 0],
         },
@@ -2624,8 +2451,8 @@ Class.triTrapper = makeMulti({
                 STAT_CALCULATOR: gunCalcNames.trap
             }
         }
-    ]
-}, 3, "Tri-Trapper")
+    ], 3)
+}
 Class.trapGuard = makeGuard({
     PARENT: "genericTank",
     LABEL: "Trap",
@@ -2757,15 +2584,16 @@ Class.assembler = {
 }
 
 // Tri-Trapper upgrades
-Class.hexaTrapper = makeAuto(makeMulti({
+Class.hexaTrapper = makeAuto({
     PARENT: "genericTank",
+    LABEL: "Hexa-Trapper",
     DANGER: 7,
     BODY: {
         SPEED: 0.8 * base.SPEED,
     },
     STAT_NAMES: statnames.trap,
     HAS_NO_RECOIL: true,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [15, 7, 1, 0, 0, 0, 0],
         },
@@ -2788,124 +2616,98 @@ Class.hexaTrapper = makeAuto(makeMulti({
                 STAT_CALCULATOR: gunCalcNames.trap,
             },
         },
-    ],
-}, 3), "Hexa-Trapper")
-Class.septaTrapper = (() => {
-    let a = 360 / 7,
-        d = 1 / 7;
-    return {
-        PARENT: "genericTank",
-        LABEL: "Septa-Trapper",
-        DANGER: 7,
-        BODY: {
-            SPEED: base.SPEED * 0.8,
-        },
-        STAT_NAMES: statnames.trap,
-        HAS_NO_RECOIL: true,
-        GUNS: [
-            {
-                POSITION: [15, 7, 1, 0, 0, 0, 0],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, 0, 0],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-            {
-                POSITION: [15, 7, 1, 0, 0, a, 4 * d],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, a, 4 * d],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-            {
-                POSITION: [15, 7, 1, 0, 0, 2 * a, 1 * d],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, 2 * a, 1 * d],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-            {
-                POSITION: [15, 7, 1, 0, 0, 3 * a, 5 * d],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, 3 * a, 5 * d],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-            {
-                POSITION: [15, 7, 1, 0, 0, 4 * a, 2 * d],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, 4 * a, 2 * d],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-            {
-                POSITION: [15, 7, 1, 0, 0, 5 * a, 6 * d],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, 5 * a, 6 * d],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-            {
-                POSITION: [15, 7, 1, 0, 0, 6 * a, 3 * d],
-            },
-            {
-                POSITION: [3, 7, 1.7, 15, 0, 6 * a, 3 * d],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                    TYPE: "trap",
-                    STAT_CALCULATOR: gunCalcNames.trap,
-                },
-            },
-        ],
-    };
-})()
-Class.architect = {
+    ], 3),
+})
+Class.septaTrapper = {
     PARENT: "genericTank",
-    LABEL: "Architect",
+    LABEL: "Septa-Trapper",
     DANGER: 7,
     BODY: {
-        SPEED: 1.1 * base.SPEED,
+        SPEED: base.SPEED * 0.8,
     },
-    FACING_TYPE: ["spin", {speed: 0.02}],
-    TURRETS: [
+    STAT_NAMES: statnames.trap,
+    HAS_NO_RECOIL: true,
+    GUNS: [
         {
-            POSITION: [12, 8, 0, 0, 190, 0],
-            TYPE: "architectGun",
+            POSITION: [15, 7, 1, 0, 0, 0, 0],
         },
         {
-            POSITION: [12, 8, 0, 120, 190, 0],
-            TYPE: "architectGun",
+            POSITION: [3, 7, 1.7, 15, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
         },
         {
-            POSITION: [12, 8, 0, 240, 190, 0],
-            TYPE: "architectGun",
+            POSITION: [15, 7, 1, 0, 0, 360 / 7, 0],
+        },
+        {
+            POSITION: [3, 7, 1.7, 15, 0, 360 / 7, 1 / 3],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
+        },
+        {
+            POSITION: [15, 7, 1, 0, 0, -360 / 7, 0],
+        },
+        {
+            POSITION: [3, 7, 1.7, 15, 0, -360 / 7, 1 / 3],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
+        },
+        {
+            POSITION: [15, 7, 1, 0, 0, 360 / 7 * 2, 0],
+        },
+        {
+            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 2, 2 / 3],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
+        },
+        {
+            POSITION: [15, 7, 1, 0, 0, -360 / 7 * 2, 0],
+        },
+        {
+            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 2, 2 / 3],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
+        },
+        {
+            POSITION: [15, 7, 1, 0, 0, 360 / 7 * 3, 0],
+        },
+        {
+            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 3, 1],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
+        },
+        {
+            POSITION: [15, 7, 1, 0, 0, -360 / 7 * 3, 0],
+        },
+        {
+            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 3, 1],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
+                TYPE: "trap",
+                STAT_CALCULATOR: gunCalcNames.trap,
+            },
         },
     ],
 }
+Class.architect = makeRadialAuto("architectGun", {isTurret: true, danger: 7, size: 12, label: "Architect", body: {SPEED: 1.1 * base.SPEED}})
 
 // Trap Guard upgrades
 Class.bushwhacker = makeGuard("sniper", "Bushwhacker")

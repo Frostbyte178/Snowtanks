@@ -4,6 +4,11 @@ Can't be bothered to touch this shit yet.
 - damocles
 ***/
 
+/***
+you never will because we fired you lol
+
+- zephi
+***/
 
 // Hierarchical Spatial Hash Grid: HSHG
 // https://gist.github.com/kirbysayshi/1760774

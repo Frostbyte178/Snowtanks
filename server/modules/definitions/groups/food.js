@@ -111,7 +111,7 @@ makeRare = (type, level) => {
         VALUE: [100, 500, 2000, 4000, 5000][level] * type.VALUE,
         SHAPE: type.SHAPE,
         SIZE: type.SIZE + level,
-        COLOR: ["lightGreen", "teal", "pureBlack", "rainbow", "trans"][level],
+        COLOR: ["lightGreen", "teal", "darkGrey", "rainbow", "trans"][level],
         ALPHA: level == 2 ? 0.25 : 1,
         BODY: {
             DAMAGE: type.BODY.DAMAGE + level,

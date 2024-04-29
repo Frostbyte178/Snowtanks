@@ -712,6 +712,74 @@ exports.makeDeco = (shape = 0, color = 16) => {
         COLOR: color,
     };
 }
+exports.makeRadialAuto = (type, options = {}) => {
+    
+
+    /*
+    Available options:
+    - count: number of turrets
+    - turret: what turret definition to use (leave null to make a new turret), overrides the `type` parameter
+    - extraStats: extra stats to append to all turret barrels, on top of g.autoTurret
+    - turretIdentifier: Class[turretIdentifier] to refer to the turret in other uses if necessary
+    - size: turret size
+    - x: turret X
+    - arc: turret FOV arc
+    - angle: turret ring offset angle
+    - label: label of the final tank
+    - rotation: rotation speed of the final tank
+    - danger: danger value of the final tank
+    - body: body stats of the final tank
+    */
+
+    let count = options.count ?? 3;
+    let isTurret = options.isTurret ?? false;
+    let turretIdentifier = type;
+
+    if (!isTurret) {
+        type = exports.dereference(ensureIsClass(type));
+
+        let extraStats = options.extraStats ?? [];
+        turretIdentifier = options.turretIdentifier ?? `auto${type.LABEL}Gun`;
+
+        Class[turretIdentifier] = {
+            PARENT: 'genericTank',
+            LABEL: "",
+            BODY: {
+                FOV: 3,
+            },
+            CONTROLLERS: ["canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster"],
+            COLOR: "grey",
+            GUNS: type.GUNS,
+            TURRETS: type.TURRETS,
+            PROPS: type.PROPS,
+        }
+
+        for (let gun of Class[turretIdentifier].GUNS) {
+            if (!gun.PROPERTIES) continue;
+            if (!gun.PROPERTIES.SHOOT_SETTINGS) continue;
+
+            gun.PROPERTIES.SHOOT_SETTINGS = exports.combineStats([gun.PROPERTIES.SHOOT_SETTINGS, g.autoTurret, ...extraStats])
+        }
+    }
+
+    let LABEL = options.label ?? (type.LABEL + "-" + count);
+    let turretSize = options.size ?? 11;
+    let turretX = options.x ?? 8;
+    let turretArc = options.arc ?? 190;
+    let turretAngle = options.angle ?? 0;
+
+    return {
+        PARENT: 'genericTank',
+        LABEL,
+        FACING_TYPE: ["spin", {speed: options.rotation ?? 0.02}],
+        DANGER: options.danger ?? (type.DANGER + 2),
+        BODY: options.body ?? undefined,
+        TURRETS: exports.weaponArray({
+            POSITION: [turretSize, turretX, 0, turretAngle, turretArc, 0],
+            TYPE: turretIdentifier
+        }, count)
+    }
+}
 exports.addAura = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) => {
     let isHeal = damageFactor < 0;
     let auraType = isHeal ? "healAura" : "aura";
@@ -766,7 +834,7 @@ exports.weaponArray = (weapons, count) => {
     if (!Array.isArray(weapons)) {
         weapons = [weapons]
     }
-    let isTurret = weapons[0].PROPERTIES == undefined;
+    let isTurret = weapons[0].TYPE != undefined;
     let angleIndex = isTurret ? 3 : 5;
 
     let output = [];

@@ -1,6 +1,7 @@
-const { combineStats, menu, addAura, makeDeco, LayeredBoss, newWeapon, weaponArray } = require('../facilitators.js');
+const { combineStats, menu, addAura, makeDeco, LayeredBoss, newWeapon, weaponArray, makeRadialAuto } = require('../facilitators.js');
 const { base, gunCalcNames, basePolygonDamage, basePolygonHealth, dfltskl, statnames } = require('../constants.js');
 const g = require('../gunvals.js');
+require('./tanks.js');
 
 // Menus
 Class.developer = {
@@ -513,6 +514,20 @@ Class.alphaGunTest = {
         }
     }]
 }
+
+Class.radialAutoTest = makeRadialAuto("gunner", {
+    count: 5,
+    isTurret: false,
+    extraStats: [{spray: 4, speed: 1.4, maxSpeed: 1.4, recoil: 0.2}],
+    turretIdentifier: "radialAutoTestTurret",
+    size: 8,
+    x: 10,
+    arc: 220,
+    angle: 36,
+    label: "Radial Auto Test",
+    rotation: 0.04,
+    danger: 10,
+})
 
 // unfinished
 Class.strokeWidthTest = {
@@ -1223,4 +1238,4 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.eternals.UPGRADES_TIER_0 = ["odin", "kronos"]
         Class.devBosses.UPGRADES_TIER_0 = ["taureonBoss", "zephiBoss", "dogeiscutBoss", "trplnrBoss", "frostBoss", "toothlessBoss"]
 
-    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
+    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
