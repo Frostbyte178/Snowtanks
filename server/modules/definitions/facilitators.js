@@ -1,7 +1,6 @@
-const { gunCalcNames } = require('./constants.js');
-const { MAX_SKILL } = require("../../config.js");
-const g = require('./gunvals.js');
-
+const { gunCalcNames } = require('./constants.js')
+const { MAX_SKILL } = require("../../config.js")
+const g = require('./gunvals.js')
 let skcnv = {
     atk: 6,
     spd: 4,
@@ -13,9 +12,9 @@ let skcnv = {
     pen: 1,
     rgn: 8,
     hlt: 7,
-};
+}
 
-// GUN DEFINITIONS
+// gun definitions
 exports.combineStats = function (stats) {
     try {
         // Build a blank array of the appropiate length
@@ -65,13 +64,13 @@ exports.combineStats = function (stats) {
         console.log(err);
         console.log(JSON.stringify(stats));
     }
-};
+}
 exports.setBuild = (build) => {
     let skills = build.split(build.includes("/") ? "/" : "").map((r) => +r);
     if (skills.length !== 10)
         throw new RangeError("Build must be made up of 10 numbers");
     return [6, 4, 3, 5, 2, 9, 0, 1, 8, 7].map((r) => skills[r]);
-};
+}
 exports.skillSet = (args) => {
     let skills = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for (let s in args) {
@@ -79,9 +78,9 @@ exports.skillSet = (args) => {
         skills[skcnv[s]] = Math.round(MAX_SKILL * args[s]);
     }
     return skills;
-};
+}
 
-// FUNCTIONS
+// functions
 exports.dereference = type => {
     let output = JSON.parse(JSON.stringify(type));
     if (type.GUNS) {
@@ -104,7 +103,28 @@ exports.dereference = type => {
     return output;
 }
 
-// CANNON FUNCTIONS
+// gun functions
+exports.makeMulti = (type, count, name = -1, startRotation = 0) => {
+    type = ensureIsClass(type);
+    let greekNumbers = ',Double ,Triple ,Quad ,Penta ,Hexa ,Septa ,Octo ,Nona ,Deca ,Hendeca ,Dodeca ,Trideca ,Tetradeca ,Pentadeca ,Hexadeca ,Septadeca ,Octadeca ,Nonadeca ,Icosa ,Henicosa ,Doicosa ,Triaicosa ,Tetraicosa ,Pentaicosa ,Hexaicosa ,Septaicosa ,Octoicosa ,Nonaicosa ,Triaconta '.split(','),
+        output = exports.dereference(type),
+        fraction = 360 / count;
+    output.GUNS = [];
+    for (let gun of type.GUNS) {
+        for (let i = 0; i < count; i++) {
+            let newgun = exports.dereference(gun);
+            if (Array.isArray(newgun.POSITION)) {
+                newgun.POSITION[5] += startRotation + fraction * i;
+            } else {
+                newgun.POSITION.ANGLE = (newgun.POSITION.ANGLE ?? 0) + startRotation + fraction * i;
+            }
+            if (gun.PROPERTIES) newgun.PROPERTIES = gun.PROPERTIES;
+            output.GUNS.push(newgun);
+        };
+    }
+    output.LABEL = name == -1 ? (greekNumbers[count - 1] || (count + ' ')) + type.LABEL : name;
+    return output;
+}
 exports.makeGuard = (type, name = -1) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type),
@@ -120,65 +140,6 @@ exports.makeGuard = (type, name = -1) => {
     }];
     output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
     output.LABEL = name == -1 ? type.LABEL + " Guard" : name;
-    return output;
-}
-exports.makeConq = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type),
-    cannons = [{
-        POSITION: [18, 14, 1, 0, 0, 180, 0],
-    }, {
-        POSITION: [2, 14, 1.1, 18, 0, 180, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.trap, g.setTrap]),
-            TYPE: "setTrap",
-            STAT_CALCULATOR: gunCalcNames.block
-        },
-    }];
-    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-    output.LABEL = name == -1 ? type.LABEL + " Conqueror" : name;
-    return output;
-}
-exports.makeSplit = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let cannons = [{
-        POSITION: [18, 8, 1, 0, 0, 90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard]),
-            TYPE: "bullet",
-        },
-    }, {
-        POSITION: [18, 8, 1, 0, 0, 270, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard]),
-            TYPE: "bullet",
-        },
-    }];
-    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-    output.LABEL = name == -1 ? "Split " + type.LABEL : name;
-    return output;
-}
-exports.makeFighter = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let cannons = [{
-        POSITION: [16, 8, 1, 0, -1, 90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.triAngleFront]),
-            TYPE: "bullet",
-            LABEL: "Side",
-        },
-    }, {
-        POSITION: [16, 8, 1, 0, 1, -90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.triAngleFront]),
-            TYPE: "bullet",
-            LABEL: "Side",
-        },
-    }];
-    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-    output.LABEL = name == -1 ? "Fighter " + type.LABEL : name;
     return output;
 }
 exports.addBackGunner = (type, name = -1) => {
@@ -203,30 +164,14 @@ exports.addBackGunner = (type, name = -1) => {
     output.LABEL = name == -1 ? type.LABEL : name;
     return output;
 }
-exports.makeMulti = (type, count, name = -1, startRotation = 0) => {
-    type = ensureIsClass(type);
-    let greekNumbers = ',Double ,Triple ,Quad ,Penta ,Hexa ,Septa ,Octo ,Nona ,Deca ,Hendeca ,Dodeca ,Trideca ,Tetradeca ,Pentadeca ,Hexadeca ,Septadeca ,Octadeca ,Nonadeca ,Icosa ,Henicosa ,Doicosa ,Triaicosa ,Tetraicosa ,Pentaicosa ,Hexaicosa ,Septaicosa ,Octoicosa ,Nonaicosa ,Triaconta '.split(','),
-        output = exports.dereference(type),
-        fraction = 360 / count;
-    output.GUNS = [];
-    for (let gun of type.GUNS) {
-        for (let i = 0; i < count; i++) {
-            let newgun = exports.dereference(gun);
-            if (Array.isArray(newgun.POSITION)) {
-                newgun.POSITION[5] += startRotation + fraction * i;
-            } else {
-                newgun.POSITION.ANGLE = (newgun.POSITION.ANGLE ?? 0) + startRotation + fraction * i;
-            }
-            if (gun.PROPERTIES) newgun.PROPERTIES = gun.PROPERTIES;
-            output.GUNS.push(newgun);
-        };
-    }
-    output.LABEL = name == -1 ? (greekNumbers[count - 1] || (count + ' ')) + type.LABEL : name;
-    return output;
-}
-exports.makeBird = (type, name = -1, frontRecoilFactor = 1, backRecoilFactor = 1, color) => {
+exports.makeBird = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);
+    let frontRecoilFactor = options.frontRecoil ?? 1;
+    let backRecoilFactor = options.frontRecoil ?? 1;
+    let color = options.frontRecoil;
+    let superBird = options.super ?? false;
+
     // Thrusters
     let backRecoil = 0.5 * backRecoilFactor;
     let thrusterProperties = { SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster, { recoil: backRecoil }]), TYPE: "bullet", LABEL: gunCalcNames.thruster };
@@ -234,12 +179,21 @@ exports.makeBird = (type, name = -1, frontRecoilFactor = 1, backRecoilFactor = 1
             POSITION: [16, 8, 1, 0, 0, 150, 0.1],
             PROPERTIES: thrusterProperties
         }, {
-            POSITION: [16, 8, 1, 0, 0, 210, 0.1],
+            POSITION: [16, 8, 1, 0, 0, -150, 0.1],
             PROPERTIES: thrusterProperties
         }, {
             POSITION: [18, 8, 1, 0, 0, 180, 0.6],
             PROPERTIES: thrusterProperties
         }];
+    if (superBird) {
+        shootyBois.splice(0, 0, {
+            POSITION: [14, 8, 1, 0, 0, 130, 0.6],
+            PROPERTIES: thrusterProperties
+        }, {
+            POSITION: [14, 8, 1, 0, 0, -130, 0.6],
+            PROPERTIES: thrusterProperties
+        })
+    }
     // Assign thruster color
     if (color) for (let gun of shootyBois) {
         gun.PROPERTIES.TYPE = [gun.PROPERTIES.TYPE, { COLOR: color }];
@@ -262,354 +216,94 @@ exports.makeBird = (type, name = -1, frontRecoilFactor = 1, backRecoilFactor = 1
     return output;
 }
 
-// SPAWNER FUNCTIONS
-exports.makeHybrid = (type, name = -1) => {
+// drone functions
+exports.makeOver = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);
-    let spawner = {
-        POSITION: [6, 12, 1.2, 8, 0, 180, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.weak]),
-            TYPE: ["drone", { INDEPENDENT: true }],
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: false,
-            MAX_CHILDREN: 3,
-        },
+
+    let angle = 180 - (options.angle ?? 125);
+    let count = options.count ?? 2;
+    let independent = options.independent ?? false;
+    let cycle = options.cycle ?? true;
+    let maxChildren = options.maxDrones ?? 3;
+    let stats = options.extraStats ?? [];
+    let spawnerProperties = {
+        SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer, ...stats]),
+        TYPE: ["drone", {INDEPENDENT: independent}],
+        AUTOFIRE: true,
+        SYNCS_SKILLS: true,
+        STAT_CALCULATOR: gunCalcNames.drone,
+        WAIT_TO_CYCLE: cycle,
+        MAX_CHILDREN: maxChildren,
     };
-    output.GUNS = type.GUNS == null ? [spawner] : type.GUNS.concat([spawner]);
-    output.LABEL = name == -1 ? "Hybrid " + type.LABEL : name;
-    return output;
-}
-exports.makeOver = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawners = [{
-        POSITION: [6, 12, 1.2, 8, 0, 125, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 3,
-        },
-    }, {
-        POSITION: [6, 12, 1.2, 8, 0, 235, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 3,
-        },
-    }];
+
+    let spawners = [];
+    if (count % 2 == 1) {
+        spawners.push({
+            POSITION: [6, 12, 1.2, 8, 0, 180, 0],
+            PROPERTIES: spawnerProperties,
+        })
+    }
+    for (let i = 2; i <= (count - count % 2); i += 2) {
+        spawners.push({
+            POSITION: [6, 12, 1.2, 8, 0, 180 - angle * i / 2, 0],
+            PROPERTIES: spawnerProperties,
+        }, {
+            POSITION: [6, 12, 1.2, 8, 0, 180 + angle * i / 2, 0],
+            PROPERTIES: spawnerProperties,
+        })
+    }
+    
     output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners);
     output.LABEL = name == -1 ? "Over" + type.LABEL.toLowerCase() : name;
     return output;
 }
-exports.makeOversplit = (type, name = -1) => {
+exports.makeBattle = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);
-    let spawners = [{
-        POSITION: [6, 12, 1.2, 8, 0, 90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 3,
-        },
-    }, {
-        POSITION: [6, 12, 1.2, 8, 0, 270, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 3,
-        },
-    }];
+
+    let angle = 180 - (options.angle ?? 125);
+    let count = options.count ?? 2;
+    let independent = options.independent ?? false;
+    let stats = options.extraStats ?? [];
+    let spawnerProperties = {
+        SHOOT_SETTINGS: exports.combineStats([g.swarm, ...stats]),
+        TYPE: independent ? "autoswarm" : "swarm",
+        STAT_CALCULATOR: gunCalcNames.swarm,
+    };
+
+    let spawners = [];
+    if (count % 2 == 1) {
+        spawners.push({
+            POSITION: [7, 7.5, 0.6, 7, 4, 180, 0],
+            PROPERTIES: spawnerProperties,
+        }, {
+            POSITION: [7, 7.5, 0.6, 7, -4, 180, 0.5],
+            PROPERTIES: spawnerProperties,
+        })
+    }
+    for (let i = 2; i <= (count - count % 2); i += 2) {
+        spawners.push({
+            POSITION: [7, 7.5, 0.6, 7, 4, 180 - angle * i / 2, 0],
+            PROPERTIES: spawnerProperties,
+        }, {
+            POSITION: [7, 7.5, 0.6, 7, -4, 180 - angle * i / 2, 0.5],
+            PROPERTIES: spawnerProperties,
+        }, {
+            POSITION: [7, 7.5, 0.6, 7, 4, 180 + angle * i / 2, 0],
+            PROPERTIES: spawnerProperties,
+        }, {
+            POSITION: [7, 7.5, 0.6, 7, -4, 180 + angle * i / 2, 0.5],
+            PROPERTIES: spawnerProperties,
+        })
+    }
+    
     output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners);
-    output.LABEL = name == -1 ? "Over" + type.LABEL.toLowerCase() : name;
-    return output;
-}
-exports.makeBattle = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawner1 = {
-        POSITION: [7, 7.5, 0.6, 7, 4, 125, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "swarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    let spawner2 = {
-        POSITION: [7, 7.5, 0.6, 7, -4, 125, 0.5],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "swarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    let spawner3 = {
-        POSITION: [7, 7.5, 0.6, 7, 4, 235, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "swarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    let spawner4 = {
-        POSITION: [7, 7.5, 0.6, 7, -4, 235, 0.5],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "swarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    if (type.TURRETS != null) {
-        output.TURRETS = type.TURRETS;
-    }
-    if (type.GUNS == null) {
-        output.GUNS = [spawner1, spawner2, spawner3, spawner4];
-    } else {
-        output.GUNS = [...type.GUNS, spawner1, spawner2, spawner3, spawner4];
-    }
-    if (name == -1) {
-        output.LABEL = "Battle" + type.LABEL.toLowerCase();
-    } else {
-        output.LABEL = name;
-    }
-    return output;
-}
-exports.makeCap = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawner1 = {
-        POSITION: [4.5, 10, 1, 10.5, 0, 125, 0],
-    };
-    let spawner2 = {
-        POSITION: [1, 12, 1, 15, 0, 125, 0],
-        PROPERTIES: {
-            MAX_CHILDREN: 4,
-            SHOOT_SETTINGS: exports.combineStats([g.factory, g.babyfactory]),
-            TYPE: "minion",
-            STAT_CALCULATOR: gunCalcNames.drone,
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-        },
-    };
-    let spawner3 = {
-        POSITION: [11.5, 12, 1, 0, 0, 125, 0],
-    };
-    let spawner4 = {
-        POSITION: [4.5, 10, 1, 10.5, 0, 235, 0],
-    };
-    let spawner5 = {
-        POSITION: [1, 12, 1, 15, 0, 235, 0],
-        PROPERTIES: {
-            MAX_CHILDREN: 4,
-            SHOOT_SETTINGS: exports.combineStats([g.factory, g.babyfactory]),
-            TYPE: "minion",
-            STAT_CALCULATOR: gunCalcNames.drone,
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-        },
-    };
-    let spawner6 = {
-        POSITION: [11.5, 12, 1, 0, 0, 235, 0],
-    };
-    if (type.TURRETS != null) {
-        output.TURRETS = type.TURRETS;
-    }
-    if (type.GUNS == null) {
-        output.GUNS = [spawner1, spawner2, spawner3, spawner4, spawner5, spawner6];
-    } else {
-        output.GUNS = [
-            ...type.GUNS,
-            spawner1,
-            spawner2,
-            spawner3,
-            spawner4,
-            spawner5,
-            spawner6,
-        ];
-    }
-    if (name == -1) {
-        output.LABEL = "Cap" + type.LABEL.toLowerCase();
-    } else {
-        output.LABEL = name;
-    }
-    return output;
-}
-exports.makeCross = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawner1 = {
-        POSITION: [6, 12, 1.2, 8, 0, 90, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 2,
-        },
-    };
-    let spawner2 = {
-        POSITION: [6, 12, 1.2, 8, 0, 180, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 2,
-        },
-    };
-    let spawner3 = {
-        POSITION: [6, 12, 1.2, 8, 0, 270, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer]),
-            TYPE: "drone",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.drone,
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 2,
-        },
-    };
-    if (type.TURRETS != null) {
-        output.TURRETS = type.TURRETS;
-    }
-    if (type.GUNS == null) {
-        output.GUNS = [spawner1, spawner2, spawner3];
-    } else {
-        output.GUNS = [...type.GUNS, spawner1, spawner2, spawner3];
-    }
-    if (name == -1) {
-        output.LABEL = "Cross-" + type.LABEL;
-    } else {
-        output.LABEL = name;
-    }
-    return output;
-}
-exports.makeSwarming = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawner = {
-        POSITION: [7, 7.5, 0.6, 7, 0, 0, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "autoswarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    if (type.TURRETS != null) {
-        output.TURRETS = type.TURRETS;
-    }
-    if (type.GUNS == null) {
-        output.GUNS = [spawner];
-    } else {
-        output.GUNS = [...type.GUNS, spawner];
-    }
-    if (name == -1) {
-        output.LABEL = "Swarming " + type.LABEL;
-    } else {
-        output.LABEL = name;
-    }
-    return output;
-}
-exports.makeBiSwarming = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawner1 = {
-        POSITION: [7, 7.5, 0.6, 7, 0, 25, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "autoswarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    let spawner2 = {
-        POSITION: [7, 7.5, 0.6, 7, 0, -25, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "autoswarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    if (type.TURRETS != null) {
-        output.TURRETS = type.TURRETS;
-    }
-    if (type.GUNS == null) {
-        output.GUNS = [spawner1, spawner2];
-    } else {
-        output.GUNS = [...type.GUNS, spawner1, spawner2];
-    }
-    if (name == -1) {
-        output.LABEL = "Bi-Swarming " + type.LABEL;
-    } else {
-        output.LABEL = name;
-    }
-    return output;
-}
-exports.makeTriSwarming = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let spawner1 = {
-        POSITION: [7, 7.5, 0.6, 7, 0, 45, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "autoswarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    let spawner2 = {
-        POSITION: [7, 7.5, 0.6, 7, 0, -45, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "autoswarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    let spawner3 = {
-        POSITION: [7, 7.5, 0.6, 7, 0, 0, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.swarm]),
-            TYPE: "autoswarm",
-            STAT_CALCULATOR: gunCalcNames.swarm,
-        },
-    };
-    if (type.TURRETS != null) {
-        output.TURRETS = type.TURRETS;
-    }
-    if (type.GUNS == null) {
-        output.GUNS = [spawner1, spawner2, spawner3];
-    } else {
-        output.GUNS = [...type.GUNS, spawner1, spawner2, spawner3];
-    }
-    if (name == -1) {
-        output.LABEL = "Tri-Swarming " + type.LABEL;
-    } else {
-        output.LABEL = name;
-    }
+    output.LABEL = name == -1 ? "Battle" + type.LABEL.toLowerCase() : name;
     return output;
 }
 
-// AUTO FUNCTIONS
+// turret functions
 exports.makeAuto = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let turret = {
@@ -811,6 +505,7 @@ exports.addAura = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) =
     };
 }
 
+// misc functions
 exports.menu = (name = -1, color = -1, shape = 0) => {
     let gun = {
         POSITION: [18, 10, -1.4, 0, 0, 0, 0],
@@ -829,7 +524,6 @@ exports.menu = (name = -1, color = -1, shape = 0) => {
         IGNORED_BY_AI: true,
     };
 }
-
 exports.weaponArray = (weapons, count) => {
     if (!Array.isArray(weapons)) {
         weapons = [weapons]
@@ -852,7 +546,6 @@ exports.weaponArray = (weapons, count) => {
     }
     return output;
 }
-
 class LayeredBoss {
     constructor(identifier, NAME, PARENT = "celestial", SHAPE = 9, COLOR = 0, trapTurretType = "baseTrapTurret", trapTurretSize = 6.5, layerScale = 5, BODY, SIZE, VALUE) {
         this.identifier = identifier ?? NAME.charAt(0).toLowerCase() + NAME.slice(1);

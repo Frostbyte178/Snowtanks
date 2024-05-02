@@ -174,7 +174,7 @@ It includes all features up to the latest release version.
 * Definitions Management
   * Split up into numerous other files, all located in `server/modules/definitions`.
   * Entity definitions are in `/groups`.
-  * "Facilitators" (makeHybrid, combineStats, etc.), constants and gun values are in their own files.
+  * "Facilitators" (makeAuto, combineStats, etc.), constants and gun values are in their own files.
   * As a requirement, you can now put `"strings"` as references instead of `Class.entity` references.
   * Added definition flattening, which would improve performance a bit by applying `PARENT`'s definitions directly to the definition.
   * Definition flattening also checks for entities that do not exist.

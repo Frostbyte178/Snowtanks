@@ -1,4 +1,4 @@
-const { combineStats, makeAuto, makeHybrid, makeOver, makeDeco, makeGuard, makeBird, makeMulti, makeRadialAuto, weaponArray } = require('../facilitators.js');
+const { combineStats, makeAuto, makeOver, makeDeco, makeGuard, makeBird, makeMulti, makeRadialAuto, weaponArray } = require('../facilitators.js');
 const { base, statnames, gunCalcNames, dfltskl, smshskl } = require('../constants.js');
 require('./generics.js');
 const g = require('../gunvals.js');
@@ -3533,11 +3533,11 @@ Class.phoenix = makeBird("sprayer", "Phoenix")
 Class.eagle = makeBird("pounder", "Eagle")
 
 // Hybrid tanks
-Class.bentHybrid = makeHybrid('tripleShot', "Bent Hybrid")
-Class.poacher = makeHybrid('hunter', "Poacher")
-Class.armsman = makeHybrid('rifle', "Armsman")
-Class.cropDuster = makeHybrid('minigun', "Crop Duster")
-Class.hybrid = makeHybrid('destroyer', "Hybrid")
+Class.bentHybrid = makeOver('tripleShot', "Bent Hybrid", {count: 1, independent: true, cycle: false})
+Class.poacher = makeOver('hunter', "Poacher", {count: 1, independent: true, cycle: false})
+Class.armsman = makeOver('rifle', "Armsman", {count: 1, independent: true, cycle: false})
+Class.cropDuster = makeOver('minigun', "Crop Duster", {count: 1, independent: true, cycle: false})
+Class.hybrid = makeOver('destroyer', "Hybrid", {count: 1, independent: true, cycle: false})
 
 // Over tanks
 Class.overgunner = makeOver({
@@ -3607,10 +3607,7 @@ Class.autoSmasher = makeAuto({
         }
     ],
     SKILL_CAP: [smshskl, smshskl, smshskl, smshskl, smshskl, smshskl, smshskl, smshskl, smshskl, smshskl]
-}, "Auto-Smasher", {
-    type: "autoSmasherTurret",
-    size: 11,
-})
+}, "Auto-Smasher", {type: "autoSmasherTurret", size: 11})
 
 // Upgrade paths
 Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "director", "pounder", "trapper", "desmos"]

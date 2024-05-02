@@ -7,7 +7,7 @@ let pickFromChanceSet = set => {
 
 spawnNatural = (tile, layeredSet, kind) => {
     let o = new Entity(tile.randomInside());
-    o.define(pickFromChanceSet(pickFromChanceSet(layeredSet)));
+    o.define(pickFromChanceSet(layeredSet));
     o.facing = ran.randomAngle();
     o.team = TEAM_ENEMIES;
     o.on('dead', () => tile.data[kind + 'Count']--);

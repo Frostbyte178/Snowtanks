@@ -336,7 +336,7 @@ let maintainloop = () => {
         o.isBot = true;
         o.name = Config.BOT_NAME_PREFIX + ran.chooseBotName();
         o.leftoverUpgrades = ran.chooseChance(...c.BOT_CLASS_UPGRADE_CHANCES);
-        let color = c.RANDOM_COLORS ? Math.floor(Math.random() * 20) : team ? getTeamColor(team) : "red";
+        let color = c.RANDOM_COLORS ? Math.floor(Math.random() * 20) : team ? getTeamColor(team) : "darkGrey";
         o.color.base = color;
         if (team) o.team = team;
         bots.push(o);

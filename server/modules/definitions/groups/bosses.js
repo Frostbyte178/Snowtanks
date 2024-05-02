@@ -2453,21 +2453,21 @@ Class.frostBossAutoTurret = {
 		{
 			POSITION: [17, 14, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.fake]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, {recoil: 0.1}, g.fake]),
 				TYPE: "bullet",
 				COLOR: {BASE: 17, BRIGHTNESS_SHIFT: -7.5}
 			},
 		}, {
 			POSITION: [22, 10, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, {recoil: 0.2}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, {recoil: 0.1}]),
 				TYPE: "bullet",
 				COLOR: {BASE: -1, BRIGHTNESS_SHIFT: -10, SATURATION_SHIFT: 0.6}
 			},
 		}, {
 			POSITION: [14, 12, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.fake]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, {recoil: 0.1}, g.fake]),
 				TYPE: "bullet",
 				COLOR: {BASE: 17, BRIGHTNESS_SHIFT: 7.5}
 			},

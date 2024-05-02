@@ -1625,7 +1625,7 @@ class Entity extends EventEmitter {
         this.health.set(((this.settings.healthWithLevel ? 2 * this.level : 0) + this.HEALTH) * this.skill.hlt * healthMultiplier);
         this.health.resist = 1 - 1 / Math.max(1, this.RESIST + this.skill.brst);
         this.shield.set(((this.settings.healthWithLevel ? 0.6 * this.level : 0) + this.SHIELD) * this.skill.shi, Math.max(0, ((this.settings.healthWithLevel ? 0.006 * this.level : 0) + 1) * this.REGEN * this.skill.rgn * regenMultiplier));
-        this.damage = damageMultiplier * this.DAMAGE * this.skill.atk * !this.pacify;
+        this.damage = damageMultiplier * this.DAMAGE * this.skill.atk;
         this.penetration = penetrationMultiplier * (this.PENETRATION + 1.5 * (this.skill.brst + 0.8 * (this.skill.atk - 1)));
         if (!this.settings.dieAtRange || !this.range) this.range = rangeMultiplier * this.RANGE;
         this.fov = fovMultiplier * this.FOV * 275 * Math.sqrt(this.size);
@@ -1678,7 +1678,7 @@ class Entity extends EventEmitter {
         // Initalize.
         this.activation.update();
         this.facing = this.bond.facing + this.bound.angle;
-        if (this.facingType[0].includes('Target')) {
+        if (this.facingType[0].includes('Target') || this.facingType[0].includes('Speed')) {
             this.facingType = ["bound", {}];
         }
         this.motionType = ["bound", {}];
@@ -1783,7 +1783,11 @@ class Entity extends EventEmitter {
             }
             this.emit("upgrade", { body: this });
             if (this.color.base == '-1' || this.color.base == 'mirror') {
-                this.color.base = getTeamColor((c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) ? TEAM_RED : this.team);
+                if (c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) {
+                    this.color.base = this.isBot ? "darkGrey" : getTeamColor(TEAM_RED);
+                } else {
+                    this.color.base = getTeamColor(this.team);
+                }
             }
             this.sendMessage("You have upgraded to " + this.label + ".");
             for (let def of this.defs) {

@@ -1,4 +1,4 @@
-const { basePolygonDamage, basePolygonHealth } = require('../constants.js'),
+const { basePolygonDamage, basePolygonHealth, base } = require('../constants.js'),
 
 // Code by Damocles (https://discord.com/channels/366661839620407297/508125275675164673/1090010998053818488)
 // Albeit heavily modified because the math in the original didn't work LOL
@@ -88,18 +88,24 @@ makeRelic = (type, scale = 1, gem, SIZE) => {
 makeCrasher = type => ({
     PARENT: type,
     COLOR: 'pink',
+    TYPE: "crasher",
     LABEL: 'Crasher ' + type.LABEL,
-    CONTROLLERS: ['nearestDifferentMaster', 'canRepel', 'mapTargetToGoal'],
+    CONTROLLERS: ['nearestDifferentMaster', 'mapTargetToGoal'],
     MOTION_TYPE: "motor",
     FACING_TYPE: "smoothWithMotion",
     HITS_OWN_TYPE: "hard",
     HAS_NO_MASTER: true,
     DRAW_HEALTH: true,
+    BODY: {
+        SPEED: 1 + 5 / Math.max(2, type.TURRETS.length + type.SHAPE),
+        ACCELERATION: 5,
+        DAMAGE: 5,
+        PUSHABILITY: 0.5,
+        DENSITY: 10,
+        RESIST: 2,
+    },
     AI: {
         NO_LEAD: true,
-    },
-    BODY: {
-        DAMAGE: type.BODY.DAMAGE * 4
     }
 }),
 
@@ -107,7 +113,7 @@ makeRare = (type, level) => {
     type = ensureIsClass(type);
     return {
         PARENT: "food",
-        LABEL: ["Shiny", "Legendary", "Shadow", "Rainbow", "Transgender"][level] + " " + type.LABEL,
+        LABEL: ["Shiny", "Legendary", "Shadow", "Rainbow", "Trans"][level] + " " + type.LABEL,
         VALUE: [100, 500, 2000, 4000, 5000][level] * type.VALUE,
         SHAPE: type.SHAPE,
         SIZE: type.SIZE + level,
@@ -172,7 +178,7 @@ Class.egg = {
     BODY: {
         DAMAGE: 0,
         DENSITY: 2,
-        HEALTH: 0.0011,
+        HEALTH: 0.5 * basePolygonHealth,
         PUSHABILITY: 0,
         ACCELERATION: 0.015
     },
@@ -361,7 +367,7 @@ Class.hexagon = {
     BODY: {
         DAMAGE: 3 * basePolygonDamage,
         DENSITY: 8,
-        HEALTH: 500 * basePolygonHealth,
+        HEALTH: 20 * basePolygonHealth,
         RESIST: 1.3,
         SHIELD: 50 * basePolygonHealth,
         PENETRATION: 1.1,
@@ -558,13 +564,24 @@ Class.tesseract = {
 };
 
 // LABY
+let polyNames = [ "egg", "square", "triangle", "pentagon", "hexagon" ],
+    shinyNames = [ "", "shiny", "legendary", "shadow", "rainbow", "trans" ];
 for (let tier = 0; tier < 6; tier++) {
-    for (let poly of [ "egg", "square", "triangle", "pentagon", "hexagon" ]) {
-        for (let shiny of [ "", "shiny", "legendary", "shadow", "rainbow", "trans" ]) {
-            let food = shiny + poly[0].toUpperCase() + poly.slice(1);
+    for (let poly in polyNames) {
+
+        let polyName = polyNames[poly];
+        polyName = polyName[0].toUpperCase() + polyName.slice(1);
+
+        for (let shiny in shinyNames) {
+
+            let shinyName = shinyNames[shiny];
+            let food = shinyName + polyName;
             food = food[0].toLowerCase() + food.slice(1);
-            Class[`laby${tier}${food[0].toUpperCase() + food.slice(1)}`] = makeLaby(Class[food], tier);
+
+            Class[`laby${tier}${food}`] = // backwards compatability, DO NOT ADD A SEMICOLON HERE. javascript is funny about whitespace characters :))))))
+            Class[`laby_${poly}_${tier}_${shiny}_0`] = makeLaby(Class[food], tier);
+
+            Class[`laby_${poly}_${tier}_${shiny}_1`] = makeCrasher(Class[`laby_${poly}_${tier}_${shiny}_0`]);
         }
-        Class[`laby${tier}${poly[0].toUpperCase() + poly.slice(1)}Crasher`] = makeCrasher(Class[`laby${tier}${poly[0].toUpperCase() + poly.slice(1)}`]);
     }
 }

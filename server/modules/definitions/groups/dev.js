@@ -2,6 +2,7 @@ const { combineStats, menu, addAura, makeDeco, LayeredBoss, newWeapon, weaponArr
 const { base, gunCalcNames, basePolygonDamage, basePolygonHealth, dfltskl, statnames } = require('../constants.js');
 const g = require('../gunvals.js');
 require('./tanks.js');
+require('./food.js');
 
 // Menus
 Class.developer = {
@@ -133,7 +134,7 @@ function compileMatrix(matrix, matrix2Entrance) {
             GUNS: [{
                 POSITION: [14, 12, 1, 4, 0, 0, 0],
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.basic, g.fake]),
+                    SHOOT_SETTINGS: combineStats([g.basic, { recoil: 0 }, g.fake]),
                     TYPE: "bullet"
                 }
             }, {
@@ -192,97 +193,88 @@ compileMatrix(gemRelicMatrix);
 
 // Tensor = N-Dimensional Array, BASICALLY
 let labyTensor = [];
-for (let tier = 0; tier < 6; tier++) {
+for (let poly = 0; poly < 5; poly++) {
     let row = [];
-    for (let poly of [ "Egg", "Square", "Triangle", "Pentagon", "Hexagon" ]) {
+    for (let tier = 0; tier < 6; tier++) {
         let column = [];
-        for (let shiny of [ "", "Shiny", "Legendary", "Shadow", "Rainbow", "Trans" ]) {
-            let str = `laby${tier}${shiny}${poly}`,
-                LABEL = str[0].toUpperCase() + str.slice(1).replace(/\d/, d => ["", "Beta", "Alpha", "Omega", "Gamma", "Delta"][d]).replace(/[A-Z]/g, m => ' ' + m) + " Generator",
-                code = str + 'Generator';
-            column.push(Class[code] = {
-                PARENT: "spectator",
-                LABEL,
-                SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
-                TURRETS: [{
-                    POSITION: [5 + tier * 2, 0, 0, 0, 0, 1],
-                    TYPE: str,
-                }],
-                GUNS: [{
-                    POSITION: [14, 12, 1, 4, 0, 0, 0],
-                    PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.basic, g.fake]),
-                        TYPE: "bullet"
-                    }
-                }, {
-                    POSITION: [12, 12, 1.4, 4, 0, 0, 0],
-                    PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.basic, { recoil: 0 }]),
-                        INDEPENDENT_CHILDREN: true,
-                        TYPE: str
-                    },
-                }],
-            });
+        for (let shiny = 0; shiny < 6; shiny++) {
+            let tube = [];
+            for (let rank = 0; rank < 2; rank++) {
+                let str = `laby_${poly}_${tier}_${shiny}_${rank}`,
+                    LABEL = ensureIsClass(str).LABEL + " Generator";
+                Class['generator_' + str] = {
+                    PARENT: "spectator",
+                    LABEL,
+                    SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
+                    TURRETS: [{
+                        POSITION: [5 + tier * 2, 0, 0, 0, 0, 1],
+                        TYPE: str,
+                    }],
+                    GUNS: [{
+                        POSITION: [14, 12, 1, 4, 0, 0, 0],
+                        PROPERTIES: {
+                            SHOOT_SETTINGS: combineStats([g.basic, { recoil: 0 }, g.fake]),
+                            TYPE: "bullet"
+                        }
+                    }, {
+                        POSITION: [12, 12, 1.4, 4, 0, 0, 0],
+                        PROPERTIES: {
+                            SHOOT_SETTINGS: combineStats([g.basic, { recoil: 0 }]),
+                            INDEPENDENT_CHILDREN: true,
+                            TYPE: str
+                        },
+                    }],
+                };
+                tube.push('generator_' + str);
+            }
+            column.push(tube);
         }
-        let str = `laby${tier}${poly}Crasher`,
-            LABEL = str[0].toUpperCase() + str.slice(1).replace(/\d/, d => ["", "Beta", "Alpha", "Omega", "Gamma", "Delta"][d]).replace(/[A-Z]/g, m => ' ' + m) + " Generator",
-            code = str + 'Generator';
-        column.push(Class[code] = {
-            PARENT: "spectator",
-            LABEL,
-            SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
-            TURRETS: [{
-                POSITION: [5 + tier * 2, 0, 0, 0, 0, 1],
-                TYPE: str,
-            }],
-            GUNS: [{
-                POSITION: [14, 12, 1, 4, 0, 0, 0],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.basic, g.fake]),
-                    TYPE: "bullet"
-                }
-            }, {
-                POSITION: [12, 12, 1.4, 4, 0, 0, 0],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.basic, { recoil: 0 }]),
-                    INDEPENDENT_CHILDREN: true,
-                    TYPE: str
-                },
-            }],
-        });
         row.push(column);
     }
     labyTensor.push(row);
 }
 
 connectMatrix(generatorMatrix, 'PowerGemGenerator');
-connectMatrix(gemRelicMatrix, 'laby0EggGenerator');
+connectMatrix(gemRelicMatrix, 'generator_laby_0_0_0_0');
 
-let tensorLength = labyTensor[0][0].length,
-    tensorWidth = labyTensor[0].length,
-    tensorHeight = labyTensor.length;
-for (let x = 0; x < tensorWidth; x++) for (let y = 0; y < tensorHeight; y++) for (let z = 0; z < tensorLength; z++) {
-    let top = (y + tensorHeight - 1) % tensorHeight,
-        bottom = (y + tensorHeight + 1) % tensorHeight,
-        left = (x + tensorWidth - 1) % tensorWidth,
-        right = (x + tensorWidth + 1) % tensorWidth,
-        front = (z + tensorLength - 1) % tensorLength,
-        back = (z + tensorLength + 1) % tensorLength,
+let tensorWidth = labyTensor.length,
+    tensorHeight = labyTensor[0].length,
+    tensorLength = labyTensor[0][0].length,
+    tensorDepth = labyTensor[0][0][0].length;
 
-    center = labyTensor[y     ][x    ][z    ];
-    top    = labyTensor[top   ][x    ][z    ];
-    bottom = labyTensor[bottom][x    ][z    ];
-    left   = labyTensor[y     ][left ][z    ];
-    right  = labyTensor[y     ][right][z    ];
-    front  = labyTensor[y     ][x    ][front];
-    back   = labyTensor[y     ][x    ][back ];
+for (let x = 0; x < tensorWidth; x++) {
+    for (let y = 0; y < tensorHeight; y++) {
+        for (let z = 0; z < tensorLength; z++) {
+            for (let w = 0; w < tensorDepth; w++) {
 
-    labyTensor[y][x][z].UPGRADES_TIER_0 = [
-        "developer" ,  top                , "spectator",
-         left       ,  center             ,  right     ,
-        "basic"     ,  bottom             , "eggGenerator",
-         front      , "PowerGemGenerator" ,  back
-    ];
+                let left = (x + tensorWidth - 1) % tensorWidth,
+                    right = (x + tensorWidth + 1) % tensorWidth,
+                    top = (y + tensorHeight - 1) % tensorHeight,
+                    bottom = (y + tensorHeight + 1) % tensorHeight,
+                    front = (z + tensorLength - 1) % tensorLength,
+                    back = (z + tensorLength + 1) % tensorLength,
+                    past = (w + tensorDepth - 1) % tensorDepth,
+                    future = (w + tensorDepth + 1) % tensorDepth,
+            
+                center = labyTensor[x    ][y     ][z    ][w     ];
+                top    = labyTensor[x    ][top   ][z    ][w     ];
+                bottom = labyTensor[x    ][bottom][z    ][w     ];
+                left   = labyTensor[left ][y     ][z    ][w     ];
+                right  = labyTensor[right][y     ][z    ][w     ];
+                front  = labyTensor[x    ][y     ][front][w     ];
+                back   = labyTensor[x    ][y     ][back ][w     ];
+                past   = labyTensor[x    ][y     ][z    ][past  ];
+                future = labyTensor[x    ][y     ][z    ][future];
+
+                Class[labyTensor[x][y][z][w]].UPGRADES_TIER_0 = [
+                    "developer"         , left  , right  ,
+                    "teams"             , top   , bottom ,
+                    "eggGenerator"      , front , back   ,
+                    "PowerGemGenerator" , past  , future
+                ];
+            }
+        }
+    }
 }
 
 // Testing tanks
@@ -529,6 +521,21 @@ Class.radialAutoTest = makeRadialAuto("gunner", {
     danger: 10,
 })
 
+Class.imageShapeTest = {
+    PARENT: 'genericTank',
+    LABEL: "Image Shape Test",
+    SHAPE: 'round.png',
+    GUNS: [
+        {
+            POSITION: [18, 8, 1, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic]),
+                TYPE: "bullet",
+            }
+        }
+    ]
+}
+
 // unfinished
 Class.strokeWidthTest = {
     PARENT: "basic",
@@ -734,6 +741,7 @@ Class.vanquisher = {
     DANGER: 8,
     LABEL: "Vanquisher",
     STAT_NAMES: statnames.generic,
+    CONTROLLERS: ['stackGuns'],
     BODY: {
         SPEED: 0.8 * base.SPEED,
     },
@@ -1238,4 +1246,4 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.eternals.UPGRADES_TIER_0 = ["odin", "kronos"]
         Class.devBosses.UPGRADES_TIER_0 = ["taureonBoss", "zephiBoss", "dogeiscutBoss", "trplnrBoss", "frostBoss", "toothlessBoss"]
 
-    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
+    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "imageShapeTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
