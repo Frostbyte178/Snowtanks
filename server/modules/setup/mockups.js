@@ -116,8 +116,7 @@ function getDimensions(entity) {
         point2 = getFurthestFrom(...point1);
     
     // Repeat selecting the second point until at least one of the first two points is off the centerline
-    // TODO: disable this logic for squares
-    while (point1[0] == 0 && point2[0] == 0 || point1[1] == 0 && point2[1] == 0) {
+    while ((point1[0] == 0 && point2[0] == 0 || point1[1] == 0 && point2[1] == 0) && entity.shape != 4) {
         point2 = getFurthestFrom(...point1);
     }
 

@@ -847,7 +847,7 @@ Class.armyOfOne = {
 };
 Class.weirdAutoBasic = {
     PARENT: "genericTank",
-    LABEL: "Weirdly defined Auto-Basic",
+    LABEL: "Weirdly Defined Auto-Basic",
     GUNS: [{
         POSITION: {
             LENGTH: 20,
@@ -938,17 +938,17 @@ Class.weaponArrayTest = {
         {
             POSITION: [20, 8, 1, 0, 0, 25, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic]),
+                SHOOT_SETTINGS: combineStats([g.basic, {reload: 2}]),
                 TYPE: 'bullet'
             }
         }, {
-            POSITION: [17, 8, 1, 0, 0, 25, 0.5],
+            POSITION: [17, 8, 1, 0, 0, 25, 0.1],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic]),
+                SHOOT_SETTINGS: combineStats([g.basic, {reload: 2}]),
                 TYPE: 'bullet'
             }
         }
-    ], 5),
+    ], 5, 0.4, false),
     TURRETS: weaponArray(
         {
             POSITION: [7, 10, 0, -11, 180, 0],

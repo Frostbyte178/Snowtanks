@@ -1196,22 +1196,13 @@ Class.hexaTank = {
     PARENT: "genericTank",
     LABEL: "Hexa Tank",
     DANGER: 6,
-    GUNS: weaponArray([
-        {
-            POSITION: [18, 8, 1, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard]),
-                TYPE: "bullet"
-            }
-        },
-        {
-            POSITION: [18, 8, 1, 0, 0, 180, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard]),
-                TYPE: "bullet"
-            }
+    GUNS: weaponArray({
+        POSITION: [18, 8, 1, 0, 0, 0, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard]),
+            TYPE: "bullet"
         }
-    ], 3)
+    }, 6, 0.5)
 }
 Class.triAngle = {
     PARENT: "genericTank",
@@ -1257,6 +1248,7 @@ Class.octoTank = {
     LABEL: "Octo Tank",
     DANGER: 7,
     GUNS: weaponArray([
+        // Must be kept like this to preserve visual layering
         {
             POSITION: [18, 8, 1, 0, 0, 0, 0],
             PROPERTIES: {
@@ -1689,8 +1681,8 @@ Class.commander = {
     BODY: {
         FOV: base.FOV * 1.15,
     },
-    GUNS: weaponArray([
-        {
+    GUNS: [
+        ...weaponArray({
             POSITION: [8, 11, 1.3, 6, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone]),
@@ -1700,16 +1692,16 @@ Class.commander = {
                 MAX_CHILDREN: 2,
                 STAT_CALCULATOR: gunCalcNames.drone,
             },
-        },
-        {
-            POSITION: [7, 7.5, 0.6, 7, 0, 180, 0],
+        }, 3),
+        ...weaponArray({
+            POSITION: [7, 7.5, 0.6, 7, 0, 60, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.commander]),
                 TYPE: "swarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
             },
-        }
-    ], 3)
+        }, 3, 1/3),
+    ]
 }
 
 // Cruiser upgrades
@@ -1807,6 +1799,7 @@ Class.fortress = {
         FOV: 1.2 * base.FOV,
     },
     GUNS: [
+        ...weaponArray(
         {
             POSITION: [7, 7.5, 0.6, 7, 0, 60, 0],
             PROPERTIES: {
@@ -1814,23 +1807,7 @@ Class.fortress = {
                 TYPE: "swarm",
                 STAT_CALCULATOR: gunCalcNames.swarm,
             },
-        },
-        {
-            POSITION: [7, 7.5, 0.6, 7, 0, 180, 1 / 3],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        },
-        {
-            POSITION: [7, 7.5, 0.6, 7, 0, 300, 2 / 3],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        },
+        }, 3, 1/3),
         ...weaponArray([
             {
                 POSITION: [14, 9, 1, 0, 0, 0, 0],
@@ -1858,50 +1835,16 @@ Class.necromancer = {
     },
     SHAPE: 4,
     MAX_CHILDREN: 14,
-    GUNS: [
-        {
-            POSITION: [5.25, 12, 1.2, 8, 0, 90, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
-                TYPE: "sunchip",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.necro,
-            },
+    GUNS: weaponArray({
+        POSITION: [5.25, 12, 1.2, 8, 0, 0, 0.25],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
+            TYPE: "sunchip",
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            STAT_CALCULATOR: gunCalcNames.necro,
         },
-        {
-            POSITION: [5.25, 12, 1.2, 8, 0, 270, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
-                TYPE: "sunchip",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.necro,
-            },
-        },
-        {
-            POSITION: [5.25, 12, 1.2, 8, 0, 0, 0.25],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
-                TYPE: "sunchip",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                MAX_CHILDREN: 4,
-                STAT_CALCULATOR: gunCalcNames.necro,
-            },
-        },
-        {
-            POSITION: [5.25, 12, 1.2, 8, 0, 180, 0.75],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip]),
-                TYPE: "sunchip",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                MAX_CHILDREN: 4,
-                STAT_CALCULATOR: gunCalcNames.necro,
-            },
-        },
-    ],
+    }, 4, 0.75),
 }
 Class.maleficitor = {
     PARENT: "genericTank",
@@ -2605,18 +2548,7 @@ Class.hexaTrapper = makeAuto({
                 STAT_CALCULATOR: gunCalcNames.trap,
             },
         },
-        {
-            POSITION: [15, 7, 1, 0, 0, 180, 0.5],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, 180, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-    ], 3),
+    ], 6, 0.5),
 })
 Class.septaTrapper = {
     PARENT: "genericTank",
@@ -2627,7 +2559,7 @@ Class.septaTrapper = {
     },
     STAT_NAMES: statnames.trap,
     HAS_NO_RECOIL: true,
-    GUNS: [
+    GUNS: weaponArray([
         {
             POSITION: [15, 7, 1, 0, 0, 0, 0],
         },
@@ -2639,73 +2571,7 @@ Class.septaTrapper = {
                 STAT_CALCULATOR: gunCalcNames.trap,
             },
         },
-        {
-            POSITION: [15, 7, 1, 0, 0, 360 / 7, 0],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, 360 / 7, 1/4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-        {
-            POSITION: [15, 7, 1, 0, 0, -360 / 7, 0],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, -360 / 7, 1/4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-        {
-            POSITION: [15, 7, 1, 0, 0, 360 / 7 * 2, 0],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 2, 2/4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-        {
-            POSITION: [15, 7, 1, 0, 0, -360 / 7 * 2, 0],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 2, 2/4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-        {
-            POSITION: [15, 7, 1, 0, 0, 360 / 7 * 3, 0],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 3, 3/4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-        {
-            POSITION: [15, 7, 1, 0, 0, -360 / 7 * 3, 0],
-        },
-        {
-            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 3, 3/4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
-            },
-        },
-    ],
+    ], 7, 4/7),
 }
 Class.architect = makeRadialAuto("architectGun", {isTurret: true, danger: 7, size: 12, label: "Architect", body: {SPEED: 1.1 * base.SPEED}})
 

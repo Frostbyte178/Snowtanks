@@ -524,22 +524,34 @@ exports.menu = (name = -1, color = -1, shape = 0) => {
         IGNORED_BY_AI: true,
     };
 }
-exports.weaponArray = (weapons, count) => {
+exports.weaponArray = (weapons, count, delayIncrement = 0, delayOverflow = false) => {
+    // delayIncrement: how much each side's delay increases by
+    // delayOverflow: false to constrain the delay value between [0, 1)
     if (!Array.isArray(weapons)) {
         weapons = [weapons]
     }
     let isTurret = weapons[0].TYPE != undefined;
-    let angleIndex = isTurret ? 3 : 5;
+    let angleKey = isTurret ? 3 : 5;
+    let delayKey = 6;
 
     let output = [];
     for (let weapon of weapons) {
         for (let i = 0; i < count; i++) {
             let angle = 360 / count * i;
+            let delay = delayIncrement * i;
             let newWeapon = exports.dereference(weapon);
-            if (Array.isArray(newWeapon.POSITION)) {
-                newWeapon.POSITION[angleIndex] += angle;
-            } else {
-                newWeapon.POSITION.ANGLE = (newWeapon.POSITION.ANGLE ?? 0) + angle;
+
+            if (!Array.isArray(newWeapon.POSITION)) {
+                angleKey = "ANGLE";
+                delayKey = "DELAY";
+            }
+
+            newWeapon.POSITION[angleKey] = (newWeapon.POSITION[angleKey] ?? 0) + angle;
+            if (!isTurret) {
+                newWeapon.POSITION[delayKey] = (newWeapon.POSITION[delayKey] ?? 0) + delay;
+                if (!delayOverflow) {
+                    newWeapon.POSITION[delayKey] %= 1;
+                }
             }
             output.push(newWeapon);
         }
