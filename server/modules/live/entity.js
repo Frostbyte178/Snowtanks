@@ -1956,21 +1956,30 @@ class Entity extends EventEmitter {
                 break;
             case "desmos":
                 this.damp = 0;
+                let save = {
+                    x: this.master.x,
+                    y: this.master.y,
+                };
+                let target = {
+                    x: this.master.x + this.master.control.target.x,
+                    y: this.master.y + this.master.control.target.y,
+                };
+                let amount = (util.getDistance(target, save) / 100) | 0;
                 if (this.waveReversed == null) this.waveReversed = this.master.control.alt ? -1 : 1;
                 if (this.waveAngle == null) {
                     this.waveAngle = this.master.facing;
-                    this.velocity.x = this.velocity.length * Math.cos(this.waveAngle);
-                    this.velocity.y = this.velocity.length * Math.sin(this.waveAngle);;
+                    this.velocity.x = ((5 + this.velocity.length * (amount + 2)) * Math.cos(this.waveAngle)) / 7;
+                    this.velocity.y = ((5 + this.velocity.length * (amount + 2)) * Math.sin(this.waveAngle)) / 7;
                 }
                 let waveX = this.maxSpeed * 5 * Math.cos((this.RANGE - this.range) / (args.period ?? 4) * 2);
                 let waveY = (args.amplitude ?? 15) * Math.cos((this.RANGE - this.range) / (args.period ?? 4)) * this.waveReversed * (args.invert ? -1 : 1);
                 this.x += Math.cos(this.waveAngle) * waveX - Math.sin(this.waveAngle) * waveY;
                 this.y += Math.sin(this.waveAngle) * waveX + Math.cos(this.waveAngle) * waveY;
                 break;
+            }
+            this.accel.x += engine.x * this.control.power;
+            this.accel.y += engine.y * this.control.power;
         }
-        this.accel.x += engine.x * this.control.power;
-        this.accel.y += engine.y * this.control.power;
-    }
     reset(keepPlayerController = true) {
         this.controllers = keepPlayerController ? [this.controllers.filter(con => con instanceof ioTypes.listenToPlayer)[0]] : [];
     }

@@ -1,4 +1,4 @@
-const { combineStats, skillSet, makeAuto, addAura, LayeredBoss, makeDeco } = require('../facilitators.js');
+const { combineStats, skillSet, makeAuto, addAura, LayeredBoss, makeDeco, weaponArray } = require('../facilitators.js');
 const { base, gunCalcNames, smshskl } = require('../constants.js');
 const g = require('../gunvals.js');
 require('./generics.js');
@@ -2500,13 +2500,26 @@ Class.frostBossBaseDeco = {
 		},
     ]))
 }
+Class.frostBossBaseDeco2 = {
+	COLOR: {BASE: -1, BRIGHTNESS_SHIFT: 7.5},
+	GUNS: weaponArray([
+		{
+			POSITION: [5, 10, 0.001, 9.5, 0, 0, 0],
+			PROPERTIES: {COLOR: {BASE: 9, BRIGHTNESS_SHIFT: 10}},
+		}, {
+			POSITION: [1.6, 9, 0, 8.4, 0, 0, 0],
+			PROPERTIES: {COLOR: {BASE: 9, BRIGHTNESS_SHIFT: 10}, DRAW_ABOVE: true},
+		},
+	], 6),
+}
 
-const trebuchetStats = [g.basic, g.sniper, g.predator, g.predator, g.predator, g.predator, {speed: 0.93, maxSpeed: 0.93, reload: 1.7, health: 1.7, damage: 1.4, size: 2}];
-const hielamanStats = [g.trap, g.setTrap, g.hexaTrapper, {reload: 2.4, health: 3.2, range: 1.2}];
+const trebuchetStats = [g.basic, g.sniper, g.predator, g.predator, g.predator, g.predator, {speed: 0.93, maxSpeed: 0.93, reload: 2, health: 1.7, damage: 1.4, size: 2}];
+const hielamanStats = [g.trap, g.setTrap, g.hexaTrapper, {reload: 2.85, health: 3.2, range: 1.2}];
 Class.frostBoss = {
     PARENT: 'miniboss',
     LABEL: 'Extrasolar',
     NAME: 'Frostbyte',
+    CONTROLLERS: [["minion", {orbit: 260, leash: 190, repel: 270}]],
     FACING_TYPE: 'toTarget',
     SHAPE: 6,
     COLOR: "aqua",
@@ -2527,21 +2540,21 @@ Class.frostBoss = {
         DENSITY: base.DENSITY * 7.5,
     },
     GUNS: [
-        ...Array(6).fill().flatMap((_, i) => ({
+        ...weaponArray({
             // Speed
-            POSITION: [8, 14.5, 0.001, 9.5, 0, 60*i, 0],
+            POSITION: [8, 14.5, 0.001, 9.5, 0, 0, 0],
             PROPERTIES: {COLOR: 9},
-        })),
-        ...Array(3).fill().flatMap((_, i) => ([
+        }, 6),
+        ...weaponArray([
             { // Heavy Snipers
-                POSITION: [26.5, 9.5, 1, 0, 0, 120 * i, 0],
+                POSITION: [26.5, 9.5, 1, 0, 0, 0, 0],
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats(trebuchetStats),
                     TYPE: "bullet",
                     COLOR: { BASE: -1, BRIGHTNESS_SHIFT: -15, SATURATION_SHIFT: 0.6 },
                 },
             }, {
-                POSITION: [24, 6.65, -1.3, 0, 0, 120 * i, 0],
+                POSITION: [24, 6.65, -1.3, 0, 0, 0, 0],
                 PROPERTIES: { 
                     SHOOT_SETTINGS: combineStats([...trebuchetStats, g.fake]),
                     TYPE: "bullet",
@@ -2549,17 +2562,29 @@ Class.frostBoss = {
                     BORDERLESS: true
                 },
             }, {
-                POSITION: [19.5, 3.8, -1.4, 0, 0, 120 * i, 0],
+                POSITION: [4.25, 9.5, -0.5, 1.425, -8.5, 90, 0],
+                PROPERTIES: { COLOR: { BASE: 17, BRIGHTNESS_SHIFT: 2.5 } },
+            }, {
+                POSITION: [4.25, 9.5, -0.5, 1.425, 8.5, -90, 0],
+                PROPERTIES: { COLOR: { BASE: 17, BRIGHTNESS_SHIFT: 2.5 } },
+            }, {
+                POSITION: [4.25, 6.65, -0.35, 0.67, -8.5, 90, 0],
+                PROPERTIES: { COLOR: { BASE: 17, BRIGHTNESS_SHIFT: 7.5 }, BORDERLESS: true },
+            }, {
+                POSITION: [4.25, 6.65, -0.35, 0.67, 8.5, -90, 0],
+                PROPERTIES: { COLOR: { BASE: 17, BRIGHTNESS_SHIFT: 7.5 }, BORDERLESS: true },
+            }, {
+                POSITION: [19.5, 3.8, -1.4, 0, 0, 0, 0],
                 PROPERTIES: { COLOR: { BASE: 17, BRIGHTNESS_SHIFT: 10 } },
             }, {
-                POSITION: [4, 11.5, 1, 19.5, 0, 120 * i, 0],
+                POSITION: [4, 11.5, 1, 19.5, 0, 0, 0],
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats([...trebuchetStats, g.fake]),
                     TYPE: "bullet",
                     COLOR: { BASE: -1, BRIGHTNESS_SHIFT: -5, SATURATION_SHIFT: 0.6 },
                 },
             }, {
-                POSITION: [2, 12, 1, 20.5, 0, 120 * i, 0],
+                POSITION: [2, 12, 1, 20.5, 0, 0, 0],
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats([...trebuchetStats, g.fake]),
                     TYPE: "bullet",
@@ -2567,16 +2592,19 @@ Class.frostBoss = {
                 },
             },
             { // Aura Blocks
-                POSITION: [15, 9, 1, 0, 0, 120 * i + 60, 0],
+                POSITION: [15, 8.5, 1, 0, 0, 60, 0],
                 PROPERTIES: {COLOR: {BASE: -1, BRIGHTNESS_SHIFT: -15, SATURATION_SHIFT: 0.6}}
             }, {
-                POSITION: [4, 7.5, -1.6, 9, 0, 120 * i + 60, 0],
-                PROPERTIES: {COLOR: {BASE: 17, BRIGHTNESS_SHIFT: 7.5}}
+                POSITION: [4, 7, -1.6, 9, 0, 60, 0],
+                PROPERTIES: {COLOR: {BASE: 17, BRIGHTNESS_SHIFT: 5}}
             }, {
-                POSITION: [15, 5.4, -0.1, 0, 0, 120 * i + 60, 0],
+                POSITION: [3, 6, -1.55, 9, 0, 60, 0],
+                PROPERTIES: {COLOR: {BASE: 17, BRIGHTNESS_SHIFT: 12.5}, BORDERLESS: true}
+            }, {
+                POSITION: [15, 5.4, -0.1, 0, 0, 60, 0],
                 PROPERTIES: {COLOR: {BASE: -1, BRIGHTNESS_SHIFT: -5, SATURATION_SHIFT: 0.75}}
             }, {
-                POSITION: [3, 9, 1.6, 15, 0, 120 * i + 60, 0],
+                POSITION: [3, 8.5, 1.6, 15, 0, 60, 0],
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats(hielamanStats),
                     TYPE: 'frostAuraBlock',
@@ -2584,22 +2612,20 @@ Class.frostBoss = {
                     COLOR: {BASE: -1, BRIGHTNESS_SHIFT: -15, SATURATION_SHIFT: 0.6}
                 },
             }, {
-                POSITION: [2, 7, 1.6, 16, 0, 120 * i + 60, 0],
+                POSITION: [2, 6, 1.6, 16, 0, 60, 0],
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats([...hielamanStats, g.fake]),
                     TYPE: 'bullet',
                     COLOR: {BASE: 17, BRIGHTNESS_SHIFT: 7.5}
                 },
             },
-        ])),
+        ], 3),
     ],
     TURRETS: [
-		...Array(6).fill().flatMap((_, i) => ([
-            {
-				POSITION: [2.95, 8.55, 0, 60 * i + 30, 180, 2],
-				TYPE: "frostBossAutoTurret",
-			},
-        ])),
+		...weaponArray({
+            POSITION: [2.95, 8.55, 0, 30, 180, 2],
+            TYPE: "frostBossAutoTurret",
+        }, 6),
 		{
 			POSITION: [8.55, 0, 0, 0, 360, 2],
 			TYPE: "frostBossBigAura",
@@ -2610,9 +2636,12 @@ Class.frostBoss = {
 			POSITION: [12, 0, 0, 180, 1],
 			TYPE: ["hexagon", {COLOR: {BASE: -1, BRIGHTNESS_SHIFT: 7.5}}],
 		}, {
+            POSITION: [12, 0, 0, 0, 1],
+			TYPE: "frostBossBaseDeco2"
+        }, {
 			POSITION: [20, 0, 0, 0, 1],
-			TYPE: ["frostBossBaseDeco"],
-		},
+			TYPE: "frostBossBaseDeco",
+		}
     ]
 }
 
@@ -2766,7 +2795,7 @@ ioTypes.nearestDifferentMaster2 = io_nearestDifferentMaster2;
 Class.toothlessBase = {
     PARENT: "genericTank",
     LABEL: "NightFury",
-	UPGRADE_TOOLTIP: "A power league...",
+	UPGRADE_TOOLTIP: "A cute...",
     GLOW: {
         RADIUS: 2,
         COLOR: 42,
@@ -2797,7 +2826,7 @@ Class.toothlessBossTurret = {
     PARENT: "genericTank",
     LABEL: "",
     BODY: {
-        FOV: 2,
+        FOV: 3,
     },
     CONTROLLERS: [
         "onlyAcceptInArc",
@@ -2918,7 +2947,6 @@ Class.toothlessBoss = {
             const power = Math.floor(body._power);
 
             if (power >= 1) {
-                body.sendMessage(`Your power level ${power}`);
                 body._oldPower = body._power;
                 body._mode = 1;
                 body.color.base = 5;
@@ -2933,11 +2961,10 @@ Class.toothlessBoss = {
         },
     }],
 }
-for (let b = 0; b < 3; b++)
-    Class.toothlessBoss.TURRETS.push({
-        POSITION: [8, 6, -5.6, 120 * b + 180, 180, 0],
-        TYPE: "toothlessBossTurret",
-    }, {
-        POSITION: [8, 6, 5.6, 120 * b + 180, 180, 0],
-        TYPE: "toothlessBossTurret",
-    });
+Class.toothlessBoss.TURRETS = Class.toothlessBoss.TURRETS.concat(weaponArray([{
+    POSITION: [8, 6, -5.6, 180, 180, 0],
+    TYPE: "toothlessBossTurret",
+}, {
+    POSITION: [8, 6, 5.6, 180, 180, 0],
+    TYPE: "toothlessBossTurret",
+}], 3));

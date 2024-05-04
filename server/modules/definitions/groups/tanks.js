@@ -2643,7 +2643,7 @@ Class.septaTrapper = {
             POSITION: [15, 7, 1, 0, 0, 360 / 7, 0],
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, 360 / 7, 1 / 3],
+            POSITION: [3, 7, 1.7, 15, 0, 360 / 7, 1/4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: "trap",
@@ -2654,7 +2654,7 @@ Class.septaTrapper = {
             POSITION: [15, 7, 1, 0, 0, -360 / 7, 0],
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, -360 / 7, 1 / 3],
+            POSITION: [3, 7, 1.7, 15, 0, -360 / 7, 1/4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: "trap",
@@ -2665,7 +2665,7 @@ Class.septaTrapper = {
             POSITION: [15, 7, 1, 0, 0, 360 / 7 * 2, 0],
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 2, 2 / 3],
+            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 2, 2/4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: "trap",
@@ -2676,7 +2676,7 @@ Class.septaTrapper = {
             POSITION: [15, 7, 1, 0, 0, -360 / 7 * 2, 0],
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 2, 2 / 3],
+            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 2, 2/4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: "trap",
@@ -2687,7 +2687,7 @@ Class.septaTrapper = {
             POSITION: [15, 7, 1, 0, 0, 360 / 7 * 3, 0],
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 3, 1],
+            POSITION: [3, 7, 1.7, 15, 0, 360 / 7 * 3, 3/4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: "trap",
@@ -2698,7 +2698,7 @@ Class.septaTrapper = {
             POSITION: [15, 7, 1, 0, 0, -360 / 7 * 3, 0],
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 3, 1],
+            POSITION: [3, 7, 1.7, 15, 0, -360 / 7 * 3, 3/4],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: "trap",
@@ -3025,7 +3025,7 @@ Class.quadruplex = {
         {
             POSITION: [20, 10, 0.8, 0, 0, 45, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
                 TYPE: ["bullet", {MOTION_TYPE: ["desmos", {amplitude: 25}]}]
             }
         },
@@ -3038,7 +3038,7 @@ Class.quadruplex = {
         {
             POSITION: [20, 10, 0.8, 0, 0, -45, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
                 TYPE: ["bullet", {MOTION_TYPE: ["desmos", {amplitude: 25, invert: true}]}]
             }
         },
@@ -3051,8 +3051,8 @@ Class.quadruplex = {
         {
             POSITION: [20, 10, 0.8, 0, 0, 135, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {period: 7, amplitude: 10}]}]
+                SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
+                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {period: 7, amplitude: 12.5}]}]
             }
         },
         {
@@ -3064,8 +3064,8 @@ Class.quadruplex = {
         {
             POSITION: [20, 10, 0.8, 0, 0, -135, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {period: 7, amplitude: 10, invert: true}]}]
+                SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
+                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {period: 7, amplitude: 12.5, invert: true}]}]
             }
         },
         {
