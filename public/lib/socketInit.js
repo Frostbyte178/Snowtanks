@@ -569,18 +569,15 @@ const process = (z = {}) => {
     }
     // Update turrets
     let turnumb = get.next();
-    if (turnumb) {
-        let b = 1;
-    }
-    if (isNew) {
+    if (isNew || z.turrets.length !== turnumb) {
         z.turrets = [];
         for (let i = 0; i < turnumb; i++) {
             z.turrets.push(process());
         }
     } else {
-        if (z.turrets.length !== turnumb) {
-            throw new Error('Mismatch between data turret number and remembered turret number!');
-        }
+        // if (z.turrets.length !== turnumb) {
+        //     throw new Error('Mismatch between data turret number and remembered turret number!');
+        // }
         for (let tur of z.turrets) {
             tur = process(tur);
         }

@@ -528,7 +528,7 @@ for (let [gemColor, name] of [
     let gem;
     if (gemColor) {
         gem = Class[name + "Gem"] = {
-            PARENT: ['gem'],
+            PARENT: 'gem',
             LABEL: name + ' Gem',
             SHAPE: 6,
             COLOR: gemColor

@@ -341,6 +341,7 @@ Class.sentry = {
     HAS_NO_MASTER: true,
     DRAW_HEALTH: true,
     GIVE_KILL_MESSAGE: true,
+    CLEAR_ON_MASTER_UPGRADE: true,
 };
 Class.sentrySwarm = {
     PARENT: "sentry",
@@ -442,6 +443,7 @@ Class.sentinel = {
     MOTION_TYPE: "motor",
     FACING_TYPE: "smoothToTarget",
     HITS_OWN_TYPE: "hard",
+    CLEAR_ON_MASTER_UPGRADE: true,
 };
 Class.sentinelLauncher = {
     PARENT: "sentinel",

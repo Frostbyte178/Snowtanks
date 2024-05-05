@@ -11,7 +11,7 @@ class Moon {
     loop () {
         let players = entities.filter(r => r.isPlayer || r.isBot);
         for (let entity of players) {
-            if (entity.id != this.moon.id && !entity.ac && entity.alpha) {
+            if (entity.id != this.moon.id && !entity.isArenaCloser && entity.alpha) {
                 entity.velocity.x += util.clamp(this.moon.x - entity.x, -90, 90) * entity.damp * 0.02;
                 entity.velocity.y += util.clamp(this.moon.y - entity.y, -90, 90) * entity.damp * 0.02;
             }

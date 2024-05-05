@@ -3032,14 +3032,64 @@ Class.oroboros = {
     STAT_NAMES: statnames.desmos,
     UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!"
 }
-Class.cocci = {
+Class.cocciPart1 = {
     PARENT: "genericSmasher",
-    LABEL: "Cocci",
-    UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!",
+    LABEL: "",
     TURRETS: [
         {
             POSITION: [21.5, 0, 0, 0, 360, 0],
             TYPE: "smasherBody"
+        },
+        {
+            POSITION: [20, -22, 0, 0, 90/4, 0],
+            TYPE: "smasher",
+            VULNERABLE: true
+        },
+    ]
+}
+Class.cocciPart2 = {
+    PARENT: "genericSmasher",
+    LABEL: "",
+    TURRETS: [
+        {
+            POSITION: [21.5, 0, 0, 0, 360, 0],
+            TYPE: "smasherBody"
+        },
+        {
+            POSITION: [20, -22, 0, 0, 90/3, 0],
+            TYPE: "cocciPart1",
+            VULNERABLE: true
+        },
+    ]
+}
+Class.cocciPart3 = {
+    PARENT: "genericSmasher",
+    LABEL: "",
+    TURRETS: [
+        {
+            POSITION: [21.5, 0, 0, 0, 360, 0],
+            TYPE: "smasherBody"
+        },
+        {
+            POSITION: [20, -22, 0, 0, 90/2, 0],
+            TYPE: "cocciPart2",
+            VULNERABLE: true
+        },
+    ]
+}
+Class.cocci = {
+    PARENT: "genericSmasher",
+    LABEL: "Cocci",
+    UPGRADE_TOOLTIP: "[DEV NOTE] this is a very early prototype and probably won't work so well lol",
+    TURRETS: [
+        {
+            POSITION: [21.5, 0, 0, 0, 360, 0],
+            TYPE: "smasherBody"
+        },
+        {
+            POSITION: [20, -22, 0, 0, 90, 0],
+            TYPE: "cocciPart3",
+            VULNERABLE: true
         }
     ]
 }
