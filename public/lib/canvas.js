@@ -1,5 +1,7 @@
 import { global } from "./global.js";
 import { settings } from "./settings.js";
+import * as socketStuff from "./socketInit.js";
+let { gui } = socketStuff;
 
 class Canvas {
     constructor() {
@@ -249,7 +251,7 @@ class Canvas {
                     global.clearUpgrades();
                 } else {
                     let upgradeIndex = global.clickables.upgrade.check(mpos);
-                    if (upgradeIndex !== -1) this.socket.talk('U', upgradeIndex);
+                    if (upgradeIndex !== -1) this.socket.talk('U', upgradeIndex, parseInt(gui.upgrades[upgradeIndex][0]));
                     else this.socket.cmd.set(primaryFire, true);
                 }
                 break;

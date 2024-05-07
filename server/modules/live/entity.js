@@ -904,6 +904,7 @@ class Entity extends EventEmitter {
         this.turrets = [];
         this.props = [];
         this.upgrades = [];
+        this.skippedUpgrades = [];
         this.settings = {};
         this.aiSettings = {};
         this.children = [];
@@ -1755,8 +1756,11 @@ class Entity extends EventEmitter {
         }
         return suc;
     }
-    upgrade(number) {
-        let old = this;
+    upgrade(number, branchId) {
+        // Account for upgrades that are too high level for the player to access
+        for (let i = 0; i < branchId; i++) {
+            number += this.skippedUpgrades[i] ?? 0;
+        }
         if (
             number < this.upgrades.length &&
             this.skill.level >= this.upgrades[number].level

@@ -345,20 +345,21 @@ function incoming(message, socket) {
             break;
         case "U":
             // upgrade request
-            if (m.length !== 1) {
+            if (m.length !== 2) {
                 socket.kick("Ill-sized upgrade request.");
                 return 1;
             }
             // Get data
             let upgrade = m[0];
+            let branchId = m[1];
             // Verify the request
-            if (typeof upgrade != "number" || upgrade < 0) {
+            if (typeof upgrade != "number" || upgrade < 0 || typeof branchId != "number" || branchId < 0) {
                 socket.kick("Bad upgrade request.");
                 return 1;
             }
             // Upgrade it
             if (player.body != null) {
-                player.body.upgrade(upgrade); // Ask to upgrade
+                player.body.upgrade(upgrade, branchId); // Ask to upgrade
             }
             break;
         case "x":
@@ -732,12 +733,20 @@ function update(gui) {
     gui.points.update(b.skill.points);
     // Update the upgrades
     let upgrades = [];
+    let skippedUpgrades = [0];
     for (let i = 0; i < b.upgrades.length; i++) {
         let upgrade = b.upgrades[i];
         if (b.skill.level >= b.upgrades[i].level) {
             upgrades.push(upgrade.branch.toString() + "\\\\//" + upgrade.branchLabel + "\\\\//" + upgrade.index);
+        } else {
+            if (upgrade.branch >= skippedUpgrades.length) {
+                skippedUpgrades[upgrade.branch] = 1;
+            } else {
+                skippedUpgrades[skippedUpgrades.length - 1]++;
+            }
         }
     }
+    b.skippedUpgrades = skippedUpgrades;
     gui.upgrades.update(upgrades);
     // Update the stats and skills
     gui.stats.update();
