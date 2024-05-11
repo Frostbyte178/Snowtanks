@@ -9,6 +9,7 @@ const dreadnoughtBody = {
     SHIELD: base.SHIELD * 2.5,
     FOV: base.FOV * 1.4,
     DENSITY: base.DENSITY * 6,
+	REGEN: base.REGEN,
 };
 g.dreadv1Generic = {
 	health: 1.4,
@@ -596,8 +597,8 @@ for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_1) {
 		if (secondary.TURRETS) TURRETS.push(...secondary.TURRETS);
 
 		// Body
-		if (primary.BODY) for (let m in primary.BODY) BODY *= primary.BODY[m];
-		if (secondary.BODY) for (let m in secondary.BODY) BODY *= secondary.BODY[m];
+		if (primary.BODY) for (let m in primary.BODY) BODY[m] *= primary.BODY[m];
+		if (secondary.BODY) for (let m in secondary.BODY) BODY[m] *= secondary.BODY[m];
 
 		// Definition name
 		let definitionName = primaryName + secondaryName;
