@@ -132,25 +132,23 @@ makeRare = (type, level) => {
     }
 },
 
-lerp = (a, b, t) => a + (b - a) * t,
-
-makeLaby = (type, level) => {
+makeLaby = (type, level, baseScale = 1) => {
     type = ensureIsClass(type);
     let usableSHAPE = Math.max(type.SHAPE, 3),
         downscale = Math.cos(Math.PI / usableSHAPE),
-        strenghtMultiplier = 6 ** level;
+        strengthMultiplier = 6 ** level;
     return {
         PARENT: "food",
         LABEL: ["", "Beta ", "Alpha ", "Omega ", "Gamma ", "Delta "][level] + type.LABEL,
-        VALUE: type.VALUE * strenghtMultiplier,
+        VALUE: type.VALUE * strengthMultiplier,
         SHAPE: type.SHAPE,
-        SIZE: level > 3 ? Math.max(40, type.SIZE * 2) * (1 + (level - 3) / 6) : type.SIZE * lerp(2 ** level, 1 + level / 3, Math.min(1, (type.SIZE - 5) / 17)),
+        SIZE: type.SIZE * baseScale / downscale ** level,
         COLOR: type.COLOR,
         ALPHA: type.ALPHA,
         BODY: {
             DAMAGE: type.BODY.DAMAGE,
             DENSITY: type.BODY.DENSITY,
-            HEALTH: type.BODY.HEALTH * strenghtMultiplier,
+            HEALTH: type.BODY.HEALTH * strengthMultiplier,
             PENETRATION: type.BODY.PENETRATION,
             PUSHABILITY: (type.BODY.PUSHABILITY / (level + 1)) || 0,
             ACCELERATION: type.BODY.ACCELERATION
@@ -172,7 +170,7 @@ Class.egg = {
     LABEL: "Egg",
     VALUE: 10,
     SHAPE: 0,
-    SIZE: 5,
+    SIZE: 4.5,
     COLOR: "veryLightGrey",
     INTANGIBLE: true,
     BODY: {
@@ -189,7 +187,7 @@ Class.gem = {
     LABEL: "Gem",
     VALUE: 2e3,
     SHAPE: 6,
-    SIZE: 5,
+    SIZE: 4.5,
     COLOR: "aqua",
     BODY: {
         DAMAGE: basePolygonDamage / 4,
@@ -236,7 +234,7 @@ Class.square = {
     LABEL: "Square",
     VALUE: 30,
     SHAPE: 4,
-    SIZE: 10,
+    SIZE: 14,
     COLOR: "gold",
     BODY: {
         DAMAGE: basePolygonDamage,
@@ -284,7 +282,7 @@ Class.pentagon = {
     LABEL: "Pentagon",
     VALUE: 400,
     SHAPE: 5,
-    SIZE: 20,
+    SIZE: 21,
     COLOR: "purple",
     BODY: {
         DAMAGE: 1.5 * basePolygonDamage,
@@ -362,7 +360,7 @@ Class.hexagon = {
     LABEL: "Hexagon",
     VALUE: 500,
     SHAPE: 6,
-    SIZE: 22,
+    SIZE: 25,
     COLOR: "hexagon",
     BODY: {
         DAMAGE: 3 * basePolygonDamage,
@@ -579,7 +577,7 @@ for (let tier = 0; tier < 6; tier++) {
             food = food[0].toLowerCase() + food.slice(1);
 
             Class[`laby${tier}${food}`] = // backwards compatability, DO NOT ADD A SEMICOLON HERE. javascript is funny about whitespace characters :))))))
-            Class[`laby_${poly}_${tier}_${shiny}_0`] = makeLaby(Class[food], tier);
+            Class[`laby_${poly}_${tier}_${shiny}_0`] = makeLaby(Class[food], tier, (polyName == "Triangle" && tier > 0) ? 2/3 : 1);
 
             Class[`laby_${poly}_${tier}_${shiny}_1`] = makeCrasher(Class[`laby_${poly}_${tier}_${shiny}_0`]);
         }

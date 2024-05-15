@@ -172,22 +172,22 @@ class Canvas {
             if (global.canUpgrade) {
                 switch (event.keyCode) {
                     case global.KEY_CHOOSE_1:
-                        this.socket.talk('U', 0);
+                        this.socket.talk('U', 0, parseInt(gui.upgrades[0][0]));
                         break;
                     case global.KEY_CHOOSE_2:
-                        this.socket.talk('U', 1);
+                        this.socket.talk('U', 1, parseInt(gui.upgrades[1][0]));
                         break;
                     case global.KEY_CHOOSE_3:
-                        this.socket.talk('U', 2);
+                        this.socket.talk('U', 2, parseInt(gui.upgrades[2][0]));
                         break;
                     case global.KEY_CHOOSE_4:
-                        this.socket.talk('U', 3);
+                        this.socket.talk('U', 3, parseInt(gui.upgrades[3][0]));
                         break;
                     case global.KEY_CHOOSE_5:
-                        this.socket.talk('U', 4);
+                        this.socket.talk('U', 4, parseInt(gui.upgrades[4][0]));
                         break;
                     case global.KEY_CHOOSE_6:
-                        this.socket.talk('U', 5);
+                        this.socket.talk('U', 5, parseInt(gui.upgrades[5][0]));
                         break;
                 }
             }

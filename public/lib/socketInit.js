@@ -224,6 +224,7 @@ const Entry = class {
         let indexes = this.index.split("-"),
             ref = global.mockups[parseInt(indexes[0])];
         return {
+            id: this.id,
             image: util.getEntityImageFromMockup(this.index, this.color),
             position: ref.position,
             barColor: this.bar,
@@ -969,6 +970,8 @@ const socketInit = port => {
                 global.updateTimes++; // metrics
                 break;
             case "b":
+                global.FFA = m[0];
+                m.shift();
                 convert.begin(m);
                 convert.broadcast();
                 break;

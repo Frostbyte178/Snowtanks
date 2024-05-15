@@ -1249,15 +1249,16 @@ class Entity extends EventEmitter {
         if (set.DRAW_FILL != null) this.drawFill = set.DRAW_FILL;
         if (set.TEAM != null) {
             this.team = set.TEAM;
-            if (!sockets.players.length) {
-                const _entity = this;
+            if (sockets.players.length) {
                 for (let i = 0; i < sockets.players.length; i++) {
-                    if (sockets.players[i].body.id == _entity.id) {
-                        sockets.players[i].team = -_entity.team;
+                    const player = sockets.players[i];
+                    if (player.body.id == this.id) {
+                        player.team = this.team;
                     }
                 }
             }
-            for (let child of this.children) child.team = set.TEAM
+            if (this.socket) this.socket.status.needsNewBroadcast = true;
+            for (let child of this.children) child.team = set.TEAM;
         }
         if (set.VARIES_IN_SIZE != null) {
             this.settings.variesInSize = set.VARIES_IN_SIZE;

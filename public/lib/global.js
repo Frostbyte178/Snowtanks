@@ -102,6 +102,7 @@ const global = {
     KEY_CHOOSE_5: 74,// J
     KEY_CHOOSE_6: 75,// K
 
+    FFA: false,
     showTree: false,
     scrollX: 0,
     realScrollX: 0,

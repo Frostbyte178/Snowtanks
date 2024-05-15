@@ -1200,10 +1200,9 @@ const Delta = class {
     constructor(dataLength, finder) {
         this.dataLength = dataLength;
         this.finder = finder;
-        this.old = [];
-        this.now = finder([]);
+        this.now = this.finder([]);
     }
-    update(save, ...args) {
+    update(...args) {
         let old = this.now;
         let now = this.finder(args);
         this.now = now;
@@ -1250,17 +1249,10 @@ const Delta = class {
             updates.push(now[i].id, ...now[i].data);
             updatesLength++;
         }
-        let reset = [0, now.length];
+        let reset = [0, now.length],
+            update = [deletesLength, ...deletes, updatesLength, ...updates];
         for (let element of now) reset.push(element.id, ...element.data);
-        let update = [deletesLength, ...deletes, updatesLength, ...updates];
-        if (!updatesLength && !deletesLength && this.save) {
-            update = this.old;
-            this.save--;
-        } else if (save) {
-            this.old = update;
-            this.save = save;
-        }
-        return { reset, update };
+        return { update, reset };
     }
 };
 
@@ -1288,21 +1280,25 @@ let minimapAll = new Delta(5, args => {
     }
     return all;
 });
-let minimapTeams = new Delta(3, args => {
-    let all = [];
-    for (let my of entities)
-        if (my.type === "tank" && my.team === args[0] && my.master === my && my.allowedOnMinimap) {
-            all.push({
-                id: my.id,
-                data: [
-                    util.clamp(Math.floor((256 * my.x) / room.width), 0, 255),
-                    util.clamp(Math.floor((256 * my.y) / room.height), 0, 255),
-                    (c.GROUPS || (c.MODE == 'ffa' && !c.TAG)) ? '10 0 1 0 false' : my.color.compiled,
-                ],
-            });
-        }
-    return all;
-});
+let teamIDs = [1, 2, 3, 4, 5, 6, 7, 8];
+if (c.GROUPS) for (let i = 0; i < 100; i++) teamIDs.push(i + 9);
+let minimapTeams = teamIDs.map((team) =>
+    new Delta(3, args => {
+        let all = [];
+        for (let my of entities)
+            if (my.type === "tank" && my.team === -team && my.master === my && my.allowedOnMinimap) {
+                all.push({
+                    id: my.id,
+                    data: [
+                        util.clamp(Math.floor((256 * my.x) / room.width), 0, 255),
+                        util.clamp(Math.floor((256 * my.y) / room.height), 0, 255),
+                        c.GROUPS || (c.MODE == 'ffa' && !c.TAG) ? '10 0 1 0 false' : my.color.compiled,
+                    ],
+                });
+            }
+        return all;
+    })
+);
 let leaderboard = new Delta(7, args => {
     let list = [];
     if (c.TAG)
@@ -1375,21 +1371,17 @@ let subscribers = [];
 setInterval(() => {
     logs.minimap.set();
     let minimapUpdate = minimapAll.update();
+    let leaderboardUpdate = leaderboard.update();
+    let teamUpdate = minimapTeams.map(r => r.update());
     for (let socket of subscribers) {
         if (!socket.status.hasSpawned) continue;
-        let team = minimapTeams.update(
-            subscribers.length - 1,
-            socket.player.team
-        );
-        let leaderboardUpdate = leaderboard.update(
-            subscribers.length - 1,
-            c.GROUPS || (c.MODE == 'ffa' && !c.TAG) ? socket.player.team : 0
-        );
+        let team = teamUpdate[-socket.player.team - 1];
         socket.talk(
             "b",
-            ...(socket.status.needsNewBroadcast ? minimapUpdate.reset : minimapUpdate.update),
-            ...(team ? socket.status.needsNewBroadcast ? team.reset : team.update : [0, 0]),
-            ...(socket.anon ? [0, 0] : socket.status.needsNewBroadcast ? leaderboardUpdate.reset : leaderboardUpdate.update)
+            c.GROUPS || (c.MODE == 'ffa' && !c.TAG),
+            ...socket.status.needsNewBroadcast ? minimapUpdate.reset : minimapUpdate.update,
+            ...team ? socket.status.needsNewBroadcast ? team.reset : team.update : [0, 0],
+            ...socket.status.needsNewBroadcast ? leaderboardUpdate.reset : leaderboardUpdate.update
         );
         if (socket.status.needsNewBroadcast) {
             socket.status.needsNewBroadcast = false;
