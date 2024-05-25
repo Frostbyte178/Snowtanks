@@ -62,7 +62,7 @@ exports.combineStats = function (stats) {
         return data;
     } catch (err) {
         console.log(err);
-        console.log(JSON.stringify(stats));
+        throw JSON.stringify(stats);
     }
 }
 exports.setBuild = (build) => {

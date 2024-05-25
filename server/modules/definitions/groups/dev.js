@@ -536,7 +536,6 @@ Class.imageShapeTest = {
     ]
 }
 
-// unfinished
 Class.strokeWidthTest = {
     PARENT: "basic",
     LABEL: "Stroke Width Test",
@@ -611,6 +610,15 @@ Class.onTest = {
             IDENTIFIER: 'secondaryGun'
         }
     }]
+}
+
+Class.turretStatScaleTest = {
+    PARENT: 'genericTank',
+    LABEL: 'Turret Stat Test',
+    TURRETS: Array(5).fill().map((_, i) => ({
+        POSITION: [15, 0, -40 + 20 * i, 0, 360, 1],
+        TYPE: ['autoTankGun', {GUN_STAT_SCALE: {speed: 1 + i / 5, maxSpeed: 1 + i / 5, reload: 1 + i / 5, recoil: 0}}]
+    }))
 }
 
 Class.auraBasicGen = addAura();
@@ -1048,7 +1056,7 @@ Class.snakeOld = {
 }
 Class.sidewinderOld = {
     PARENT: "genericTank",
-    LABEL: "Sidewinder (old)",
+    LABEL: "Sidewinder (Legacy)",
     DANGER: 7,
     BODY: {
         SPEED: 0.8 * base.SPEED,
@@ -1246,4 +1254,4 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.eternals.UPGRADES_TIER_0 = ["odin", "kronos"]
         Class.devBosses.UPGRADES_TIER_0 = ["taureonBoss", "zephiBoss", "dogeiscutBoss", "trplnrBoss", "frostBoss", "toothlessBoss"]
 
-    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "imageShapeTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
+    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "imageShapeTest", "turretStatScaleTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]

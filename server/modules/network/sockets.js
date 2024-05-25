@@ -1269,7 +1269,7 @@ let minimapAll = new Delta(5, args => {
             all.push({
                 id: my.id,
                 data: [
-                    my.type === "wall" || my.isMothership ? (my.shape === 4 || my.shapeData == "M 1 1 L -1 1 L -1 -1 L 1 -1 Z") ? 2 : 1 : 0,
+                    my.type === "wall" || my.isMothership ? my.shape === 4 ? 2 : 1 : 0,
                     util.clamp(Math.floor((256 * my.x) / room.width), 0, 255),
                     util.clamp(Math.floor((256 * my.y) / room.height), 0, 255),
                     my.color.compiled,
@@ -1280,25 +1280,21 @@ let minimapAll = new Delta(5, args => {
     }
     return all;
 });
-let teamIDs = [1, 2, 3, 4, 5, 6, 7, 8];
-if (c.GROUPS) for (let i = 0; i < 100; i++) teamIDs.push(i + 9);
-let minimapTeams = teamIDs.map((team) =>
-    new Delta(3, args => {
-        let all = [];
-        for (let my of entities)
-            if (my.type === "tank" && my.team === -team && my.master === my && my.allowedOnMinimap) {
-                all.push({
-                    id: my.id,
-                    data: [
-                        util.clamp(Math.floor((256 * my.x) / room.width), 0, 255),
-                        util.clamp(Math.floor((256 * my.y) / room.height), 0, 255),
-                        c.GROUPS || (c.MODE == 'ffa' && !c.TAG) ? '10 0 1 0 false' : my.color.compiled,
-                    ],
-                });
-            }
-        return all;
-    })
-);
+let minimapTeams = new Delta(3, args => {
+    let all = [];
+    for (let my of entities)
+        if (my.type === "tank" && my.team === args[0] && my.master === my && my.allowedOnMinimap) {
+            all.push({
+                id: my.id,
+                data: [
+                    util.clamp(Math.floor((256 * my.x) / room.width), 0, 255),
+                    util.clamp(Math.floor((256 * my.y) / room.height), 0, 255),
+                    c.GROUPS || (c.MODE == 'ffa' && !c.TAG) ? '10 0 1 0 false' : my.color.compiled,
+                ],
+            });
+        }
+    return all;
+});
 let leaderboard = new Delta(7, args => {
     let list = [];
     if (c.TAG)
@@ -1370,17 +1366,23 @@ let leaderboard = new Delta(7, args => {
 let subscribers = [];
 setInterval(() => {
     logs.minimap.set();
-    let minimapUpdate = minimapAll.update();
-    let leaderboardUpdate = leaderboard.update();
-    let teamUpdate = minimapTeams.map(r => r.update());
+    let minimapUpdate = minimapAll.update(),
+        leaderboardUpdate = leaderboard.update(),
+        oldTeamUpdate,
+        teamUpdate;
     for (let socket of subscribers) {
         if (!socket.status.hasSpawned) continue;
-        let team = teamUpdate[-socket.player.team - 1];
+        teamUpdate = minimapTeams.update(socket.player.team);
+        if (teamUpdate.update.length == 2 && !socket.status.needsNewBroadcast) {
+            teamUpdate = oldTeamUpdate;
+        } else {
+            oldTeamUpdate = teamUpdate;
+        }
         socket.talk(
             "b",
             c.GROUPS || (c.MODE == 'ffa' && !c.TAG),
             ...socket.status.needsNewBroadcast ? minimapUpdate.reset : minimapUpdate.update,
-            ...team ? socket.status.needsNewBroadcast ? team.reset : team.update : [0, 0],
+            ...teamUpdate ? socket.status.needsNewBroadcast ? teamUpdate.reset : teamUpdate.update : [0, 0],
             ...socket.status.needsNewBroadcast ? leaderboardUpdate.reset : leaderboardUpdate.update
         );
         if (socket.status.needsNewBroadcast) {

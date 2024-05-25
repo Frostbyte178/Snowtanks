@@ -722,13 +722,13 @@ Class.appeaserOfficialV2 = {
 		{
 			POSITION: [7, 11, 1.35, 6, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.spam, {size: 0.8, health: 0.66}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.spam, {size: 0.7, health: 0.96}]),
 				TYPE: "bullet",
 			},
 		}, {
 			POSITION: [7, 10, 1.3, 8, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.spam, {size: 0.8, health: 0.66, reload: 1.1}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.spam, {size: 0.6, health: 0.95, reload: 1.1}]),
 				TYPE: "bullet",
 			},
 		},
@@ -1258,19 +1258,19 @@ Class.arbitratorOfficialV2 = {
 		{
 			POSITION: [7.5, 10.75, 1.33, 5.5, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.7, health: 0.64, reload: 1}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.7,  health: 1.33, reload: 1}]),
 				TYPE: "bullet",
 			},
 		}, {
 			POSITION: [7.5, 9.5, 1.33, 7.5, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.7, health: 0.64, reload: 1.1}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.65, health: 1.33, reload: 1.1}]),
 				TYPE: "bullet",
 			},
 		}, {
 			POSITION: [7.5, 7.25, 1.25, 9.5, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.7, health: 0.64, reload: 1.2}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.7,  health: 1.33, reload: 1.2}]),
 				TYPE: "bullet",
 			},
 		},

@@ -107,7 +107,7 @@ let checkMazeForBlocks = (initX, initY, size, maze) => {
                             y: d.y
                         });
                         o.define("wall");
-                        o.SIZE = d.s * 0.5 - 2;
+                        o.SIZE = d.s * 0.5 / lazyRealSizes[4] * 1.414 - 2;
                         o.team = TEAM_ENEMIES;
                         o.protect();
                         o.life();

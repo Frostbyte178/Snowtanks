@@ -1,4 +1,4 @@
-const { combineStats, makeAuto } = require('../facilitators.js');
+const { combineStats, makeAuto, weaponArray } = require('../facilitators.js');
 const { gunCalcNames, base } = require('../constants.js');
 const g = require('../gunvals.js');
 
@@ -230,52 +230,19 @@ Class.hive = {
     },
     FACING_TYPE: "turnWithSpeed",
     INDEPENDENT: true,
-    CONTROLLERS: ["alwaysFire", "nearestDifferentMaster", "targetSelf"],
+    CONTROLLERS: ["nearestDifferentMaster", "targetSelf"],
     AI: {
         NO_LEAD: true,
     },
-    GUNS: [
-        {
-            POSITION: [7, 9.5, 0.6, 7, 0, 108, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
+    GUNS: weaponArray({
+        POSITION: [7, 9.5, 0.6, 7, 0, 108, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
+            TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
+            STAT_CALCULATOR: gunCalcNames.swarm,
+            AUTOFIRE: true
         },
-        {
-            POSITION: [7, 9.5, 0.6, 7, 0, 180, 0.2],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        },
-        {
-            POSITION: [7, 9.5, 0.6, 7, 0, 252, 0.4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        },
-        {
-            POSITION: [7, 9.5, 0.6, 7, 0, 324, 0.6],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        },
-        {
-            POSITION: [7, 9.5, 0.6, 7, 0, 36, 0.8],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        },
-    ],
+    }, 5, 0.2)
 }
 Class.protoHive = {
     PARENT: "bullet",
@@ -286,32 +253,17 @@ Class.protoHive = {
     },
     FACING_TYPE: "turnWithSpeed",
     INDEPENDENT: true,
-    CONTROLLERS: ["alwaysFire", "nearestDifferentMaster", "targetSelf"],
+    CONTROLLERS: ["nearestDifferentMaster", "targetSelf"],
     AI: { NO_LEAD: true },
-    GUNS: [
-        {
-            POSITION: [7, 9.5, 0.6, 7, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { INDEPENDENT: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        }, {
-            POSITION: [7, 9.5, 0.6, 7, 0, 120, 0.2],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { INDEPENDENT: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
-        }, {
-            POSITION: [7, 9.5, 0.6, 7, 0, -120, 0.4],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
-                TYPE: ["bee", { INDEPENDENT: true }],
-                STAT_CALCULATOR: gunCalcNames.swarm,
-            },
+    GUNS: weaponArray({
+        POSITION: [7, 9.5, 0.6, 7, 0, 0, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.swarm, g.hive, g.bee]),
+            TYPE: ["bee", { PERSISTS_AFTER_DEATH: true }],
+            STAT_CALCULATOR: gunCalcNames.swarm,
+            AUTOFIRE: true
         },
-    ],
+    }, 5, 1/3)
 }
 Class.snake = {
     PARENT: "bullet",
@@ -659,7 +611,6 @@ Class.assemblerTrap = {
     },
     TURRETS: [
         {
-            /**     SIZE X  Y  ANGLE ARC */
             POSITION: [4, 0, 0, 0, 360, 1],
             TYPE: 'assemblerDot'
         }

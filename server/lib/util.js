@@ -16,6 +16,8 @@ exports.getDirection = (p1, p2) => Math.atan2(p2.y - p1.y, p2.x - p1.x)
 
 exports.clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 
+exports.lerp = (value, target, scale) => value + scale * (target - value)
+
 exports.listify = list => {
   if (list.length === 0) return ''
   if (list.length === 1) return list[0]

@@ -902,6 +902,37 @@ class io_orbit extends IO {
         this.body.facing = angle;
     }
 }
+class io_snake extends IO {
+    constructor(body, opts = {}) {
+        super(body);
+        this.waveInvert = opts.invert ? -1 : 1;
+        this.wavePeriod = opts.period ?? 7.5;
+        this.waveAmplitude = opts.amplitude ?? 100;
+
+        this.reverseWave = this.body.master.control.alt ? -1 : 1;;
+        this.velocityMagnitude = 0;
+        this.velocityAngle = 0;
+        this.body.damp = 0;
+        this.waveAngle = this.body.master.facing + (opts.angle ?? 0);
+        this.startX = this.body.x;
+        this.startY = this.body.y;
+        this.body.x += Math.cos(this.body.velocity.direction) * this.body.size * 20;
+        this.body.y += Math.sin(this.body.velocity.direction) * this.body.size * 20;
+    }
+    think(input) {
+        // Define a sin wave for the bullet to follow
+        let waveX = 50 * (this.body.RANGE - this.body.range) / this.wavePeriod;
+        let waveY = this.waveAmplitude * Math.sin(waveX / 50) * this.waveInvert * this.reverseWave;
+        // Rotate the sin wave
+        let trueWaveX = Math.cos(this.waveAngle) * waveX - Math.sin(this.waveAngle) * waveY;
+        let trueWaveY = Math.sin(this.waveAngle) * waveX + Math.cos(this.waveAngle) * waveY;
+        // Follow the sin wave
+        this.body.x = util.lerp(this.body.x, this.startX + trueWaveX, this.velocityMagnitude);
+        this.body.y = util.lerp(this.body.y, this.startY + trueWaveY, this.velocityMagnitude);
+        // Accelerate after spawning
+        this.velocityMagnitude = Math.min(1, this.velocityMagnitude + 0.018 / c.runSpeed)
+    }
+}
 
 class io_disableOnOverride extends IO {
     constructor(body) {
@@ -987,6 +1018,7 @@ let ioTypes = {
     orbit: io_orbit,
     goToMasterTarget: io_goToMasterTarget,
     avoid: io_avoid,
+    snake: io_snake,
     minion: io_minion,
     hangOutNearMaster: io_hangOutNearMaster,
     fleeAtLowHealth: io_fleeAtLowHealth,

@@ -157,7 +157,7 @@ Class.eliteSpawner = {
             POSITION: [2, 18, 1, 11, 0, 60, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.weak, g.weak, g.weak, { size: 0.5, health: 2.5 }]),
-                TYPE: ["sentrySwarm", {ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
+                TYPE: ["sentrySwarm", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
                 STAT_CALCULATOR: gunCalcNames.drone,
@@ -166,7 +166,7 @@ Class.eliteSpawner = {
             POSITION: [2, 18, 1, 11, 0, 180, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.weak, g.weak, g.weak, { size: 0.5, health: 2.5 }]),
-                TYPE: ["sentryTrap", {ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
+                TYPE: ["sentryTrap", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
                 STAT_CALCULATOR: gunCalcNames.drone,
@@ -175,7 +175,7 @@ Class.eliteSpawner = {
             POSITION: [2, 18, 1, 11, 0, 300, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.weak, g.weak, g.weak, { size: 0.5, health: 2.5 }]),
-                TYPE: ["sentryGun", {ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
+                TYPE: ["sentryGun", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
                 STAT_CALCULATOR: gunCalcNames.drone,
@@ -1131,7 +1131,7 @@ odin.addLayer({gun: {
 }}, true, null, 18);
 odin.addLayer({turret: {
     POSITION: [7, 8, 0, null, 160, 0],
-    TYPE: "autosmashTurret",
+    TYPE: "autoSmasherLauncherTurret",
 }}, true, 5.5);
 odin.addLayer({turret: {
     POSITION: [8, 9, 0, null, 160, 0],
@@ -1156,7 +1156,7 @@ Class.taureonCore = {
         POSITION: [21, 15, -1.1, 0, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.destroyer, g.sniper]),
-            TYPE: "snake",
+            TYPE: "snakeOld",
             STAT_CALCULATOR: gunCalcNames.sustained
         }
     }],
@@ -1223,11 +1223,11 @@ Class.taureonMissile = {
         ACCELERATION: 10,
         FOV: base.FOV * 2
     },
-    TURRETS: [{/** SIZE     X       Y     ANGLE    ARC */
+    TURRETS: [{
         POSITION: [10, 0, 0, 0, 360, 1],
         TYPE: ["genericTank", {COLOR: "grey"}],
     }],
-    GUNS: [{/* LENGTH  WIDTH   ASPECT    X       Y     ANGLE   DELAY */
+    GUNS: [{
         POSITION: [6, 12, 1.4, 8, 0, 180, 0],
         PROPERTIES: {
             AUTOFIRE: true,

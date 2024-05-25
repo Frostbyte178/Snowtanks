@@ -54,12 +54,12 @@ class Skill {
         this.acl = 0;
         this.reset();
     }
-    reset() {
+    reset(resetLSPF = true) {
         this.points = 0;
         this.score = 0;
         this.deduction = 0;
         this.level = 0;
-        this.LSPF = null;
+        if (resetLSPF) this.LSPF = null;
         this.set([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         this.maintain();
     }

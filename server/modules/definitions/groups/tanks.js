@@ -165,7 +165,7 @@ Class.desmos = {
             POSITION: [20, 10, 0.8, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: "desmos"}]
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
@@ -2256,7 +2256,6 @@ Class.fieldGun = {
             },
         },
         {
-            /*** LENGTH  WIDTH   ASPECT    X       Y     ANGLE   DELAY */
             POSITION: [10, 9, 1, 9, 0, 0, 0],
         },
         {
@@ -2519,7 +2518,6 @@ Class.assembler = {
     ],
     TURRETS: [
         {
-            /**        SIZE X   Y  ANGLE ARC */
             POSITION: [2.5, 14, 0, 0,    360, 1],
             TYPE: 'assemblerDot'
         }
@@ -2747,14 +2745,14 @@ Class.helix = {
             POSITION: [20, 8, 0.75, 0, -5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: false}]}]
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             },
         },
         {
             POSITION: [20, 8, 0.75, 0, 5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: true}]}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             },
         },
         {
@@ -2850,7 +2848,7 @@ Class.triplex = {
         {
             POSITION: [18, 10, 0.7, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, g.desmos]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, {shudder: 0, spray: 0, size: 0.8}]),
                 TYPE: "bullet",
             },
         },
@@ -2858,14 +2856,14 @@ Class.triplex = {
             POSITION: [18, 10, 0.7, 0, 0, 45, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: "desmos"}]
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             },
         },
         {
             POSITION: [18, 10, 0.7, 0, 0, -45, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: true}]}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             },
         },
         {
@@ -2892,7 +2890,7 @@ Class.quadruplex = {
             POSITION: [20, 10, 0.8, 0, 0, 45, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {amplitude: 25}]}]
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
@@ -2905,7 +2903,7 @@ Class.quadruplex = {
             POSITION: [20, 10, 0.8, 0, 0, -45, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {amplitude: 25, invert: true}]}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             }
         },
         {
@@ -2918,7 +2916,7 @@ Class.quadruplex = {
             POSITION: [20, 10, 0.8, 0, 0, 135, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {period: 7, amplitude: 12.5}]}]
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
@@ -2931,7 +2929,7 @@ Class.quadruplex = {
             POSITION: [20, 10, 0.8, 0, 0, -135, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {period: 7, amplitude: 12.5, invert: true}]}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             }
         },
         {
