@@ -19,18 +19,18 @@ spawnUndergroundNatural = (tile, layeredSet, kind) => {
 },
 
 undergroundTick = tile => {
-    if (++tile.data.foodSpawnCooldown > c.FOOD_SPAWN_COOLDOWN_UNDERGROUND) {
-        if (tile.data.foodCount < c.FOOD_CAP_UNDERGROUND && Math.random() < c.FOOD_SPAWN_CHANCE_UNDERGROUND) {
-            spawnUndergroundNatural(tile, c.FOOD_TYPES_UNDERGROUND, 'food');
+    if (++tile.data.foodSpawnCooldown > Config.FOOD_SPAWN_COOLDOWN_UNDERGROUND) {
+        if (tile.data.foodCount < Config.FOOD_CAP_UNDERGROUND && Math.random() < Config.FOOD_SPAWN_CHANCE_UNDERGROUND) {
+            spawnUndergroundNatural(tile, Config.FOOD_TYPES_UNDERGROUND, 'food');
         }
     }
 },
 
 inkTick = tile => {
-    if (++tile.data.foodSpawnCooldown > c.FOOD_SPAWN_COOLDOWN_INK) {
+    if (++tile.data.foodSpawnCooldown > Config.FOOD_SPAWN_COOLDOWN_INK) {
         tile.data.foodSpawnCooldown = 0;
-        if (tile.data.foodCount < c.FOOD_CAP_INK && Math.random() < c.FOOD_SPAWN_CHANCE_INK) {
-            spawnNatural(tile, c.FOOD_TYPES_INK, 'food');
+        if (tile.data.foodCount < Config.FOOD_CAP_INK && Math.random() < Config.FOOD_SPAWN_CHANCE_INK) {
+            spawnNatural(tile, Config.FOOD_TYPES_INK, 'food');
         }
     }
 },
@@ -49,7 +49,7 @@ ink = new Tile({
     data: {
         allowMazeWallSpawn: true,
         foodSpawnCooldown: 0, foodCount: 0,
-        enemySpawnCooldown: -c.FOOD_SPAWN_COOLDOWN_INK, enemyCount: 0
+        enemySpawnCooldown: -Config.FOOD_SPAWN_COOLDOWN_INK, enemyCount: 0
     },
     tick: inkTick
 }),

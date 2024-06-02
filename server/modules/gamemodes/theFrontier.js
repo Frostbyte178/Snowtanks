@@ -167,7 +167,7 @@ function generateFrontierMaze(width, height) {
             }
             if (spawnWall) {
                 let o = new Entity({
-                    x: d.x + UNDERGROUND_START * c.TILE_WIDTH,
+                    x: d.x + UNDERGROUND_START * Config.TILE_WIDTH,
                     y: d.y
                 });
                 o.define(Class.towerMedium);
@@ -180,7 +180,7 @@ function generateFrontierMaze(width, height) {
         }
     }
 };
-c.UNDERGROUND_START = UNDERGROUND_START;
-c.TDM_END = TDM_END;
+Config.UNDERGROUND_START = UNDERGROUND_START;
+Config.TDM_END = TDM_END;
 
 module.exports = { generateFrontierMaze };
