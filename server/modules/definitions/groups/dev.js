@@ -1,4 +1,4 @@
-const { combineStats, menu, addAura, makeDeco, LayeredBoss, newWeapon, weaponArray, makeRadialAuto } = require('../facilitators.js');
+const { combineStats, menu, addAura, makeDeco, LayeredBoss, newWeapon, weaponArray, makeRadialAuto, makeTurret } = require('../facilitators.js');
 const { base, gunCalcNames, basePolygonDamage, basePolygonHealth, dfltskl, statnames } = require('../constants.js');
 const g = require('../gunvals.js');
 require('./tanks.js');
@@ -510,7 +510,7 @@ Class.alphaGunTest = {
 Class.radialAutoTest = makeRadialAuto("gunner", {
     count: 5,
     isTurret: false,
-    extraStats: [{spray: 4, speed: 1.4, maxSpeed: 1.4, recoil: 0.2}],
+    extraStats: {spray: 4, speed: 1.4, maxSpeed: 1.4, recoil: 0.2},
     turretIdentifier: "radialAutoTestTurret",
     size: 8,
     x: 10,
@@ -520,6 +520,15 @@ Class.radialAutoTest = makeRadialAuto("gunner", {
     rotation: 0.04,
     danger: 10,
 })
+Class.makeAutoTestTurret = makeTurret("ranger", {canRepel: true, limitFov: true, extraStats: {reload: 0.5}});
+Class.makeAutoTest = {
+    PARENT: 'genericTank',
+    LABEL: "Make Auto Test",
+    TURRETS: weaponArray({
+        POSITION: [8, 10, 0, 0, 180, 0],
+        TYPE: 'makeAutoTestTurret'
+    }, 3)
+}
 
 Class.imageShapeTest = {
     PARENT: 'genericTank',
@@ -968,7 +977,7 @@ Class.weaponArrayTest = {
 Class.levels = menu("Levels")
 Class.levels.UPGRADES_TIER_0 = []
 for (let i = 0; i < 12; i++) {
-    let LEVEL = i * c.TIER_MULTIPLIER;
+    let LEVEL = i * Config.TIER_MULTIPLIER;
     Class["level" + LEVEL] = {
         PARENT: "levels",
         LEVEL,
@@ -1254,4 +1263,4 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.eternals.UPGRADES_TIER_0 = ["odin", "kronos"]
         Class.devBosses.UPGRADES_TIER_0 = ["taureonBoss", "zephiBoss", "dogeiscutBoss", "trplnrBoss", "frostBoss", "toothlessBoss"]
 
-    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "imageShapeTest", "turretStatScaleTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
+    Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "makeAutoTest", "imageShapeTest", "turretStatScaleTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]

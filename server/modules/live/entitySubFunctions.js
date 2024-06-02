@@ -13,9 +13,9 @@ const skcnv = {
 
 let curvePoints = [];
 for (let i = 0; i < 256; i++) {
-    curvePoints.push(Math.log(4 * (i / c.MAX_SKILL) + 1) / 1.6);
+    curvePoints.push(Math.log(4 * (i / Config.MAX_SKILL) + 1) / 1.6);
 }
-let curve = x => curvePoints[x * c.MAX_SKILL];
+let curve = x => curvePoints[x * Config.MAX_SKILL];
 function apply(f, x) {
     return x < 0 ? 1 / (1 - x * f) : f * x + 1;
 }
@@ -25,7 +25,7 @@ class Skill {
         // Just skill stuff.
         this.raw = inital;
         this.caps = [];
-        this.setCaps([ c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL ]);
+        this.setCaps([ Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL ]);
         this.name = [
             "Reload",
             "Bullet Penetration",
@@ -72,7 +72,7 @@ class Skill {
         }
         let attrib = [];
         for (let i = 0; i < 10; i++) {
-            attrib[i] = curve(this.raw[i] / c.MAX_SKILL);
+            attrib[i] = curve(this.raw[i] / Config.MAX_SKILL);
         }
         this.rld = Math.pow(0.5, attrib[skcnv.rld]);
         this.pen = apply(2.5, attrib[skcnv.pen]);
@@ -82,9 +82,9 @@ class Skill {
         this.acl = apply(0.5, attrib[skcnv.rld]);
         this.rst = 0.5 * attrib[skcnv.str] + 2.5 * attrib[skcnv.pen];
         this.ghost = attrib[skcnv.pen];
-        this.shi = c.GLASS_HEALTH_FACTOR * apply(3 / c.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.shi]);
+        this.shi = Config.GLASS_HEALTH_FACTOR * apply(3 / Config.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.shi]);
         this.atk = apply(0.021, attrib[skcnv.atk]);
-        this.hlt = c.GLASS_HEALTH_FACTOR * apply(2 / c.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.hlt]);
+        this.hlt = Config.GLASS_HEALTH_FACTOR * apply(2 / Config.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.hlt]);
         this.mob = apply(0.8, attrib[skcnv.mob]);
         this.rgn = apply(25, attrib[skcnv.rgn]);
         this.brst = 0.3 * (0.5 * attrib[skcnv.atk] + 0.5 * attrib[skcnv.hlt] + attrib[skcnv.rgn]);
@@ -130,7 +130,7 @@ class Skill {
         return this.levelScore ? (this.score - this.deduction) / this.levelScore : 0;
     }
     get levelPoints() {
-        return this.LSPF ? this.LSPF(this.level) : c.LEVEL_SKILL_POINT_FUNCTION(this.level);
+        return this.LSPF ? this.LSPF(this.level) : Config.LEVEL_SKILL_POINT_FUNCTION(this.level);
     }
     cap(skill, real = false) {
         return this.caps[skcnv[skill]];

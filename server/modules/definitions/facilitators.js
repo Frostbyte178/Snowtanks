@@ -104,27 +104,6 @@ exports.dereference = type => {
 }
 
 // gun functions
-exports.makeMulti = (type, count, name = -1, startRotation = 0) => {
-    type = ensureIsClass(type);
-    let greekNumbers = ',Double ,Triple ,Quad ,Penta ,Hexa ,Septa ,Octo ,Nona ,Deca ,Hendeca ,Dodeca ,Trideca ,Tetradeca ,Pentadeca ,Hexadeca ,Septadeca ,Octadeca ,Nonadeca ,Icosa ,Henicosa ,Doicosa ,Triaicosa ,Tetraicosa ,Pentaicosa ,Hexaicosa ,Septaicosa ,Octoicosa ,Nonaicosa ,Triaconta '.split(','),
-        output = exports.dereference(type),
-        fraction = 360 / count;
-    output.GUNS = [];
-    for (let gun of type.GUNS) {
-        for (let i = 0; i < count; i++) {
-            let newgun = exports.dereference(gun);
-            if (Array.isArray(newgun.POSITION)) {
-                newgun.POSITION[5] += startRotation + fraction * i;
-            } else {
-                newgun.POSITION.ANGLE = (newgun.POSITION.ANGLE ?? 0) + startRotation + fraction * i;
-            }
-            if (gun.PROPERTIES) newgun.PROPERTIES = gun.PROPERTIES;
-            output.GUNS.push(newgun);
-        };
-    }
-    output.LABEL = name == -1 ? (greekNumbers[count - 1] || (count + ' ')) + type.LABEL : name;
-    return output;
-}
 exports.makeGuard = (type, name = -1) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type),
@@ -407,12 +386,14 @@ exports.makeDeco = (shape = 0, color = 16) => {
     };
 }
 exports.makeRadialAuto = (type, options = {}) => {
-    
 
     /*
+    - type: what turret (or regular Class) to use as the radial auto
+
     Available options:
     - count: number of turrets
-    - turret: what turret definition to use (leave null to make a new turret), overrides the `type` parameter
+    - isTurret: whether or not the `type` is a turret already (if this option is `false`, the `type` is assumed to
+        not be a turret and the faciliator will create a new turret modeled after the `type`)
     - extraStats: extra stats to append to all turret barrels, on top of g.autoTurret
     - turretIdentifier: Class[turretIdentifier] to refer to the turret in other uses if necessary
     - size: turret size
@@ -433,13 +414,16 @@ exports.makeRadialAuto = (type, options = {}) => {
         type = exports.dereference(ensureIsClass(type));
 
         let extraStats = options.extraStats ?? [];
+        if (!Array.isArray(extraStats)) {
+            extraStats = [extraStats];
+        }
         turretIdentifier = options.turretIdentifier ?? `auto${type.LABEL}Gun`;
 
         Class[turretIdentifier] = {
             PARENT: 'genericTank',
             LABEL: "",
             BODY: {
-                FOV: 3,
+                FOV: 2,
             },
             CONTROLLERS: ["canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster"],
             COLOR: "grey",
@@ -472,6 +456,58 @@ exports.makeRadialAuto = (type, options = {}) => {
             POSITION: [turretSize, turretX, 0, turretAngle, turretArc, 0],
             TYPE: turretIdentifier
         }, count)
+    }
+}
+exports.makeTurret = (type, options = {}) => {
+
+    /*
+    - type: what Class to turn into an auto turret
+    
+    Available options:
+    - canRepel: whether or not the auto turret can fire backwards with secondary fire
+    - limitFov: whether or not the auto turret should bother to try to limit its FOV arc
+    - hasAI: whether or not the auto turret can think and shoot on its own
+    - extraStats: array of stats to append onto the shoot settings of all of the turret's guns
+    - label: turret label
+    - color: turret color
+    - fov: turret FOV
+    - independent: turret independence
+    */
+
+    type = exports.dereference(ensureIsClass(type));
+
+    let CONTROLLERS = [];
+    if (options.canRepel) { // default false
+        CONTROLLERS.push("canRepel", "mapAltToFire");
+    }
+    if (options.limitFov) { // default false
+        CONTROLLERS.push("onlyAcceptInArc");
+    }
+    if (options.hasAI ?? true) { // default true
+        CONTROLLERS.push("nearestDifferentMaster");
+    }
+
+    let GUNS = type.GUNS;
+    let extraStats = options.extraStats ?? [];
+    if (!Array.isArray(extraStats)) {
+        extraStats = [extraStats];
+    }
+    for (let gun of GUNS) {
+        if (!gun.PROPERTIES) continue;
+        if (!gun.PROPERTIES.SHOOT_SETTINGS) continue;
+
+        gun.PROPERTIES.SHOOT_SETTINGS = exports.combineStats([gun.PROPERTIES.SHOOT_SETTINGS, g.autoTurret, ...extraStats])
+    }
+
+    return {
+        PARENT: 'genericTank',
+        LABEL: options.label ?? "",
+        COLOR: options.color ?? "grey",
+        BODY: { FOV: options.fov ?? 2 },
+        INDEPENDENT: options.independent ?? false,
+        CONTROLLERS,
+        GUNS,
+        TURRETS: type.TURRETS,
     }
 }
 exports.addAura = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) => {
@@ -586,7 +622,7 @@ class LayeredBoss {
             SHAPE: this.shape,
             COLOR: -1,
             INDEPENDENT: true,
-            CONTROLLERS: [["spin", { independent: true, speed: 0.02 / c.runSpeed * (this.layerID % 2 ? -1 : 1) }]],
+            CONTROLLERS: [["spin", { independent: true, speed: 0.02 / Config.runSpeed * (this.layerID % 2 ? -1 : 1) }]],
             MAX_CHILDREN, 
             GUNS: [],
             TURRETS: [],
@@ -617,9 +653,166 @@ class LayeredBoss {
 }
 exports.LayeredBoss = LayeredBoss;
 
-//unfinished lolo
-exports.makeLabyrinthShape = (type) => {
-    let output = exports.dereference(type);
-    let downscale = Math.max(output.SHAPE, 3);
-    return output;
+// Food facilitators
+exports.makeRelic = (type, scale = 1, gem, SIZE) => {
+    // Code by Damocles (https://discord.com/channels/366661839620407297/508125275675164673/1090010998053818488)
+    // Albeit heavily modified because the math in the original didn't work LOL
+    type = ensureIsClass(type);
+    let relicCasing = {
+        PARENT: 'genericEntity',
+        LABEL: 'Relic Casing',
+        LEVEL_CAP: 45,
+        COLOR: type.COLOR,
+        MIRROR_MASTER_ANGLE: true,
+        SHAPE: [[-0.4,-1],[0.4,-0.25],[0.4,0.25],[-0.4,1]].map(r => r.map(s => s * scale))
+    }, relicBody = {
+        PARENT: 'genericEntity',
+        LABEL: 'Relic Mantle',
+        LEVEL_CAP: 45,
+        COLOR: type.COLOR,
+        MIRROR_MASTER_ANGLE: true,
+        SHAPE: type.SHAPE
+    };
+    Class[Math.random().toString(36)] = relicCasing;
+    Class[Math.random().toString(36)] = relicBody;
+    let width = 6 * scale,
+        y = 8.25 + ((scale % 1) * 5),
+        isEgg = type.SHAPE == 0,
+        casings = isEgg ? 8 : type.SHAPE,
+        fraction = 360 / casings,
+        GUNS = [],
+        TURRETS = [{ POSITION: [32.5, 0, 0, 0, 0, 0], TYPE: relicBody }],
+        PARENT = [type],
+        additionalAngle = type.SHAPE % 2 === 0 ? 0 : fraction / 2;
+
+    if (SIZE) {
+        PARENT.push({ SIZE });
+    }
+
+    for (let i = 0; i < casings; i++) {
+        let angle = i * fraction,
+            gunAngle = angle + additionalAngle;
+        if (isEgg) {
+            GUNS.push({
+                POSITION: [4, width, 2.5, 12,  0, gunAngle, 0]
+            });
+            TURRETS.push({
+                POSITION: [8, -15,  0, angle, 0, 1],
+                TYPE: relicCasing
+            });
+        } else {
+            GUNS.push({
+                POSITION: [4, width, 2.5, 12,  y, gunAngle, 0]
+            });
+            GUNS.push({
+                POSITION: [4, width, 2.5, 12, -y, gunAngle, 0]
+            });
+            TURRETS.push({
+                POSITION: [8, -15,  y, angle, 0, 1],
+                TYPE: relicCasing
+            });
+            TURRETS.push({
+                POSITION: [8, -15, -y, angle, 0, 1],
+                TYPE: relicCasing
+            });
+        }
+    }
+
+    if (gem) {
+        TURRETS.push({
+            POSITION: [8, 0, 0, 0, 0, 1],
+            TYPE: [gem, { MIRROR_MASTER_ANGLE: true }]
+        });
+    }
+
+    return {
+        PARENT,
+        LABEL: type.LABEL + ' Relic',
+        COLOR: "white", // This is the color of the floor, this makes it look hollow.
+        BODY: {
+            ACCELERATION: 0.001
+        },
+        CONTROLLERS: [],
+        VALUE: type.VALUE * 100_000,
+        GUNS,
+        TURRETS
+    };
+}
+
+exports.makeCrasher = type => ({
+    PARENT: type,
+    COLOR: 'pink',
+    TYPE: "crasher",
+    LABEL: 'Crasher ' + type.LABEL,
+    CONTROLLERS: ['nearestDifferentMaster', 'mapTargetToGoal'],
+    MOTION_TYPE: "motor",
+    FACING_TYPE: "smoothWithMotion",
+    HITS_OWN_TYPE: "hard",
+    HAS_NO_MASTER: true,
+    BODY: {
+        SPEED: 1 + 5 / Math.max(2, type.TURRETS.length + type.SHAPE),
+        ACCELERATION: 5,
+        PUSHABILITY: 0.5,
+        DENSITY: 10,
+        RESIST: 2,
+    },
+    AI: {
+        NO_LEAD: true,
+    }
+})
+
+exports.makeRare = (type, level) => {
+    type = ensureIsClass(type);
+    return {
+        PARENT: "food",
+        LABEL: ["Shiny", "Legendary", "Shadow", "Rainbow", "Trans"][level] + " " + type.LABEL,
+        VALUE: [100, 500, 2000, 4000, 5000][level] * type.VALUE,
+        SHAPE: type.SHAPE,
+        SIZE: type.SIZE + level,
+        COLOR: ["lightGreen", "teal", "darkGrey", "rainbow", "trans"][level],
+        ALPHA: level == 2 ? 0.25 : 1,
+        BODY: {
+            DAMAGE: type.BODY.DAMAGE + level,
+            DENSITY: type.BODY.DENSITY + level,
+            HEALTH: [10, 20, 40, 80, 100][level] * type.BODY.HEALTH,
+            PENETRATION: type.BODY.PENETRATION + level,
+            ACCELERATION: type.BODY.ACCELERATION
+        },
+        DRAW_HEALTH: true,
+        INTANGIBLE: false,
+        GIVE_KILL_MESSAGE: true,
+    }
+}
+
+exports.makeLaby = (type, level, baseScale = 1) => {
+    type = ensureIsClass(type);
+    let usableSHAPE = Math.max(type.SHAPE, 3),
+        downscale = Math.cos(Math.PI / usableSHAPE),
+        strengthMultiplier = 6 ** level;
+    return {
+        PARENT: "food",
+        LABEL: ["", "Beta ", "Alpha ", "Omega ", "Gamma ", "Delta "][level] + type.LABEL,
+        VALUE: type.VALUE * strengthMultiplier,
+        SHAPE: type.SHAPE,
+        SIZE: type.SIZE * baseScale / downscale ** level,
+        COLOR: type.COLOR,
+        ALPHA: type.ALPHA ?? 1,
+        BODY: {
+            DAMAGE: type.BODY.DAMAGE,
+            DENSITY: type.BODY.DENSITY,
+            HEALTH: type.BODY.HEALTH * strengthMultiplier,
+            PENETRATION: type.BODY.PENETRATION,
+            PUSHABILITY: (type.BODY.PUSHABILITY / (level + 1)) || 0,
+            ACCELERATION: type.BODY.ACCELERATION
+        },
+        INTANGIBLE: type.INTANGIBLE,
+        VARIES_IN_SIZE: false,
+        DRAW_HEALTH: type.DRAW_HEALTH,
+        GIVE_KILL_MESSAGE: type.GIVE_KILL_MESSAGE || level > 1,
+        GUNS: type.GUNS ?? [],
+        TURRETS: [...(type.TURRETS ? type.TURRETS : []), ...Array(level).fill().map((_, i) => ({
+            POSITION: [20 * downscale ** (i + 1), 0, 0, !(i & 1) ? 180 / usableSHAPE : 0, 0, 1],
+            TYPE: [type, { COLOR: -1, MIRROR_MASTER_ANGLE: true }]
+        }))]
+    };
 }

@@ -2533,7 +2533,7 @@ class io_nearestDifferentMaster2 extends ioTypes.nearestDifferentMaster {
             this.tick = 100;
         }
         // Think damn hard
-        if (this.tick++ > 15 * c.runSpeed) {
+        if (this.tick++ > 15 * Config.runSpeed) {
             this.tick = 0;
             this.validTargets = this.buildList(range);
             // Ditch our old target if it's invalid

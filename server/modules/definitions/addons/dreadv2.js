@@ -68,8 +68,11 @@ const buildHexnoughts = true;
 // Set the below variable to true to enable photosphere with 10 auras instead of 6.
 const useOldPhotosphere = false;
 
-// For hexnought merging
-const hexnoughtScaleFactor = 0.9;
+// Hexnought scaling
+const outerTurretScale = 0.9;
+const centerTurretScale = 1;
+const weaponLengthRemoval = 0.1;
+const weaponWidthScale = 0.8;
 
 // Misc
 Class.genericDreadnoughtOfficialV2 = {
@@ -768,7 +771,7 @@ Class.infiltratorOfficialV2 = {
 		{
 			POSITION: [5, 6, 1.4, 6, 5.5, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, {maxSpeed: 0.9, size: 1.5, reload: 0.9}]),
+				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, {maxSpeed: 0.9, size: 1.5, reload: 1.4}]),
 				TYPE: "drone",
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
@@ -779,7 +782,7 @@ Class.infiltratorOfficialV2 = {
 		}, {
 			POSITION: [5, 6, 1.4, 6, -5.5, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, {maxSpeed: 0.9, size: 1.5, reload: 0.9}]),
+				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, {maxSpeed: 0.9, size: 1.5, reload: 1.4}]),
 				TYPE: "drone",
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
@@ -790,7 +793,7 @@ Class.infiltratorOfficialV2 = {
 		}, {
 			POSITION: [5, 6, 1.4, 8, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, g.pounder, {damage: 0.85, maxSpeed: 0.9, size: 2, reload: 0.8}]),
+				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, g.pounder, {damage: 0.85, maxSpeed: 0.9, size: 2, reload: 1.4}]),
 				TYPE: "betadrone",
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
@@ -1308,7 +1311,7 @@ Class.raiderOfficialV2 = {
 	LABEL: "Raider",
 	GUNS: weaponArray([
 		{
-			POSITION: [4, 5, 2.1, 8, 3.25, 0, 0],
+			POSITION: [4, 5, 2.1, 8, 3, 0, 0],
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, {damage: 0.9, health: 0.75, maxSpeed: 0.9, size: 1.5, reload: 1.2}]),
 				TYPE: "drone",
@@ -1319,7 +1322,7 @@ Class.raiderOfficialV2 = {
 				WAIT_TO_CYCLE: true,
 			},
 		}, {
-			POSITION: [4, 5, 2.1, 8, -3.25, 0, 0],
+			POSITION: [4, 5, 2.1, 8, -3, 0, 0],
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, {damage: 0.9, health: 0.75, maxSpeed: 0.9, size: 1.5, reload: 1.2}]),
 				TYPE: "drone",
@@ -1332,7 +1335,7 @@ Class.raiderOfficialV2 = {
 		}, {
 			POSITION: [6, 6.5, 1.4, 8, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, g.pounder, {damage: 1.04, maxSpeed: 0.9, size: 2, reload: 1.05}]),
+				SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.overseer, g.pounder, {damage: 1.04, maxSpeed: 0.9, size: 2, reload: 1.2}]),
 				TYPE: "betadrone",
 				MAX_CHILDREN: 1,
 				AUTOFIRE: true,
@@ -1414,7 +1417,7 @@ Class.gladiatorOfficialV2 = {
 	LABEL: "Gladiator",
 	GUNS: weaponArray([
 		{
-			POSITION: [4.75, 12, 1, 10, 0, 0, 0],
+			POSITION: [5, 12, 1, 10, 0, 0, 0],
 		}, {
 			POSITION: [1.5, 13, 1, 14.75, 0, 0, 0],
 			PROPERTIES: {
@@ -2106,12 +2109,22 @@ function mergeHexnoughtWeaponV2(weapon1, weapon2) {
 
 	// Scale to fit size constraints
 	for (let g in gunsOnOneSide) {
-		gunsOnOneSide[g].POSITION[1] *= hexnoughtScaleFactor ** 2;
-		gunsOnOneSide[g].POSITION[4] *= hexnoughtScaleFactor ** 2;
+		let outerLength = gunsOnOneSide[g].POSITION[0] + gunsOnOneSide[g].POSITION[3] - 9.3; // length + x - 9.3
+		if (gunsOnOneSide[g].POSITION[0] >= outerLength) {
+			gunsOnOneSide[g].POSITION[0] -= outerLength * weaponLengthRemoval; // length
+		} else {
+			gunsOnOneSide[g].POSITION[0] *= weaponWidthScale; // length
+			gunsOnOneSide[g].POSITION[3] -= outerLength * weaponLengthRemoval; // x instead of length if barrel deco
+		}
+		gunsOnOneSide[g].POSITION[1] *= weaponWidthScale; // width
+		let aspect = gunsOnOneSide[g].POSITION[2];
+		aspect = aspect - (aspect - (aspect > 0 ? 1 : -1)) * 0.2;
+		gunsOnOneSide[g].POSITION[2] = aspect; // aspect
+		gunsOnOneSide[g].POSITION[4] *= weaponWidthScale; // y
 	}
 
 	for (let t in turretsOnOneSide) {
-		turretsOnOneSide[t].POSITION[0] *= hexnoughtScaleFactor ** 2;
+		turretsOnOneSide[t].POSITION[0] *= weaponWidthScale; // size
 	}
 
 	for (let i = 0; i < 3; i++) {
@@ -2173,7 +2186,7 @@ function makeHexnoughtBodyV2(body) {
 						turret = body.TURRETS[t + i * 5 + 1];
 						TURRETS.push(
 							{
-								POSITION: [turret.POSITION[0] * hexnoughtScaleFactor, turret.POSITION[1] * hexnoughtScaleFactor ** 0.5, turret.POSITION[2], turret.POSITION[3] / 6 * 5 + 60 * j, turret.POSITION[4], turret.POSITION[5]],
+								POSITION: [turret.POSITION[0] * outerTurretScale, turret.POSITION[1], turret.POSITION[2], turret.POSITION[3] / 6 * 5 + 60 * j, turret.POSITION[4], turret.POSITION[5]],
 								TYPE: turret.TYPE,
 							}
 						)
@@ -2183,7 +2196,7 @@ function makeHexnoughtBodyV2(body) {
 			} else { // Centered turrets
 				TURRETS.push(
 					{
-						POSITION: [turret.POSITION[0] * hexnoughtScaleFactor ** 0.5, 0, 0, turret.POSITION[3], turret.POSITION[4], turret.POSITION[5]],
+						POSITION: [turret.POSITION[0] * centerTurretScale, 0, 0, turret.POSITION[3], turret.POSITION[4], turret.POSITION[5]],
 						TYPE: turret.TYPE,
 					}
 				) 

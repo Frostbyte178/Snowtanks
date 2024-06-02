@@ -46,7 +46,7 @@ class Group {
 const addMember = (socket, party = -1) => {
     let group = activeGroups.find(entry => entry.members.length < entry.size);
     if (party !== -1) group = activeGroups.find(entry => (entry.teamID === party / room.partyHash && entry.members.length < entry.size));
-    if (!group) group = new Group(c.GROUPS || 0);
+    if (!group) group = new Group(Config.GROUPS || 0);
     group.addMember(socket);
 };
 

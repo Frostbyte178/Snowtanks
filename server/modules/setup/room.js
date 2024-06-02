@@ -1,6 +1,6 @@
 let importedRoom = [];
 
-for (let filename of c.ROOM_SETUP) {
+for (let filename of Config.ROOM_SETUP) {
     let currentRoom = require(`./rooms/${filename}.js`);
     for (let y = 0; y < currentRoom.length; y++) {
         for (let x = 0; x < currentRoom[0].length; x++) {
@@ -29,19 +29,19 @@ global.room = {
 };
 
 Object.defineProperties(room, {
-    tileWidth: { get: () => c.TILE_WIDTH, set: v => c.TILE_WIDTH = v },
-    tileHeight: { get: () => c.TILE_HEIGHT, set: v => c.TILE_HEIGHT = v },
-    width: { get: () => room.xgrid * c.TILE_WIDTH, set: v => c.TILE_WIDTH = v / room.xgrid },
-    height: { get: () => room.ygrid * c.TILE_HEIGHT, set: v => c.TILE_HEIGHT = v / room.ygrid }
+    tileWidth: { get: () => Config.TILE_WIDTH, set: v => Config.TILE_WIDTH = v },
+    tileHeight: { get: () => Config.TILE_HEIGHT, set: v => Config.TILE_HEIGHT = v },
+    width: { get: () => room.xgrid * Config.TILE_WIDTH, set: v => Config.TILE_WIDTH = v / room.xgrid },
+    height: { get: () => room.ygrid * Config.TILE_HEIGHT, set: v => Config.TILE_HEIGHT = v / room.ygrid }
 });
 
 Object.defineProperties(room.center, {
-    x: { get: () => room.xgrid * c.TILE_WIDTH / 2, set: v => c.TILE_WIDTH = v * 2 / room.xgrid },
-    y: { get: () => room.ygrid * c.TILE_HEIGHT / 2, set: v => c.TILE_HEIGHT = v * 2 / room.ygrid }
+    x: { get: () => room.xgrid * Config.TILE_WIDTH / 2, set: v => Config.TILE_WIDTH = v * 2 / room.xgrid },
+    y: { get: () => room.ygrid * Config.TILE_HEIGHT / 2, set: v => Config.TILE_HEIGHT = v * 2 / room.ygrid }
 });
 
 room.isInRoom = location => {
-    if (c.ARENA_TYPE === "circle") {
+    if (Config.ARENA_TYPE === "circle") {
         return (location.x - room.center.x) ** 2 + (location.y - room.center.y) ** 2 < room.center.x ** 2;
     }
     return location.x >= 0 && location.x <= room.width && location.y >= 0 && location.y <= room.height;
@@ -54,7 +54,7 @@ room.near = function(position, radius) {
     };
 };
 room.random = function() {
-    return c.ARENA_TYPE === "circle" ? room.near(room.center, room.center.x) : {
+    return Config.ARENA_TYPE === "circle" ? room.near(room.center, room.center.x) : {
         x: ran.irandom(room.width),
         y: ran.irandom(room.height)
     };

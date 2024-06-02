@@ -4,7 +4,7 @@ function checkWin() {
     if (won) return;
     let all = 0,
         teams = {};
-    for (let i = 1; i <= c.TEAMS; i++) {
+    for (let i = 1; i <= Config.TEAMS; i++) {
         teams[-i] = 0;
     }
     for (let i = 0; i < entities.length; i++) {
@@ -30,7 +30,7 @@ function checkWin() {
 function init(g) {
     g.events.on('spawn', entity => {
         entity.on('dead', () => {
-            if (!c.TAG || !entity.isPlayer && !entity.isBot) return;
+            if (!Config.TAG || !entity.isPlayer && !entity.isBot) return;
             let killers = [];
             for (let entry of entity.collisionArray) {
                 if (isPlayerTeam(entry.team) && entity.team !== entry.team) {

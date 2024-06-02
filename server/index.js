@@ -20,7 +20,7 @@ Array.prototype.remove = function (index) {
 
 //console window title
 // https://stackoverflow.com/questions/29548477/how-do-you-set-the-terminal-tab-title-from-node-js
-process.stdout.write(String.fromCharCode(27) + "]0;" + c.WINDOW_NAME + String.fromCharCode(7));
+process.stdout.write(String.fromCharCode(27) + "]0;" + Config.WINDOW_NAME + String.fromCharCode(7));
 
 util.log(room.width + " x " + room.height + " room initalized.");
 
@@ -275,9 +275,9 @@ let maintainloop = () => {
             instance.health.regenerate(instance.shield.max && instance.shield.max === instance.shield.amount);
         }
     }
-    if (!naturallySpawnedBosses.length && bossTimer++ > c.BOSS_SPAWN_COOLDOWN) {
-        bossTimer = -c.BOSS_SPAWN_DURATION;
-        let selection = c.BOSS_TYPES[ran.chooseChance(...c.BOSS_TYPES.map((selection) => selection.chance))],
+    if (!naturallySpawnedBosses.length && bossTimer++ > Config.BOSS_SPAWN_COOLDOWN) {
+        bossTimer = -Config.BOSS_SPAWN_DURATION;
+        let selection = Config.BOSS_TYPES[ran.chooseChance(...Config.BOSS_TYPES.map((selection) => selection.chance))],
             amount = ran.chooseChance(...selection.amount) + 1;
         if (selection.message) {
             sockets.broadcast(selection.message);
@@ -303,25 +303,25 @@ let maintainloop = () => {
             }
 
             sockets.broadcast(`${util.listify(names)} ${names.length == 1 ? 'has' : 'have'} arrived!`);
-        }, c.BOSS_SPAWN_DURATION * 30);
+        }, Config.BOSS_SPAWN_DURATION * 30);
     }
 
     // upgrade existing ones
     for (let i = 0; i < bots.length; i++) {
         let o = bots[i];
-        if (o.skill.level < c.LEVEL_CAP) {
-            o.skill.score += c.BOT_XP;
+        if (o.skill.level < Config.LEVEL_CAP) {
+            o.skill.score += Config.BOT_XP;
         }
         o.skill.maintain();
-        o.skillUp([ "atk", "hlt", "spd", "str", "pen", "dam", "rld", "mob", "rgn", "shi" ][ran.chooseChance(...c.BOT_SKILL_UPGRADE_CHANCES)]);
+        o.skillUp([ "atk", "hlt", "spd", "str", "pen", "dam", "rld", "mob", "rgn", "shi" ][ran.chooseChance(...Config.BOT_SKILL_UPGRADE_CHANCES)]);
         if (o.leftoverUpgrades && o.upgrade(ran.irandomRange(0, o.upgrades.length))) {
             o.leftoverUpgrades--;
         }
     }
 
     // then add new bots if arena is open
-    if (!global.arenaClosed && bots.length < c.BOTS) {
-        let team = c.MODE === "tdm" ? getWeakestTeam() : undefined,
+    if (!global.arenaClosed && bots.length < Config.BOTS) {
+        let team = Config.MODE === "tdm" ? getWeakestTeam() : undefined,
             limit = 20, // give up after 20 attempts and just pick whatever is currently chosen
             loc;
         do {
@@ -329,13 +329,13 @@ let maintainloop = () => {
         } while (limit-- && dirtyCheck(loc, 50))
         let o = new Entity(loc);
         o.define('bot');
-        o.define(c.SPAWN_CLASS);
+        o.define(Config.SPAWN_CLASS);
         o.refreshBodyAttributes();
-        o.skill.score = c.BOT_START_XP;
+        o.skill.score = Config.BOT_START_XP;
         o.isBot = true;
         o.name = Config.BOT_NAME_PREFIX + ran.chooseBotName();
-        o.leftoverUpgrades = ran.chooseChance(...c.BOT_CLASS_UPGRADE_CHANCES);
-        let color = c.RANDOM_COLORS ? Math.floor(Math.random() * 20) : team ? getTeamColor(team) : "darkGrey";
+        o.leftoverUpgrades = ran.chooseChance(...Config.BOT_CLASS_UPGRADE_CHANCES);
+        let color = Config.RANDOM_COLORS ? Math.floor(Math.random() * 20) : team ? getTeamColor(team) : "darkGrey";
         o.color.base = color;
         if (team) o.team = team;
         bots.push(o);
@@ -344,7 +344,7 @@ let maintainloop = () => {
 };
 
 //evaluating js with a seperate console window if enabled
-if (c.REPL_WINDOW) {
+if (Config.REPL_WINDOW) {
     util.log('Starting REPL Terminal.');
     //TODO: figure out how to spawn a seperate window and put the REPL stdio in there instead
     //let { stdin, stdout, stderr } = (require('child_process').spawn("cmd.exe", ["/c", "node", "blank.js"], { detached: true }));
@@ -358,7 +358,7 @@ setInterval(() => {
     gamemodeLoop();
     roomLoop();
 
-    if (counter++ / c.runSpeed > 30) {
+    if (counter++ / Config.runSpeed > 30) {
         chatLoop();
         maintainloop();
         speedcheckloop();

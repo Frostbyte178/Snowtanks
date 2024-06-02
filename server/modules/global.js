@@ -35,7 +35,7 @@ global.getTeamColor = team => ([10, 11, 12, 15, 25, 26, 27, 28][-team - 1] || 3)
 global.isPlayerTeam = team => /*team < 0 && */team > -9;
 global.getWeakestTeam = () => {
     let teamcounts = {};
-    for (let i = -c.TEAMS; i < 0; i++) {
+    for (let i = -Config.TEAMS; i < 0; i++) {
         teamcounts[i] = 0;
     }
     for (let o of entities) {
@@ -49,7 +49,7 @@ global.getWeakestTeam = () => {
     teamcounts = Object.entries(teamcounts);
     let lowestTeamCount = Math.min(...teamcounts.map(x => x[1])),
         entries = teamcounts.filter(a => a[1] == lowestTeamCount);
-    return parseInt(!entries.length ? -Math.ceil(Math.random() * c.TEAMS) : ran.choose(entries)[0]);
+    return parseInt(!entries.length ? -Math.ceil(Math.random() * Config.TEAMS) : ran.choose(entries)[0]);
 };
 
 global.Tile = class Tile {
@@ -88,7 +88,7 @@ function TO_SCREAMING_SNAKE_CASE(TEXT) {
     }
 }
 
-global.c = new Proxy(new EventEmitter(), {
+global.Config = new Proxy(new EventEmitter(), {
     get (obj, prop) {
         return obj[TO_SCREAMING_SNAKE_CASE(prop)];
     },
@@ -108,14 +108,13 @@ global.c = new Proxy(new EventEmitter(), {
         }
     }
 });
-global.c.port = process.env.PORT;
-global.Config = global.c;
+global.Config.port = process.env.PORT;
 
 for (let [key, value] of Object.entries(require('./setup/config.js'))) {
     if (key in EventEmitter.prototype) {
         util.warn(`Configuration contains "${key}", which is in 'EventEmitter.prototype' and its value is therefore discarded.`);
     } else {
-        global.c[key] = value;
+        global.Config[key] = value;
     }
 }
 

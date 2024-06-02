@@ -18,12 +18,12 @@
 
 ::-webkit-scrollbar-track {
     border-radius: 3px;
-    background: rgba(0, 0, 0, 0.15);
+    background: oklch(0% 0 0 / 15%);
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 3px;
-    background: rgba(0, 0, 0, 0.3);
+    background: oklch(0% 0 0 / 30%);
 }
 
 html,
@@ -40,7 +40,7 @@ body {
 body {
     font-family: Ubuntu;
     font-size: 14px;
-    background-image: url('./osa_background_tile.png');
+    background-image: url('./backgroundTile.png');
     background-repeat: repeat;
     background-color: gray;
 }
@@ -186,7 +186,7 @@ div {
     overflow-y: scroll;
     scroll-behavior: smooth;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.15);
+    scrollbar-color: oklch(0% 0 0 / 30%) oklch(0% 0 0 / 15%);
 }
 
 .serverSelector tr {
@@ -270,7 +270,7 @@ table {
 }
 
 #startMenuSlidingTrigger:hover {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 1px 2px oklch(0% 0 0 / 25%);
 }
 
 update {
@@ -296,7 +296,7 @@ update {
     padding: 5px 20px 10px;
     overflow: hidden auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.15);
+    scrollbar-color: oklch(0% 0 0 / 30%) oklch(0% 0 0 / 15%);
 }
 
 #patchNotes div {
@@ -307,7 +307,7 @@ update {
     }
 
     > date {
-        color: rgba(0, 0, 0, 0.45);
+        color: oklch(0% 0 0 / 45%);
         font-style: italic;
     }
 

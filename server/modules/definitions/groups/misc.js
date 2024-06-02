@@ -1,8 +1,8 @@
-const { combineStats, skillSet, makeAuto, weaponArray, makeMulti } = require('../facilitators.js');
-const { base, statnames, gunCalcNames, dfltskl, smshskl } = require('../constants.js');
+const { combineStats, skillSet, makeAuto, weaponArray } = require('../facilitators.js')
+const { base, statnames, gunCalcNames, dfltskl, smshskl } = require('../constants.js')
 require('./generics.js')
-require('./tanks.js');
-const g = require('../gunvals.js');
+require('./tanks.js')
+const g = require('../gunvals.js')
 
 // OBSTACLES
 Class.rock = {

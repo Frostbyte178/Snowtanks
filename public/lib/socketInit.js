@@ -970,8 +970,6 @@ const socketInit = port => {
                 global.updateTimes++; // metrics
                 break;
             case "b":
-                global.FFA = m[0];
-                m.shift();
                 convert.begin(m);
                 convert.broadcast();
                 break;

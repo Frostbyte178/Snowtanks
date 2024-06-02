@@ -251,7 +251,7 @@ class Canvas {
                     global.clearUpgrades();
                 } else {
                     let upgradeIndex = global.clickables.upgrade.check(mpos);
-                    if (upgradeIndex !== -1) this.socket.talk('U', upgradeIndex, parseInt(gui.upgrades[upgradeIndex][0]));
+                    if (upgradeIndex !== -1 && upgradeIndex < gui.upgrades.length) this.socket.talk('U', upgradeIndex, parseInt(gui.upgrades[upgradeIndex][0]));
                     else this.socket.cmd.set(primaryFire, true);
                 }
                 break;

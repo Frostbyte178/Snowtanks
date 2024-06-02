@@ -510,7 +510,7 @@ class io_nearestDifferentMaster extends IO {
             this.tick = 100;
         }
         // Think damn hard
-        if (this.tick++ > 15 * c.runSpeed) {
+        if (this.tick++ > 15 * Config.runSpeed) {
             this.tick = 0;
             this.validTargets = this.buildList(range);
             // Ditch our old target if it's invalid
@@ -717,7 +717,7 @@ class io_spin extends IO {
             this.a = Math.atan2(input.target.y, input.target.x);
             return input;
         }
-        this.a += this.speed / c.runSpeed;
+        this.a += this.speed / Config.runSpeed;
         let offset = (this.independent && this.body.bond != null) ? this.body.bound.angle : 0;
         return {
             target: {
@@ -837,7 +837,7 @@ class io_formulaTarget extends IO {
         //     this.originAngle = this.masterAngle ? b.master.facing : getTheGunThatSpawnedMe("how do i do that????").angle;
         // }
 
-        let angle = this.originAngle + this.formula(this.frame += 1 / c.runSpeed, this.body);
+        let angle = this.originAngle + this.formula(this.frame += 1 / Config.runSpeed, this.body);
         return {
             goal: {
                 x: this.body.x + Math.sin(angle),
@@ -930,7 +930,7 @@ class io_snake extends IO {
         this.body.x = util.lerp(this.body.x, this.startX + trueWaveX, this.velocityMagnitude);
         this.body.y = util.lerp(this.body.y, this.startY + trueWaveY, this.velocityMagnitude);
         // Accelerate after spawning
-        this.velocityMagnitude = Math.min(1, this.velocityMagnitude + 0.018 / c.runSpeed)
+        this.velocityMagnitude = Math.min(1, this.velocityMagnitude + 0.018 / Config.runSpeed)
     }
 }
 

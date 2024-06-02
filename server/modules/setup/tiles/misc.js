@@ -23,27 +23,27 @@ normal = new Tile({
     },
     init: tile => room.spawnableDefault.push(tile),
     tick: tile => {
-        if (++tile.data.foodSpawnCooldown > c.FOOD_SPAWN_COOLDOWN) {
+        if (++tile.data.foodSpawnCooldown > Config.FOOD_SPAWN_COOLDOWN) {
             tile.data.foodSpawnCooldown = 0;
-            if (tile.data.foodCount < c.FOOD_CAP && Math.random() < c.FOOD_SPAWN_CHANCE) {
-                spawnNatural(tile, c.FOOD_TYPES, 'food');
+            if (tile.data.foodCount < Config.FOOD_CAP && Math.random() < Config.FOOD_SPAWN_CHANCE) {
+                spawnNatural(tile, Config.FOOD_TYPES, 'food');
             }
         }
     }
 }),
 
 nestTick = tile => {
-    if (++tile.data.enemySpawnCooldown > c.ENEMY_SPAWN_COOLDOWN_NEST) {
+    if (++tile.data.enemySpawnCooldown > Config.ENEMY_SPAWN_COOLDOWN_NEST) {
         tile.data.enemySpawnCooldown = 0;
-        if (tile.data.enemyCount < c.ENEMY_CAP_NEST && Math.random() < c.ENEMY_SPAWN_CHANCE_NEST) {
-            spawnNatural(tile, c.ENEMY_TYPES_NEST, 'enemy');
+        if (tile.data.enemyCount < Config.ENEMY_CAP_NEST && Math.random() < Config.ENEMY_SPAWN_CHANCE_NEST) {
+            spawnNatural(tile, Config.ENEMY_TYPES_NEST, 'enemy');
         }
     }
 
-    if (++tile.data.foodSpawnCooldown > c.FOOD_SPAWN_COOLDOWN_NEST) {
+    if (++tile.data.foodSpawnCooldown > Config.FOOD_SPAWN_COOLDOWN_NEST) {
         tile.data.foodSpawnCooldown = 0;
-        if (tile.data.foodCount < c.FOOD_CAP_NEST && Math.random() < c.FOOD_SPAWN_CHANCE_NEST) {
-            spawnNatural(tile, c.FOOD_TYPES_NEST, 'food');
+        if (tile.data.foodCount < Config.FOOD_CAP_NEST && Math.random() < Config.FOOD_SPAWN_CHANCE_NEST) {
+            spawnNatural(tile, Config.FOOD_TYPES_NEST, 'food');
         }
     }
 },
@@ -79,7 +79,7 @@ wall = new Tile({
         let o = new Entity(tile.loc);
         o.define("wall");
         o.team = TEAM_ROOM;
-        o.SIZE = room.tileWidth / 2;
+        o.SIZE = room.tileWidth / 2 / lazyRealSizes[4] * Math.SQRT2 - 2;
         o.protect();
         o.life();
         makeHitbox(o);
