@@ -58,6 +58,7 @@ Class.spectator = {
     DRAW_HEALTH: false,
     HITS_OWN_TYPE: "never",
     ARENA_CLOSER: true,
+    TOOLTIP: "Left click to teleport, Right click above or below the screen to change FOV",
     SKILL_CAP: [0, 0, 0, 0, 0, 0, 0, 0, 0, 255],
     BODY: {
         SPEED: 5,
@@ -66,7 +67,54 @@ Class.spectator = {
         HEALTH: 1e100,
         SHIELD: 1e100,
         REGEN: 1e100,
-    }
+    },
+    GUNS: [{
+        POSITION: [0,0,0,0,0,0,0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, {reload: 0.2}, g.fake]),
+            TYPE: "bullet",
+            ALPHA: 0
+        }
+    }, {
+        POSITION: [0, 0, 0, 0, 0, 0, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, { reload: 0.25 }, g.fake]),
+            TYPE: "bullet",
+            ALPHA: 0,
+            ALT_FIRE: true,
+        }
+    }],
+    ON: [{
+        event: "fire",
+        handler: ({ body }) => {
+            body.x = body.x + body.control.target.x
+            body.y = body.y + body.control.target.y
+        }
+    }, {
+        event: "altFire",
+        handler: ({ body }) => body.FOV = body.y + body.control.target.y < body.y ? body.FOV + 0.5 : Math.max(body.FOV - 0.5, 0.2)
+    }]
+}
+
+Class.generatorBase = {
+    PARENT: "genericTank",
+    LABEL: "Generator",
+    ALPHA: 0,
+    IGNORED_BY_AI: true,
+    CAN_BE_ON_LEADERBOARD: false,
+    ACCEPTS_SCORE: false,
+    DRAW_HEALTH: false,
+    HITS_OWN_TYPE: "never",
+    ARENA_CLOSER: true,
+    SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
+    BODY: {
+        SPEED: 5,
+        FOV: 2.5,
+        DAMAGE: 0,
+        HEALTH: 1e100,
+        SHIELD: 1e100,
+        REGEN: 1e100,
+    },
 }
 
 Class.bosses = menu("Bosses")
@@ -124,9 +172,8 @@ function compileMatrix(matrix, matrix2Entrance) {
             LABEL = str[0].toUpperCase() + str.slice(1).replace(/[A-Z]/g, m => ' ' + m) + " Generator",
             code = str + 'Generator';
         Class[code] = matrix[y][x] = {
-            PARENT: "spectator",
+            PARENT: "generatorBase",
             LABEL,
-            SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
             TURRETS: [{
                 POSITION: [5 + y * 2, 0, 0, 0, 0, 1],
                 TYPE: str,
@@ -203,9 +250,8 @@ for (let poly = 0; poly < 5; poly++) {
                 let str = `laby_${poly}_${tier}_${shiny}_${rank}`,
                     LABEL = ensureIsClass(str).LABEL + " Generator";
                 Class['generator_' + str] = {
-                    PARENT: "spectator",
+                    PARENT: "generatorBase",
                     LABEL,
-                    SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
                     TURRETS: [{
                         POSITION: [5 + tier * 2, 0, 0, 0, 0, 1],
                         TYPE: str,
