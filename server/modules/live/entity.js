@@ -69,28 +69,10 @@ class Gun extends EventEmitter {
                     repeat: info.PROPERTIES.BLINKER.REPEAT ?? 1000,
                     start: info.PROPERTIES.BLINKER.START ?? 0,
                     end: info.PROPERTIES.BLINKER.END ?? 500,
-                    offColor: "17 0 1 0 false",
+                    offColor: new Color(17),
                 }
-                // Color defining
-                let blinkerOffUnboxed = {
-                    base: 17,
-                    hueShift: 0,
-                    saturationShift: 1,
-                    brightnessShift: 0,
-                    allowBrightnessInvert: false,
-                }
-                if (typeof info.PROPERTIES.BLINKER.OFF_COLOR === "number" || typeof info.PROPERTIES.BLINKER.OFF_COLOR === "string") {
-                    blinkerOffUnboxed.base = info.PROPERTIES.BLINKER.OFF_COLOR;
-                }
-                else if (typeof info.PROPERTIES.BLINKER.OFF_COLOR === "object")
-                    blinkerOffUnboxed = {
-                        base: info.PROPERTIES.BLINKER.OFF_COLOR.BASE ?? 17,
-                        hueShift: info.PROPERTIES.BLINKER.OFF_COLOR.HUE_SHIFT ?? 0,
-                        saturationShift: info.PROPERTIES.BLINKER.OFF_COLOR.SATURATION_SHIFT ?? 1,
-                        brightnessShift: info.PROPERTIES.BLINKER.OFF_COLOR.BRIGHTNESS_SHIFT ?? 0,
-                        allowBrightnessInvert: info.PROPERTIES.BLINKER.OFF_COLOR.ALLOW_BRIGHTNESS_INVERT ?? false,
-                    };
-                this.blinker.offColor = blinkerOffUnboxed.base + " " + blinkerOffUnboxed.hueShift + " " + blinkerOffUnboxed.saturationShift + " " + blinkerOffUnboxed.brightnessShift + " " + blinkerOffUnboxed.allowBrightnessInvert;
+                this.blinker.offColor.interpret(info.PROPERTIES.BLINKER.OFF_COLOR);
+                this.blinker.offColor = this.blinker.offColor.compiled;
             }
             if (info.PROPERTIES.ALPHA != null) this.alpha = info.PROPERTIES.ALPHA;
             if (info.PROPERTIES.STROKE_WIDTH != null) this.strokeWidth = info.PROPERTIES.STROKE_WIDTH;
@@ -494,7 +476,8 @@ class Gun extends EventEmitter {
             alpha: this.alpha,
             strokeWidth: this.strokeWidth,
             borderless: this.borderless, 
-            drawFill: this.drawFill, 
+            drawFill: this.drawFill,
+            blinker: this.blinker ? JSON.stringify(this.blinker) : 0,
             drawAbove: this.drawAbove,
             length: this.length,
             width: this.width,
