@@ -167,12 +167,12 @@ const requires = [
     "./live/controllers.js", // The AI of the game.
     "./live/entity.js", // The actual Entity constructor.
     "./definitions/combined.js", // Class dictionary.
-    "./setup/room.js", // These are the basic room functions, set up by config.json
     "./network/sockets.js", // The networking that helps players interact with the game.
     "./network/webServer.js", // The networking that actually hosts the server.
-    "./setup/mockups.js", // This file loads the mockups.
     "./debug/logs.js", // The logging pattern for the game. Useful for pinpointing lag.
     "./debug/speedLoop.js", // The speed check loop lmao.
+    "./setup/room.js", // These are the basic room functions, set up by config.json
+    "./setup/mockups.js", // This file loads the mockups.
     "./gamemodes/bossRush.js", // Boss Rush
     "./gamemodes/maze.js", // Maze
     "./gamemodes/mothership.js", // The mothership mode

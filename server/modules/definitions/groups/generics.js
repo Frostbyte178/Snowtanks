@@ -97,6 +97,7 @@ Class.genericTank = {
         BRIGHTNESS_SHIFT: 0,
         ALLOW_BRIGHTNESS_INVERT: true,
     },
+    SHAPE: 0,
     MOTION_TYPE: "motor",
     FACING_TYPE: "toTarget",
     SIZE: 12,

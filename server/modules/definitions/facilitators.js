@@ -1,4 +1,3 @@
-const { gunCalcNames } = require('./constants.js')
 const { MAX_SKILL } = require("../../config.js")
 const g = require('./gunvals.js')
 let skcnv = {
@@ -114,7 +113,7 @@ exports.makeGuard = (type, name = -1) => {
         PROPERTIES: {
             SHOOT_SETTINGS: exports.combineStats([g.trap]),
             TYPE: "trap",
-            STAT_CALCULATOR: gunCalcNames.trap,
+            STAT_CALCULATOR: "trap",
         },
     }];
     output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
@@ -153,7 +152,7 @@ exports.makeBird = (type, name = -1, options = {}) => {
 
     // Thrusters
     let backRecoil = 0.5 * backRecoilFactor;
-    let thrusterProperties = { SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster, { recoil: backRecoil }]), TYPE: "bullet", LABEL: gunCalcNames.thruster };
+    let thrusterProperties = { SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster, { recoil: backRecoil }]), TYPE: "bullet", LABEL: "thruster" };
     let shootyBois = [{
             POSITION: [16, 8, 1, 0, 0, 150, 0.1],
             PROPERTIES: thrusterProperties
@@ -211,7 +210,7 @@ exports.makeOver = (type, name = -1, options = {}) => {
         TYPE: ["drone", {INDEPENDENT: independent}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: gunCalcNames.drone,
+        STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: cycle,
         MAX_CHILDREN: maxChildren,
     };
@@ -248,7 +247,7 @@ exports.makeBattle = (type, name = -1, options = {}) => {
     let spawnerProperties = {
         SHOOT_SETTINGS: exports.combineStats([g.swarm, ...stats]),
         TYPE: independent ? "autoswarm" : "swarm",
-        STAT_CALCULATOR: gunCalcNames.swarm,
+        STAT_CALCULATOR: "swarm",
     };
 
     let spawners = [];

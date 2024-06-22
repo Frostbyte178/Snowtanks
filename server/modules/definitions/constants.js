@@ -76,17 +76,6 @@ module.exports = {
 			RELOAD: 'Ball Density',
 		},
 	},
-	gunCalcNames: {
-	    default: 0,
-	    bullet: 1,
-	    drone: 2,
-	    swarm: 3,
-	    fixedReload: 4,
-	    thruster: 5,
-	    sustained: 6,
-	    necro: 7,
-	    trap: 8,
-	},
 	base: {
 	    ACCEL: 1.6,
 	    SPEED: 5.25,

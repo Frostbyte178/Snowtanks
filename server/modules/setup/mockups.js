@@ -41,7 +41,7 @@ function getMockup(e, positionInfo) {
         guns: e.guns.map(function(gun) {
             return {
                 offset: rounder(gun.offset),
-                direction: rounder(gun.direction),
+                direction: rounder(gun.offsetDirection),
                 length: rounder(gun.length),
                 width: rounder(gun.width),
                 aspect: rounder(gun.aspect),
@@ -200,8 +200,8 @@ function sizeEntity(entity, x = 0, y = 0, angle = 0, scale = 1) {
             let newX = point[0] * cosT - point[1] * sinT,
                 newY = point[0] * sinT + point[1] * cosT;
             // Translate it to the right position
-            newX += g.offset * Math.cos(g.direction + g.angle + angle);
-            newY += g.offset * Math.sin(g.direction + g.angle + angle);
+            newX += g.offset * Math.cos(g.offsetDirection + g.angle + angle);
+            newY += g.offset * Math.sin(g.offsetDirection + g.angle + angle);
             // Save coords
             endPoints.push([x + newX * scale, y + newY * scale]);
         }

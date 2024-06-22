@@ -1,5 +1,5 @@
 const { combineStats, addAura, makeAuto, weaponArray, dereference } = require('../facilitators.js');
-const { gunCalcNames, smshskl, base } = require('../constants.js');
+const { smshskl, base } = require('../constants.js');
 const g = require('../gunvals.js');
 
 const eggnoughtBody = {
@@ -158,7 +158,7 @@ Class.supermissile = {
 				AUTOFIRE: true,
 				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {speed: 1.3, maxSpeed: 1.3}]),
 				TYPE: ["bullet", {PERSISTS_AFTER_DEATH: true}],
-				STAT_CALCULATOR: gunCalcNames.thruster,
+				STAT_CALCULATOR: "thruster",
 			},
 		}, {
 			POSITION: [14, 6, 1, 0, 2, 230, 0],
@@ -166,7 +166,7 @@ Class.supermissile = {
 				AUTOFIRE: true,
 				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {speed: 1.3, maxSpeed: 1.3}]),
 				TYPE: ["bullet", {PERSISTS_AFTER_DEATH: true}],
-				STAT_CALCULATOR: gunCalcNames.thruster,
+				STAT_CALCULATOR: "thruster",
 			},
 		}, {
 			POSITION: [14, 6, 1, 0, 0, 0, 0.2],
@@ -264,7 +264,7 @@ Class.invaderOfficialV2 = {
 			MAX_CHILDREN: 4,
 			AUTOFIRE: true,
 			SYNCS_SKILLS: true,
-			STAT_CALCULATOR: gunCalcNames.drone,
+			STAT_CALCULATOR: "drone",
 			WAIT_TO_CYCLE: true,
 		},
 	}, 2),
@@ -284,7 +284,7 @@ Class.centaurOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.pounder, {shudder: 0.4}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		},
 	], 2),
@@ -437,7 +437,7 @@ Class.executorOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.1, health: 1.25}]),
 				TYPE: "missile",
-				STAT_CALCULATOR: gunCalcNames.sustained,
+				STAT_CALCULATOR: "sustained",
 			},
 		}, {
 			POSITION: [17, 9, 1, 0, 0, 0, 0],	
@@ -455,7 +455,7 @@ Class.inquisitorOfficialV2 = {
 			MAX_CHILDREN: 3,
 			AUTOFIRE: true,
 			SYNCS_SKILLS: true,
-			STAT_CALCULATOR: gunCalcNames.drone,
+			STAT_CALCULATOR: "drone",
 			WAIT_TO_CYCLE: true,
 		},
 	}, 4),
@@ -485,7 +485,7 @@ Class.assailantOfficialV2 = {
 				MAX_CHILDREN: 4,
 				SHOOT_SETTINGS: combineStats([g.factory, {size: 0.9, reload: 1.65, health: 1.3, damage: 0.7, speed: 0.8, maxSpeed: 0.8}]),
 				TYPE: "assailantMinionOfficialV2",
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
 				MAX_CHILDREN: 2,
@@ -506,7 +506,7 @@ Class.daemonOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {health: 0.7, speed: 0.7, maxSpeed: 0.7, range: 0.7, shudder: 0.5}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		}, {
 			POSITION: [11.5, 4.5, 1, 0, -4.5, 0, 0],
@@ -515,7 +515,7 @@ Class.daemonOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {health: 0.7, speed: 0.7, maxSpeed: 0.7, range: 0.7, shudder: 0.5}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		},
 	], 4),
@@ -531,7 +531,7 @@ Class.minotaurOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {shudder: 0.7, range: 0.6}]),
 				TYPE: "unsetTrap",
-				STAT_CALCULATOR: gunCalcNames.block
+				STAT_CALCULATOR: "block"
 			},
 		},
 	], 4),
@@ -645,7 +645,7 @@ Class.colossusBottomOfficialV2 = {
 }
 Class.colossusOfficialV2 = {
 	PARENT: "genericSquarenought",
-	LABEL: "colossus",
+	LABEL: "Colossus",
 	BODY: speedBuffBodyStats[0],
 	PROPS: [
 		{
@@ -756,7 +756,7 @@ Class.inhibitorOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.15, health: 1.33}]),
 				TYPE: "supermissile",
-				STAT_CALCULATOR: gunCalcNames.sustained,
+				STAT_CALCULATOR: "sustained",
 			},
 		},
 	], 3),
@@ -773,7 +773,7 @@ Class.infiltratorOfficialV2 = {
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				WAIT_TO_CYCLE: true,
 			},
 		}, {
@@ -784,7 +784,7 @@ Class.infiltratorOfficialV2 = {
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				WAIT_TO_CYCLE: true,
 			},
 		}, {
@@ -795,7 +795,7 @@ Class.infiltratorOfficialV2 = {
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				WAIT_TO_CYCLE: true,
 			},
 		},
@@ -825,7 +825,7 @@ Class.aggressorOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.factory, {size: 0.9, reload: 1.65, health: 1.72, damage: 0.7, speed: 0.8, maxSpeed: 0.8}]),
 				TYPE: "aggressorMinionOfficialV2",
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
 				MAX_CHILDREN: 2,
@@ -846,7 +846,7 @@ Class.hydraOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {shudder: 0.6, health: 0.7, speed: 1.15, maxSpeed: 1.15, range: 0.85}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		}, {
 			POSITION: [6, 3.5, 1, 4, -8.5, 0, 0],
@@ -855,7 +855,7 @@ Class.hydraOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {shudder: 0.6, health: 0.7, speed: 1.15, maxSpeed: 1.15, range: 0.85}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		}, {
 			POSITION: [12, 5, 1, 0, 0, 0, 0],
@@ -864,7 +864,7 @@ Class.hydraOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.twin, g.pounder, {reload: 1.1, health: 1.02, speed: 0.75, maxSpeed: 0.75, range: 0.65}]),
 				TYPE: "unsetTrap",
-				STAT_CALCULATOR: gunCalcNames.block
+				STAT_CALCULATOR: "block"
 			},
 		},
 	], 3),
@@ -880,7 +880,7 @@ Class.beelzebubOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {health: 1.4, speed: 1.2, maxSpeed: 1.2, size: 1.2, shudder: 0.65, range: 0.55}]),
 				TYPE: "unsetTrap",
-				STAT_CALCULATOR: gunCalcNames.block
+				STAT_CALCULATOR: "block"
 			},
 		},
 	], 3),
@@ -1298,7 +1298,7 @@ Class.tyrantOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.18, health: 1.41}]),
 				TYPE: "supermissile",
-				STAT_CALCULATOR: gunCalcNames.sustained,
+				STAT_CALCULATOR: "sustained",
 			},
 		},
 	], 5),
@@ -1315,7 +1315,7 @@ Class.raiderOfficialV2 = {
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				WAIT_TO_CYCLE: true,
 			},
 		}, {
@@ -1326,7 +1326,7 @@ Class.raiderOfficialV2 = {
 				MAX_CHILDREN: 2,
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				WAIT_TO_CYCLE: true,
 			},
 		}, {
@@ -1337,7 +1337,7 @@ Class.raiderOfficialV2 = {
 				MAX_CHILDREN: 1,
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				WAIT_TO_CYCLE: true,
 			},
 		},
@@ -1370,7 +1370,7 @@ Class.gladiatorTritrapMinionOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.pounder, g.flankGuard, g.minionGun, {reload: 1.2, speed: 0.8, maxSpeed: 0.8}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		},
 	], 3),
@@ -1382,7 +1382,7 @@ Class.gladiatorTriswarmMinionOfficialV2 = {
 		PROPERTIES: {
 			SHOOT_SETTINGS: combineStats([g.swarm, g.flankGuard, g.minionGun, {speed: 1.1, maxSpeed: 1.1, reload: 1.6, size: 1.6, range: 1.15}]),
 			TYPE: ["swarm", {COLOR: 5}],
-			STAT_CALCULATOR: gunCalcNames.swarm,
+			STAT_CALCULATOR: "swarm",
 		},
 	}, 3),
 }
@@ -1420,7 +1420,7 @@ Class.gladiatorOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.factory, {size: 0.9, reload: 1.65, health: 1.16, damage: 0.7, speed: 0.8, maxSpeed: 0.8}]),
 				TYPE: "minion",
-				STAT_CALCULATOR: gunCalcNames.drone,
+				STAT_CALCULATOR: "drone",
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true,
 				MAX_CHILDREN: 2,
@@ -1445,7 +1445,7 @@ Class.cerberusOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {range: 1.2, shudder: 0.6, health: 0.55, reload: 1.2, speed: 1.35, maxSpeed: 1.35, range: 0.67}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		}, {
 			POSITION: [12, 4, 1, 0, -2.5, -10, 0.5],
@@ -1454,7 +1454,7 @@ Class.cerberusOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {range: 1.2, shudder: 0.6, health: 0.55, reload: 1.2, speed: 1.35, maxSpeed: 1.35, range: 0.67}]),
 				TYPE: "trap",
-				STAT_CALCULATOR: gunCalcNames.trap,
+				STAT_CALCULATOR: "trap",
 			},
 		}, {
 			POSITION: [14, 5.5, 1, 0, 0, 0, 0],
@@ -1463,7 +1463,7 @@ Class.cerberusOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.twin, g.pounder, {reload: 1.15, health: 0.85, speed: 0.75, maxSpeed: 0.75, range: 0.5}]),
 				TYPE: "unsetTrap",
-				STAT_CALCULATOR: gunCalcNames.block
+				STAT_CALCULATOR: "block"
 			},
 		},
 	], 5),
@@ -1479,7 +1479,7 @@ Class.luciferOfficialV2 = {
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {reload: 1.2, speed: 1.2, maxSpeed: 1.2, size: 1.25, health: 1.15, range: 0.37}]),
 				TYPE: "unsetTrap",
-				STAT_CALCULATOR: gunCalcNames.block
+				STAT_CALCULATOR: "block"
 			},
 		},
 	], 5),
@@ -1945,7 +1945,7 @@ Class.addons.UPGRADES_TIER_0.push("dreadOfficialV2");
 
 const hexDreadNames = {
 	Javelin: {
-		Javelin: 'Javelin',
+		Javelin: 'Javelin II',
 		Rapier: 'Lance',
 		Diplomat: 'Envoy',
 		Arbitrator: 'Cutlass',
@@ -1957,7 +1957,7 @@ const hexDreadNames = {
 		Lucifer: 'Kitsune',
 	},
 	Rapier: {
-		Rapier: 'Rapier',
+		Rapier: 'Rapier II',
 		Diplomat: 'Emissary',
 		Arbitrator: 'Umpire',
 		Retardant: 'Impeder',
@@ -1968,7 +1968,7 @@ const hexDreadNames = {
 		Lucifer: 'Damocles',
 	},
 	Diplomat: {
-		Diplomat: 'Diplomat',
+		Diplomat: 'Diplomat II',
 		Arbitrator: 'Moderator',
 		Retardant: 'Insurgent',
 		Tyrant: 'Dictator',
@@ -1978,7 +1978,7 @@ const hexDreadNames = {
 		Lucifer: 'Manticore',
 	},
 	Arbitrator: {
-		Arbitrator: 'Arbitrator',
+		Arbitrator: 'Arbitrator II',
 		Retardant: 'Extinguisher',
 		Tyrant: 'Shogun',
 		Raider: 'Buccaneer',
@@ -1987,7 +1987,7 @@ const hexDreadNames = {
 		Lucifer: 'Keres',
 	},
 	Retardant: {
-		Retardant: 'Retardant',
+		Retardant: 'Retardant II',
 		Tyrant: 'Anarchist',
 		Raider: 'Freebooter',
 		Gladiator: 'Combatant',
@@ -1995,29 +1995,29 @@ const hexDreadNames = {
 		Lucifer: 'Demogorgon',
 	},
 	Tyrant: {
-		Tyrant: 'Tyrant',
+		Tyrant: 'Tyrant II',
 		Raider: 'Corsair',
 		Gladiator: 'Amazon',
 		Cerberus: 'Ouroboros',
 		Lucifer: 'Raiju',
 	},
 	Raider: {
-		Raider: 'Raider',
+		Raider: 'Raider II',
 		Gladiator: 'Filibuster',
 		Cerberus: 'Wyvern',
 		Lucifer: 'Kraken',
 	},
 	Gladiator: {
-		Gladiator: 'Gladiator',
+		Gladiator: 'Gladiator II',
 		Cerberus: 'Ogre',
 		Lucifer: 'Wendigo',
 	},
 	Cerberus: {
-		Cerberus: 'Cerberus',
+		Cerberus: 'Cerberus II',
 		Lucifer: 'Oni',
 	},
 	Lucifer: {
-		Lucifer: 'Lucifer',
+		Lucifer: 'Lucifer II',
 	},
 };
 

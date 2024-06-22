@@ -268,7 +268,7 @@ It includes all features up to the latest release version.
 * Turrets no longer shoot multiple times as fast than intended.
 * Entities with 0 body damage don't get assist credit when they happen to ram something as it dies.
 * Entities now die if they are dead but are touching a rock.
-* Gun.settings no longer is tied to the gun's definition.
+* Gun.shootSettings no longer is tied to the gun's definition.
 * Bots spawn in their team's bases if there are bases.
 * Bots fire alt-fire barrels.
 * Bots can now use Trapper classes.

@@ -1374,7 +1374,7 @@ setInterval(() => {
         if (!socket.status.hasSpawned) continue;
         leaderboardUpdate = leaderboard.update(
             socket.id,
-            Config.GROUPS || (Config.MODE == 'ffa' && !Config.TAG) ? socket.player.body.id : null
+            (Config.GROUPS || (Config.MODE == 'ffa' && !Config.TAG)) && socket.player.body ? socket.player.body.id : null
         );
         teamUpdate = minimapTeams.update(
             socket.id,

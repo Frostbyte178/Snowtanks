@@ -1,5 +1,5 @@
 const { combineStats, skillSet, makeAuto, addAura, LayeredBoss, makeDeco, weaponArray } = require('../facilitators.js');
-const { base, gunCalcNames, smshskl } = require('../constants.js');
+const { base, smshskl } = require('../constants.js');
 const g = require('../gunvals.js');
 require('./generics.js');
 
@@ -65,7 +65,7 @@ Class.eliteGunner = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
                 TYPE: ["unsetPillbox", {MOTION_TYPE: "glide"}],
-                STAT_CALCULATOR: gunCalcNames.trap,
+                STAT_CALCULATOR: "trap",
             },
         }, {
             POSITION: [6, 14, -2, 2, 0, 60, 0],
@@ -117,21 +117,21 @@ Class.eliteBattleship = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.battleship]),
                 TYPE: "autoswarm",
-                STAT_CALCULATOR: gunCalcNames.swarm,
+                STAT_CALCULATOR: "swarm",
             },
         }, {
             POSITION: [4, 6, 0.6, 7, 0, 60, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.battleship]),
                 TYPE: "autoswarm",
-                STAT_CALCULATOR: gunCalcNames.swarm,
+                STAT_CALCULATOR: "swarm",
             },
         }, {
             POSITION: [4, 6, 0.6, 7, 8, 60, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.battleship]),
                 TYPE: "autoswarm",
-                STAT_CALCULATOR: gunCalcNames.swarm,
+                STAT_CALCULATOR: "swarm",
             },
         }, 
     ], 3),
@@ -160,7 +160,7 @@ Class.eliteSpawner = {
                 TYPE: ["sentrySwarm", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
+                STAT_CALCULATOR: "drone",
             },
         }, {
             POSITION: [2, 18, 1, 11, 0, 180, 0],
@@ -169,7 +169,7 @@ Class.eliteSpawner = {
                 TYPE: ["sentryTrap", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
+                STAT_CALCULATOR: "drone",
             },
         }, {
             POSITION: [2, 18, 1, 11, 0, 300, 0],
@@ -178,7 +178,7 @@ Class.eliteSpawner = {
                 TYPE: ["sentryGun", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
-                STAT_CALCULATOR: gunCalcNames.drone,
+                STAT_CALCULATOR: "drone",
             },
         },
     ],
@@ -202,7 +202,7 @@ Class.eliteTrapGuard = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap]),
                 TYPE: "trap",
-                STAT_CALCULATOR: gunCalcNames.trap,
+                STAT_CALCULATOR: "trap",
             },
         },
     ], 3),
@@ -283,7 +283,7 @@ Class.legionaryCrasherTop = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.pounder, { speed: 3, maxSpeed: 1.7, size: 0.6, range: 2.8}]),
                 TYPE: [ "swarm", { INDEPENDENT: true } ],
-                STAT_CALCULATOR: gunCalcNames.swarm,
+                STAT_CALCULATOR: "swarm",
                 AUTOFIRE: true,
                 
             },
@@ -292,7 +292,7 @@ Class.legionaryCrasherTop = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.pounder, { speed: 3, maxSpeed: 1.7, size: 0.6, range: 2.8}]),
                 TYPE: [ "swarm", { INDEPENDENT: true } ],
-                STAT_CALCULATOR: gunCalcNames.swarm,
+                STAT_CALCULATOR: "swarm",
                 AUTOFIRE: true,
             },
         },
@@ -325,7 +325,7 @@ Class.legionaryCrasher = {
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, g.destroyer, { speed: 2.5, size: 0.6, maxSpeed: 3 }]),
                     TYPE: "legionaryPillbox",
-                    STAT_CALCULATOR: gunCalcNames.trap,
+                    STAT_CALCULATOR: "trap",
                 },
             },
         ], 3),
@@ -380,7 +380,7 @@ Class.sorcerer = {
             TYPE: "minichip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.necro,
+            STAT_CALCULATOR: "necro",
             WAIT_TO_CYCLE: true,
         },
     }, 2)
@@ -408,7 +408,7 @@ Class.summoner = {
             TYPE: ["sunchip"],
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.necro,
+            STAT_CALCULATOR: "necro",
             WAIT_TO_CYCLE: true,
         },
     }, 4)
@@ -436,7 +436,7 @@ Class.enchantress = {
             TYPE: "dorito",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.necro,
+            STAT_CALCULATOR: "necro",
             WAIT_TO_CYCLE: true,
         },
     }, 3)
@@ -464,7 +464,7 @@ Class.exorcistor = {
             TYPE: "demonchip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.necro,
+            STAT_CALCULATOR: "necro",
             WAIT_TO_CYCLE: true,
         },
     }, 5)
@@ -492,7 +492,7 @@ Class.shaman = {
             TYPE: "realchip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: gunCalcNames.necro,
+            STAT_CALCULATOR: "necro",
             WAIT_TO_CYCLE: true,
         },
     }, 6)
@@ -533,7 +533,7 @@ Class.nestKeeper = {
             TYPE: "drone",
             AUTOFIRE: true,
             LABEL: "Mega Crasher",
-            STAT_CALCULATOR: gunCalcNames.drone,
+            STAT_CALCULATOR: "drone",
         },
     }, 5),
     TURRETS: [
@@ -571,7 +571,7 @@ Class.nestWarden = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, { speed: 1.2 }, g.setTrap, g.constructor]),
                 TYPE: "unsetTrap",
-                STAT_CALCULATOR: gunCalcNames.block
+                STAT_CALCULATOR: "block"
             },
         }
     ], 5),
@@ -644,7 +644,7 @@ Class.roguePalisade = {
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([ g.factory, g.pounder, { reload: 2 }]),
             TYPE: ["minion", {INDEPENDENT: true}],
-            STAT_CALCULATOR: gunCalcNames.drone,
+            STAT_CALCULATOR: "drone",
             AUTOFIRE: true,
             MAX_CHILDREN: 3,
             SYNCS_SKILLS: true,
@@ -826,7 +826,7 @@ Class.defender = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, {reload: 1.33, damage: 2.5}]),
                 TYPE: ["trap", {COLOR: "yellow"}],
-                STAT_CALCULATOR: gunCalcNames.trap,
+                STAT_CALCULATOR: "trap",
             },
         }, 
     ], 3),
@@ -901,7 +901,7 @@ ares.addLayer({gun: {
         TYPE: ["demonchip", { INDEPENDENT: true, }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: gunCalcNames.necro,
+        STAT_CALCULATOR: "necro",
         WAIT_TO_CYCLE: true,
     },
 }}, false, null, 18);
@@ -928,7 +928,7 @@ ezekiel.addLayer({gun: {
         TYPE: ["dorito", { COLOR: "orange", INDEPENDENT: true, }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: gunCalcNames.necro,
+        STAT_CALCULATOR: "necro",
         WAIT_TO_CYCLE: true,
     },
 }}, true, null, 18);
@@ -945,7 +945,7 @@ eris.addLayer({gun: {
         TYPE: ["minion", { INDEPENDENT: true, COLOR: "pink", HAS_NO_RECOIL: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: gunCalcNames.necro,
+        STAT_CALCULATOR: "necro",
         WAIT_TO_CYCLE: true,
     },
 }}, false, null, 14);
@@ -962,7 +962,7 @@ selene.addLayer({gun: {
         TYPE: ["sunchip", { COLOR: "gold", INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: gunCalcNames.necro,
+        STAT_CALCULATOR: "necro",
         WAIT_TO_CYCLE: true,
     },
 }}, true, null, 18);
@@ -980,7 +980,7 @@ paladin.addLayer({gun: {
         TYPE: ["demonchip", {INDEPENDENT: true}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: gunCalcNames.drone,
+        STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: true,
     },
 }}, true, null, 16);
@@ -1157,7 +1157,7 @@ Class.taureonCore = {
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.destroyer, g.sniper]),
             TYPE: "snakeOld",
-            STAT_CALCULATOR: gunCalcNames.sustained
+            STAT_CALCULATOR: "sustained"
         }
     }],
     TURRETS: [{
@@ -1231,7 +1231,7 @@ Class.taureonMissile = {
         POSITION: [6, 12, 1.4, 8, 0, 180, 0],
         PROPERTIES: {
             AUTOFIRE: true,
-            STAT_CALCULATOR: gunCalcNames.thruster,
+            STAT_CALCULATOR: "thruster",
             SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, { reload: 0.25, range: 0.075 }]),
             TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true, ALPHA: 0.5 }]
         }
@@ -1239,7 +1239,7 @@ Class.taureonMissile = {
         POSITION: [10, 12, 0.8, 8, 0, 180, 0],
         PROPERTIES: {
             AUTOFIRE: true,
-            STAT_CALCULATOR: gunCalcNames.thruster,
+            STAT_CALCULATOR: "thruster",
             SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, { reload: 0.25, range: 0.075 }]),
             TYPE: ["bullet", { PERSISTS_AFTER_DEATH: true, ALPHA: 0.5 }]
         }
@@ -1308,7 +1308,7 @@ Class.taureonBoss = {
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, g.destroyer, { shudder: 0.1, reload: 0.6, speed: 5, range: 2 }]),
             TYPE: "taureonMissile",
-            STAT_CALCULATOR: gunCalcNames.sustained
+            STAT_CALCULATOR: "sustained"
         }
     },{
         POSITION: [4, 5, -0.5, 12, 0, 90, 0]
@@ -1317,7 +1317,7 @@ Class.taureonBoss = {
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, g.destroyer, { shudder: 0.1, reload: 0.6, speed: 5, range: 2 }]),
             TYPE: "taureonMissile",
-            STAT_CALCULATOR: gunCalcNames.sustained
+            STAT_CALCULATOR: "sustained"
         }
     },{
         POSITION: [5.5, 5, -1.5, 5, 0, -45, 0]
@@ -1370,7 +1370,7 @@ Class.zephiEggchip = {
                 AUTOFIRE: true,
                 SHOOT_SETTINGS: combineStats([g.basic, g.skimmer, g.lowPower, { reload: 0.5, recoil: 1.35, speed: 1.3, maxSpeed: 1.3 }]),
                 TYPE: ["bullet", { COLOR: "black", PERSISTS_AFTER_DEATH: true }],
-                STAT_CALCULATOR: gunCalcNames.thruster,
+                STAT_CALCULATOR: "thruster",
             },
         },
     ],
@@ -1432,7 +1432,7 @@ Class.zephiBoss = {
                 MAX_CHILDREN: 8,
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.necro,
+                STAT_CALCULATOR: "necro",
                 WAIT_TO_CYCLE: true,
                 COLOR: "black",
             }
@@ -1444,7 +1444,7 @@ Class.zephiBoss = {
                 MAX_CHILDREN: 8,
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.necro,
+                STAT_CALCULATOR: "necro",
                 WAIT_TO_CYCLE: true,
                 COLOR: "black",
             }
@@ -1456,7 +1456,7 @@ Class.zephiBoss = {
                 MAX_CHILDREN: 4,
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
-                STAT_CALCULATOR: gunCalcNames.necro,
+                STAT_CALCULATOR: "necro",
                 WAIT_TO_CYCLE: true
             }
         }
@@ -1540,7 +1540,7 @@ function createDogeiscutMissileTurret(color) {
                         },
                     ],
                     AUTOFIRE: true,
-                    STAT_CALCULATOR: gunCalcNames.thruster,
+                    STAT_CALCULATOR: "thruster",
                 },
             },
         ],
@@ -1640,7 +1640,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.annihilator, {size: 1, reload: 3, recoil: 5}]),
                 TYPE: ["dogeiscutBomb"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
             }
         }, {
             POSITION: [ 4, 4, 1.5, 3, 0, 180, 0, ],
@@ -1654,7 +1654,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_red"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'red'
             }
         }, {
@@ -1662,7 +1662,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_orange"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'orange'
             }
         }, {
@@ -1670,7 +1670,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_yellow"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'yellow'
             }
         }, {
@@ -1678,7 +1678,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_green"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'green'
             }
         }, {
@@ -1686,7 +1686,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_cyan"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'cyan'
             }
         }, {
@@ -1694,7 +1694,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_blue"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'blue'
             }
         }, {
@@ -1702,7 +1702,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_purple"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'purple'
             }
         }, 
@@ -1713,7 +1713,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_red"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'red'
             }
         }, {
@@ -1721,7 +1721,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_orange"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'orange'
             }
         }, {
@@ -1729,7 +1729,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_yellow"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'yellow'
             }
         }, {
@@ -1737,7 +1737,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_green"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'green'
             }
         }, {
@@ -1745,7 +1745,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_cyan"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'cyan'
             }
         }, {
@@ -1753,7 +1753,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_blue"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'blue'
             }
         }, {
@@ -1761,7 +1761,7 @@ Class.dogeiscutBoss = {
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.sidewinder, {speed: 3, range: 0.8, reload: 4}]),
                 TYPE: ["dogeiscutMissile_purple"],
-                STAT_CALCULATOR: gunCalcNames.sustained,
+                STAT_CALCULATOR: "sustained",
                 COLOR: 'purple'
             }
         },
@@ -2416,7 +2416,7 @@ Class.frostBoss = {
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats(hielamanStats),
                     TYPE: 'frostAuraBlock',
-                    STAT_CALCULATOR: gunCalcNames.trap,
+                    STAT_CALCULATOR: "trap",
                     COLOR: {BASE: -1, BRIGHTNESS_SHIFT: -15, SATURATION_SHIFT: 0.6}
                 },
             }, {
@@ -2667,8 +2667,8 @@ Class.toothlessBossTurret = {
                 master._maxPower ??= 0;
 
                 body.guns.forEach((gun, i) => {
-                    body._damage[i] = gun.settings.damage;
-                    body._reload[i] = gun.settings.reload;
+                    body._damage[i] = gun.shootSettings.damage;
+                    body._reload[i] = gun.shootSettings.reload;
 
                     _temp += (body._damage[i] * 3) / body._damage[i];
                     _temp += body._reload[i] / (body._reload[i] / 3);
@@ -2700,8 +2700,8 @@ Class.toothlessBossTurret = {
                 let max_damage = body._damage[i] * damageMultiplayer;
                 let min_reload = body._reload[i] / reloadMultiplayer;
 
-                gun.settings.damage = _1 > max_damage ? max_damage : _1;
-                gun.settings.reload = _2 < min_reload ? min_reload : _2;
+                gun.shootSettings.damage = _1 > max_damage ? max_damage : _1;
+                gun.shootSettings.reload = _2 < min_reload ? min_reload : _2;
             });
         },
     }],
