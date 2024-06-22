@@ -579,7 +579,7 @@ Class.makeAutoTest = {
 Class.imageShapeTest = {
     PARENT: 'genericTank',
     LABEL: "Image Shape Test",
-    SHAPE: 'round.png',
+    SHAPE: '/round.png',
     GUNS: [
         {
             POSITION: [18, 8, 1, 0, 0, 0, 0],

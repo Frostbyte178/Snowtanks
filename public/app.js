@@ -674,6 +674,25 @@ function drawPoly(context, centerX, centerY, radius, sides, angle = 0, borderles
             );
     } else {
         if ("string" === typeof sides) {
+            //ideally we'd preload images when mockups are loaded but im too lazy for that atm
+            if (sides.startsWith('/') | sides.startsWith('./') | sides.startsWith('http')) {
+                drawPolyImgs[sides] = new Image();
+                drawPolyImgs[sides].src = sides;
+                drawPolyImgs[sides].isBroken = false;
+                drawPolyImgs[sides].onerror = function() {
+                    this.isBroken = true;
+                }
+
+                let img = drawPolyImgs[sides];
+                context.translate(centerX, centerY);
+                context.rotate(angle);
+                context.imageSmoothingEnabled = imageInterpolation;
+                context.drawImage(img, -radius, -radius, radius*2, radius*2);
+                context.imageSmoothingEnabled = true;
+                context.rotate(-angle);
+                context.translate(-centerX, -centerY);
+                return;
+            }
             let path = new Path2D(sides);
             context.save();
             context.translate(centerX, centerY);
