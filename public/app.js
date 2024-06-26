@@ -382,20 +382,20 @@ window.onload = async () => {
 // Sliding between options menu.
 function toggleOptionsMenu() {
     let clicked = false,
-      a = document.getElementById("startMenuSlidingTrigger"), // Trigger ID
-      c = document.getElementById("optionArrow"), // Arrow
-      h = document.getElementById("viewOptionText"), // Text (view options)
-      u = document.getElementsByClassName("sliderHolder")[0], // Sliding.
-      y = document.getElementsByClassName("slider"), // For animations things.
-      toggle = () => {
-        c.style.transform = c.style.webkitTransform = clicked // Rotate the arrow.
-          ? "translate(2px, -2px) rotate(45deg)"
-          : "rotate(-45deg)";
-        h.innerText = clicked ? "close options" : "view options"; // Change the text.
-        clicked ? u.classList.add("slided") : u.classList.remove("slided"); // Slide it up.
-        y[0].style.opacity = clicked ? 0 : 1; // Fade it away.
-        y[2].style.opacity = clicked ? 1 : 0; // same for this.
-      };
+        a = document.getElementById("startMenuSlidingTrigger"), // Trigger ID
+        c = document.getElementById("optionArrow"), // Arrow
+        h = document.getElementById("viewOptionText"), // Text (view options)
+        u = document.getElementsByClassName("sliderHolder")[0], // Sliding.
+        y = document.getElementsByClassName("slider"), // For animations things.
+        toggle = () => {
+            c.style.transform = c.style.webkitTransform = clicked // Rotate the arrow.
+            ? "translate(2px, -2px) rotate(45deg)"
+            : "rotate(-45deg)";
+            h.innerText = clicked ? "close options" : "view options"; // Change the text.
+            clicked ? u.classList.add("slided") : u.classList.remove("slided"); // Slide it up.
+            y[0].style.opacity = clicked ? 0 : 1; // Fade it away.
+            y[2].style.opacity = clicked ? 1 : 0; // same for this.
+        };
     a.onclick = () => { // When the button is triggered, This code runs.
         clicked = !clicked;
         toggle();
