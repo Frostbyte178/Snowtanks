@@ -41,7 +41,7 @@ function close(socket) {
             }
         }
         // Disconnect everything
-        util.log("[INFO] " + (player.body ? "User " + player.body.name : "A user without an entity") + " disconnected!");
+        util.log("[INFO] " + (player.body ? `User ${player.body.name == "" ? "A unnamed player" : player.body.name}` : "A user without an entity") + " disconnected!");
         util.remove(players, index);
     } else {
         util.log("[INFO] A player disconnected before entering the game.");
@@ -133,17 +133,19 @@ function incoming(message, socket) {
                 let key = m[0].toString().trim();
                 socket.permissions = permissionsDict[key];
                 if (socket.permissions) {
-                    util.log("[INFO] A socket was verified with the token: " + key);
+                    util.log(`[INFO] A socket ( ${socket.ip} ) was verified with the token: ${key}`);
                 } else {
-                    util.log("[WARNING] A socket failed to verify with the token: " + key);
+                    util.log(`[WARNING] A socket ( ${socket.ip} ) failed to verify with the token: ${key}`);
                 }
                 socket.key = key;
             }
             socket.verified = true;
+            util.log(`[INFO] A socket ( ${socket.ip} ) has been welcomed to the server room. Waiting for spawn request.`);
             util.log("Clients: " + clients.length);
             break;
         case "s":
             // spawn request
+            util.log(`[INFO] A socket ( ${socket.ip} ) is asking for spawn request, checking all securities...`);
             if (!socket.status.deceased) {
                 socket.kick("Trying to spawn while already alive.");
                 return 1;
@@ -185,6 +187,7 @@ function incoming(message, socket) {
                 util.remove(views, views.indexOf(socket.view));
                 socket.makeView();
             }
+            util.log("[INFO] Passed the security, spawning player.");
             socket.party = m[4];
             socket.player = socket.spawn(name);
 
@@ -198,9 +201,21 @@ function incoming(message, socket) {
             //socket.view.gazeUpon();
             //socket.lastUptime = Infinity;
             // Give it the room state
-            socket.talk("R", room.width, room.height, JSON.stringify(room.setup.map(x => x.map(t => t.color.compiled))), JSON.stringify(util.serverStartTime), Config.runSpeed, Config.ARENA_TYPE);
+            if (needsRoom) socket.talk(
+                "R",
+                room.width,
+                room.height,
+                JSON.stringify(room.setup.map(x => x.map(t => t.color.compiled))),
+                JSON.stringify(util.serverStartTime),
+                Config.runSpeed,
+                Config.ARENA_TYPE
+            );
+            // Give the server name
+            if (needsRoom) socket.talk("svInfo", Config.gameModeName, "?");
+            // More important stuff
+            socket.talk("updateName", socket.player.body.name);
             // Log it
-            util.log(`[INFO] ${m[0]} ${needsRoom ? "joined" : "rejoined"} the game on team ${socket.player.body.team}! Players: ${players.length}`);
+            util.log(`[INFO] ${name == "" ? "An unnamed player" : m[0]} ${needsRoom ? "joined" : "rejoined"} the game on team ${socket.player.body.team}! Players: ${players.length}`);
             break;
         case "S":
             // clock syncing
@@ -253,7 +268,7 @@ function incoming(message, socket) {
             break;
         case "C":
             // command packet
-            if (m.length !== 4) {
+            if (m.length !== 5) {
                 socket.kick("Ill-sized command packet.");
                 return 1;
             }
@@ -263,11 +278,13 @@ function incoming(message, socket) {
                     y: m[1],
                 },
                 reverseTank = m[2],
-                commands = m[3];
+                movement = m[3],
+                commands = m[4];
             // Verify data
             if (
                 typeof target.x !== "number" ||
                 typeof target.y !== "number" ||
+                typeof movement !== "number" ||
                 typeof commands !== "number"
             ) {
                 socket.kick("Weird downlink.");
@@ -295,20 +312,21 @@ function incoming(message, socket) {
             if (player.body) player.body.reverseTank = reverseTank;
             // Process the commands
             if (player.command != null && player.body != null) {
-                player.command.up = commands & 1;
-                player.command.down = (commands & 2) >> 1;
-                player.command.left = (commands & 4) >> 2;
-                player.command.right = (commands & 8) >> 3;
-                player.command.lmb = (commands & 16) >> 4;
-                player.command.mmb = (commands & 32) >> 5;
-                player.command.rmb = (commands & 64) >> 6;
+                let moving = commands & 1;
+                player.command.movement = moving ? {
+                    x: Math.cos(movement),
+                    y: Math.sin(movement)
+                } : { x: 0, y: 0 };
+                player.command.lmb = (commands & 2) >> 1;
+                player.command.mmb = (commands & 4) >> 2;
+                player.command.rmb = (commands & 8) >> 3;
             }
             // Update the thingy
             socket.timeout.set(commands);
             break;
         case "t":
             // player toggle
-            if (m.length !== 1) {
+            if (m.length !== 2) {
                 socket.kick("Ill-sized toggle.");
                 return 1;
             }
@@ -319,14 +337,12 @@ function incoming(message, socket) {
                 socket.kick("Weird toggle.");
                 return 1;
             }
-
+            let sendMessage = m[1];
             // ...what are we supposed to do?
             let given = [
                 "autospin",
                 "autofire",
                 "override",
-                "reverse mouse", //reverse mouse does nothing server-side, it's easier to make the client send swapped inputs
-                "reverse tank", //reverse tank does nothing server-side, it's easier to make the client turn around 180 degrees
                 "autoalt",
                 "spinlock" //spinlock does something both in client and server side
             ][tog];
@@ -340,7 +356,7 @@ function incoming(message, socket) {
             if (player.command != null && player.body != null) {
                 player.command[given] = !player.command[given];
                 // Send a message.
-                player.body.sendMessage(given.charAt(0).toUpperCase() + given.slice(1) + (player.command[given] ? " enabled." : " disabled."));
+                if (sendMessage) player.body.sendMessage(given.charAt(0).toUpperCase() + given.slice(1) + (player.command[given] ? " enabled." : " disabled."));
             }
             break;
         case "U":
@@ -489,16 +505,17 @@ function incoming(message, socket) {
                     })
                     .filter((instance) => instance);
                 if (!motherships.length) {
-                    player.body.sendMessage("There are no motherships available that are on your team.");
+                    player.body.sendMessage("There are no motherships available that are on your team or already controlled by an player.");
                     return 1;
                 }
                 let mothership = motherships.shift();
                 mothership.controllers = [];
                 mothership.underControl = true;
                 player.body = mothership;
-                body.kill();
                 player.body.become(player);
-                player.body.FOV += 0.5;
+                body.kill();
+                if (!player.body.dontIncreaseFov) player.body.FOV += 0.5;
+                player.body.dontIncreaseFov = true;
                 player.body.refreshBodyAttributes();
                 player.body.name = body.name;
                 player.body.sendMessage("You are now controlling the mothership.");
@@ -508,16 +525,18 @@ function incoming(message, socket) {
                     if (entry.isDominator && entry.team === player.body.team && !entry.underControl) return entry;
                 }).filter(x=>x);
                 if (!dominators.length) {
-                    player.body.sendMessage("There are no dominators available that are on your team!");
+                    player.body.sendMessage("There are no dominators available that are on your team or already controlled by an player.");
                     return 1;
                 }
                 let dominator = dominators.shift();
                 dominator.controllers = [];
                 dominator.underControl = true;
                 player.body = dominator;
-                body.kill();
                 player.body.become(player, true);
-                player.body.FOV += 0.5;
+                body.dontSendDeathMessage = true;
+                body.kill();
+                if (!player.body.dontIncreaseFov) player.body.FOV += 0.5;
+                player.body.dontIncreaseFov = true;
                 player.body.refreshBodyAttributes();
                 player.body.name = body.name;
                 player.body.sendMessage("You are now controlling the dominator.");
@@ -529,28 +548,33 @@ function incoming(message, socket) {
 
         case "M":
             if (player.body == null) return 1;
-            let abort, message = m[0];
+            let abort, message = m[0], original = m[0];
 
             if ("string" !==  typeof message) {
                 socket.kick("Non-string chat message.");
                 return 1;
             }
 
-            events.emit('chatMessage', { message, socket, preventDefault: () => abort = true });
-
-            // we are not anti-choice here.
-            if (abort) break;
-
-            util.log(player.body.name + ': ' + message);
-
-            let id = player.body.id;
-            if (!chats[id]) {
-                chats[id] = [];
-            }
+            util.log(player.body.name + ': ' + original);
 
             if (Config.SANITIZE_CHAT_MESSAGE_COLORS) {
                 // I thought it should be "§§" but it only works if you do "§§§§"?
                 message = message.replace(/§/g, "§§§§");
+                original = original.replace(/§/g, "§§§§");
+            }
+
+            Events.emit('chatMessage', { message: original, socket, preventDefault: () => abort = true, setMessage: str => message = str });
+
+            // we are not anti-choice here.
+            if (abort) break;
+
+            if (message !== original) {
+                util.log('changed to: ' + message);
+            }
+
+            let id = player.body.id;
+            if (!chats[id]) {
+                chats[id] = [];
             }
 
             // TODO: this needs to be lag compensated, so the message would not last 1 second less due to high ping
@@ -896,7 +920,7 @@ const spawn = (socket, name) => {
     } else {
         body = new Entity(loc);
         body.protect();
-        body.isPlayer = true;
+        body.isPlayer = true; // Mark it as an player.
         if (player.team != null) {
             body.team = player.team;
         } else {
@@ -906,13 +930,15 @@ const spawn = (socket, name) => {
         if (socket.permissions && socket.permissions.nameColor) {
             body.nameColor = socket.permissions.nameColor;
             socket.talk("z", body.nameColor);
+        } else {
+            body.nameColor = "#ffffff";
+            socket.talk("z", body.nameColor);
         }
-        body.addController(new ioTypes.listenToPlayer(body, { player }));
-        socket.spectateEntity = null;
-        body.invuln = true;
+        body.become(player); // become it so it can speak and listen.
+        socket.spectateEntity = null; // Dont break the camera.
+        body.invuln = true; // Make it safe 
     }
-    body.name = name;
-    body.sendMessage = (content, displayTime = Config.MESSAGE_DISPLAY_TIME) => socket.talk("m", displayTime, content);
+    body.name = name; // Define the name.
 
     socket.rememberedTeam = player.team;
     player.body = body;
@@ -926,10 +952,7 @@ const spawn = (socket, name) => {
     player.teamColor = new Color(!Config.RANDOM_COLORS && (Config.GROUPS || (Config.MODE == 'ffa' && !Config.TAG)) ? 10 : getTeamColor(body.team)).compiled; // blue
     player.target = { x: 0, y: 0 };
     player.command = {
-        up: false,
-        down: false,
-        left: false,
-        right: false,
+        movement: { x: 0, y: 0 },
         lmb: false,
         mmb: false,
         rmb: false,
@@ -944,12 +967,13 @@ const spawn = (socket, name) => {
     player.records = () => [
         player.body.skill.score,
         Math.floor((util.time() - begin) / 1000),
+        Config.RESPAWN_TIMEOUT,
         player.body.killCount.solo,
         player.body.killCount.assists,
         player.body.killCount.bosses,
         player.body.killCount.polygons,
         player.body.killCount.killers.length,
-        ...player.body.killCount.killers,
+        ...player.body.killCount.killers
     ];
     player.gui = newgui(player);
     player.socket = socket;
@@ -963,7 +987,7 @@ const spawn = (socket, name) => {
     for (let i = 0; i < msg.length; i++) {
         body.sendMessage(msg[i]);
     }
-    socket.talk("c", socket.camera.x, socket.camera.y, socket.camera.fov);
+    socket.talk("c", socket.camera.x, socket.camera.y, socket.camera.fov); // Move the camera
     return player;
 };
 

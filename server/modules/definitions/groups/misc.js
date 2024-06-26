@@ -50,7 +50,8 @@ Class.moon = {
     PARENT: "rock",
     LABEL: "Moon",
     SIZE: 60,
-    SHAPE: 0
+    SHAPE: 0,
+    VARIES_IN_SIZE: false
 }
 
 // DOMINATORS
@@ -67,7 +68,10 @@ Class.dominator = {
         str: 1,
         spd: 1,
     }),
-    LEVEL: -1,
+    LEVEL: 45,
+    LEVEL_CAP: 45,
+    SIZE: 50,
+    SYNC_WITH_TANK: true,
     BODY: {
         RESIST: 100,
         SPEED: 1.32,
@@ -173,7 +177,7 @@ for (let tier of sancHealerTiers) {
                 }, {
                     POSITION: { LENGTH: 8, WIDTH: 10, X: 10, ANGLE: (360 / tier) * i },
                     PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.basic, g.healer]),
+                        SHOOT_SETTINGS: combineStats([g.basic, { range: 0.5 }, g.healer]),
                         TYPE: "healerBullet",
                         AUTOFIRE: true,
                     }
@@ -349,7 +353,7 @@ Class.sentrySwarm = {
         {
             POSITION: [7, 14, 0.6, 7, 0, 180, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, { recoil: 1.15 }]),
+                SHOOT_SETTINGS: combineStats([g.swarm, { recoil: 1.15, range: 0.9 }]),
                 TYPE: "swarm",
                 STAT_CALCULATOR: "swarm",
             },
@@ -677,6 +681,7 @@ Class.arenaCloser = {
     DRAW_HEALTH: false,
     HITS_OWN_TYPE: "never",
     ARENA_CLOSER: true,
+    IS_IMMUNE_TO_TILES: true,
     GUNS: [{
         POSITION: [14, 10, 1, 0, 0, 0, 0],
         PROPERTIES: {
@@ -692,6 +697,7 @@ Class.antiTankMachineGun = {
     UPGRADE_LABEL: "A.T.M.G.",
     CONTROLLERS: [['spin', {onlyWhenIdle: true}], 'nearestDifferentMaster'],
     LEVEL: 45,
+    SIZE: 12,
     BODY: {
         RESIST: 100,
         SPEED: 1.32,

@@ -1,6 +1,7 @@
 let loop;
 function close() {
     sockets.broadcast("Closing!");
+    util.log('Closing!');
     clearInterval(loop);
     setTimeout(process.exit, 1000);
 }
@@ -34,6 +35,8 @@ function closeArena() {
             ACCEPTS_SCORE: false,
             CAN_BE_ON_LEADERBOARD: false,
             VALUE: 100000,
+            LEVEL: 45,
+            CAN_GO_OUTSIDE_ROOM: true,
         });
         o.color.base = 3;
         o.team = TEAM_ROOM;
@@ -48,7 +51,7 @@ function closeArena() {
             let instance = entities[i];
             if (
                 instance.isPlayer || instance.isMothership ||
-                (instance.isDominator && instance.team !== -101)
+                (instance.isDominator && instance.team !== TEAM_ROOM)
             ) {
                 alive = true;
             }

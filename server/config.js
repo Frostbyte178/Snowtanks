@@ -2,7 +2,7 @@ module.exports = {
     // Server
 
     // Game server domain.
-    // If 'localhost:NUMBER', the port must equal the port setting.
+    // If the host is 'localhost:NUMBER', the NUMBER must be the port setting.
     host: "localhost:26301",
 
     // Which port to run the web server on.
@@ -39,7 +39,7 @@ module.exports = {
 
     // Miscellaneous
 
-    // How long a entity chat message lasts in milliseconds.
+    // How long a chat message lasts in milliseconds.
     // Includes the fade-out period.
     CHAT_MESSAGE_DURATION: 30_000,
 
@@ -63,6 +63,9 @@ module.exports = {
     
     // How long a popup message lasts before fading out in milliseconds.
     MESSAGE_DISPLAY_TIME: 10_000,
+
+    // How long you have to wait to respawn in seconds.
+    RESPAWN_TIMEOUT: 0,
     
 
 
@@ -70,6 +73,9 @@ module.exports = {
 
     // General multiplier for acceleration and max speeds.
     runSpeed: 1.5,
+
+    // Where the bullet spawns, where 1 is fully outside the barrel and -1 is fully inside the barrel, and 0 is halfway between.
+    bulletSpawnOffset: -1,
 
     // General damage multiplier everytime damage is dealt.
     DAMAGE_CONSTANT: 0.5,
@@ -104,10 +110,10 @@ module.exports = {
     // Level difference between each tier.
     TIER_MULTIPLIER: 15,
 
-    // Max normally achievable level.
+    // Maximum normally achievable level.
     LEVEL_CAP: 45,
 
-    // Max level you get by level-up key and auto-level-up.
+    // Maximum level via the level-up key and auto-level-up.
     LEVEL_CHEAT_CAP: 45,
 
     // Amount of player-bots to spawn.
@@ -130,6 +136,13 @@ module.exports = {
 
     // The class that players and player-bots spawn as.
     SPAWN_CLASS: "basic",
+
+    // How every entity regenerates their health.
+    REGENERATE_TICK: 200,
+
+    // How many members a team can have in comparison to an unweighed team.
+    // Example: Lets say we have team A and B. If the weigh of A is 2 and B is 1, then the game will try to give A twice as many members as B.
+    TEAM_WEIGHTS: {},
 
 
 
@@ -249,7 +262,7 @@ module.exports = {
         message: "A strange trembling...",
     },{
         bosses: ["paladin", "freyja", "zaphkiel", "nyx", "theia"],
-        amount: [1], chance: 0.1,
+        amount: [1], chance: 0.01,
         message: "The world tremors as the celestials are reborn anew!",
     },{
         bosses: ["julius", "genghis", "napoleon"],
@@ -259,8 +272,8 @@ module.exports = {
 
 
 
-    // Default values for gamemode related stuff.
-    // Do not change these, you'll likely break stuff.
+    // Default values for gamemode related things.
+    // Do not change these, you'll likely break stuff!
     // Change GAME_MODES instead.
     GAMEMODE_NAME_PREFIXES: [],
     SPECIAL_BOSS_SPAWNS: false,

@@ -7,7 +7,7 @@ let calculatePoints = wave => 5 + wave * 3;
 
 let oldGroups = {
     elites: [ "eliteDestroyer", "eliteGunner", "eliteSprayer", "eliteBattleship", "eliteSpawner" ],
-    mysticals: [ "summoner", "eliteSkimmer", "nestKeeper", "roguePalisade" ],
+    strange: [ "summoner", "eliteSkimmer", "nestKeeper", "roguePalisade" ],
     celestials: [ "paladin", "freyja", "zaphkiel", "nyx", "theia" ],
     eternals: [ "legionaryCrasher", "kronos", "odin" ],
 };
@@ -19,42 +19,42 @@ class BossRush {
             ran.chooseN(oldGroups.elites, 2),
             ran.chooseN(oldGroups.elites, 3),
             ran.chooseN(oldGroups.elites, 4),
-            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 1)),
-            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.mysticals, 2)),
-            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 3)),
-            ran.chooseN(oldGroups.mysticals, 4),
-            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 4)),
-            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.mysticals, 4)),
-            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 4)),
-            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.strange, 1)),
+            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.strange, 2)),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.strange, 3)),
+            ran.chooseN(oldGroups.strange, 4),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.strange, 4)),
+            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.strange, 4)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.strange, 4)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.strange, 4)),
             [ oldGroups.celestials[0] ],
             [ oldGroups.celestials[1] ],
             [ oldGroups.celestials[2] ],
             [ oldGroups.celestials[3] ],
             [ oldGroups.celestials[4] ],
-            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 1)).concat(ran.chooseN(oldGroups.celestials, 1)),
-            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 1)).concat(ran.chooseN(oldGroups.celestials, 1)),
-            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 3)).concat(ran.chooseN(oldGroups.celestials, 1)),
-            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.strange, 1)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.strange, 1)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.strange, 3)).concat(ran.chooseN(oldGroups.celestials, 1)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.strange, 4)).concat(ran.chooseN(oldGroups.celestials, 1)),
             ran.chooseN(oldGroups.celestials, 2),
-            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.mysticals, 2)).concat(ran.chooseN(oldGroups.celestials, 2)),
-            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 3)).concat(ran.chooseN(oldGroups.celestials, 2)),
-            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 2)),
+            ran.chooseN(oldGroups.elites, 1).concat(ran.chooseN(oldGroups.strange, 2)).concat(ran.chooseN(oldGroups.celestials, 2)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.strange, 3)).concat(ran.chooseN(oldGroups.celestials, 2)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.strange, 4)).concat(ran.chooseN(oldGroups.celestials, 2)),
             ran.chooseN(oldGroups.celestials, 3),
-            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.mysticals, 3)).concat(ran.chooseN(oldGroups.celestials, 3)),
-            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 3)),
+            ran.chooseN(oldGroups.elites, 3).concat(ran.chooseN(oldGroups.strange, 3)).concat(ran.chooseN(oldGroups.celestials, 3)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.strange, 4)).concat(ran.chooseN(oldGroups.celestials, 3)),
             ran.chooseN(oldGroups.celestials, 4),
-            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.mysticals, 2)).concat(ran.chooseN(oldGroups.celestials, 4)),
-            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 4)),
+            ran.chooseN(oldGroups.elites, 2).concat(ran.chooseN(oldGroups.strange, 2)).concat(ran.chooseN(oldGroups.celestials, 4)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.strange, 4)).concat(ran.chooseN(oldGroups.celestials, 4)),
             ran.chooseN(oldGroups.celestials, 5),
-            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.mysticals, 4)).concat(ran.chooseN(oldGroups.celestials, 5)),
+            ran.chooseN(oldGroups.elites, 4).concat(ran.chooseN(oldGroups.strange, 4)).concat(ran.chooseN(oldGroups.celestials, 5)),
             ran.chooseN(oldGroups.eternals, 1),
         ];
         this.bossChoices = [
             // [ cost , definition reference ],
 
             //mysticals
-            [  1, "sorcerer"],
+            [  2, "sorcerer"],
             [  2, "summoner"],
             [  2, "enchantress"],
             [  2, "exorcistor"],
@@ -90,7 +90,7 @@ class BossRush {
             [ 35, "theia"],
 
             //eternals
-            [ 99, "legionaryCrasher" /*fucking mid*/],
+            [100, "legionaryCrasher"],
             [100, "kronos"],
             [100, "odin"],
         ];
@@ -105,6 +105,7 @@ class BossRush {
         this.remainingEnemies = 0;
         this.sanctuaryTier = 1;
         this.sanctuaries = [];
+        this.leftSanctuaries = 0;
     }
 
     generateWaves() {
@@ -116,6 +117,7 @@ class BossRush {
 
             while (points > 0 && choices.length) {
                 choices = choices.filter(([ cost ]) => cost <= points);
+                if (!choices.length) break;
                 let [ cost, boss ] = ran.choose(choices);
                 points -= cost;
                 wave.push(boss);
@@ -142,11 +144,32 @@ class BossRush {
     spawnSanctuary(tile, team, type = false) {
         type = type ? type : "sanctuaryTier3";
         let o = new Entity(tile.loc);
-        this.defineSanctuary(o, tile, team, type);
+        this.defineSanctuary(o, team, type);
         this.sanctuaries.push(o);
+        let spawnableTeam = room.spawnable[Object.keys(room.spawnable).find((key) => room.spawnable[key].includes(tile))];
+        o.on('dead', () => {
+            if (o.team === TEAM_ENEMIES) {
+                this.spawnSanctuary(tile, TEAM_BLUE, `sanctuaryTier${this.sanctuaryTier}`);
+                tile.color.interpret(getTeamColor(TEAM_BLUE));
+                this.leftSanctuaries++;
+                sockets.broadcast('A sanctuary has been repaired! ' + this.leftSanctuaries + ' sanctuaries remain.');
+                if (team !== spawnableTeam) { // Allow the player to spawn so we add it to the spawnable locations.
+                    room.spawnable[TEAM_BLUE].push(tile);
+                }
+            } else {
+                this.spawnSanctuary(tile, TEAM_ENEMIES, "dominator");
+                tile.color.interpret(getTeamColor(TEAM_ENEMIES));
+                this.leftSanctuaries--;
+                sockets.broadcast('A sanctuary has been destroyed! ' + this.leftSanctuaries + ' sanctuaries remain.');
+                if (team !== spawnableTeam) { // Don't allow players to spawn at the destroyed sanctuary so we remove it from spawnable location.
+                    util.remove(spawnableTeam, spawnableTeam.indexOf(tile));
+                }
+            }
+            sockets.broadcastRoom();
+        });
     }
 
-    defineSanctuary(entity, tile, team, type) {
+    defineSanctuary(entity, team, type) {
         entity.define(type);
         entity.team = team;
         entity.color.base = getTeamColor(team);
@@ -154,19 +177,8 @@ class BossRush {
         entity.name = 'Sanctuary';
         entity.SIZE = room.tileWidth / (Config.CLASSIC_SIEGE ? 10 : 17.5);
         entity.isDominator = true;
-        entity.define({ DANGER: 11 })
-        entity.on('dead', () => {
-            if (entity.team === TEAM_ENEMIES) {
-                this.spawnSanctuary(tile, TEAM_BLUE, `sanctuaryTier${this.sanctuaryTier}`);
-                tile.color.interpret(getTeamColor(TEAM_BLUE));
-                sockets.broadcast('A sanctuary has been repaired!');
-            } else {
-                this.spawnSanctuary(tile, TEAM_ENEMIES, "dominator");
-                tile.color.interpret(getTeamColor(TEAM_ENEMIES));
-                sockets.broadcast('A sanctuary has been destroyed!');
-            }
-            sockets.broadcastRoom();
-        });
+        entity.nameColor = "#ffffff";
+        entity.define({ DANGER: 11 });
     }
 
     playerWin() {
@@ -245,6 +257,7 @@ class BossRush {
         Class.basic.UPGRADES_TIER_2.push("healer");
         //TODO: filter out tiles that are not of sanctuary type
         for (let tile of room.spawnable[TEAM_BLUE]) {
+            this.leftSanctuaries += 1;
             this.spawnSanctuary(tile, TEAM_BLUE, "sanctuaryTier1");
         }
     }

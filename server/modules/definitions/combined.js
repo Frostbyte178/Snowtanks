@@ -28,7 +28,7 @@ function processAddonFolder(directory) {
         console.log(`Loading addon: ${filename}`);
         let result = require(filepath);
         if ('function' === typeof result) {
-            result({ Config, Events: events });
+            result({ Class, Config, Events });
         }
         loadedAddons.push(filename.slice(0, -3));
     }
@@ -55,7 +55,6 @@ if (Config.flattenDefintions) {
 }
 
 console.log(`Combined ${groups.length} definition groups and ${loadedAddons.length} addons into ${definitionCount} ${Config.flattenDefintions ? 'flattened ' : ''}definitions!\n`);
-
 // Index the definitions
 let i = 0;
 for (let key in Class) {

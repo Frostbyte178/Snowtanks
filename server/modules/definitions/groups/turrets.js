@@ -139,7 +139,7 @@ Class.trapTurret = {
         {
             POSITION: [4, 14, 1.8, 16, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.lowPower, { speed: 1.2 }, { reload: 2 }]),
+                SHOOT_SETTINGS: combineStats([g.trap, g.lowPower, { shudder: 0.4, speed: 0.9, reload: 2 }]),
                 TYPE: "trap",
                 STAT_CALCULATOR: "trap",
             },
@@ -157,7 +157,7 @@ Class.baseTrapTurret = {
         }, {
             POSITION: [4, 14, 1.8, 16, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.lowPower, g.pounder, g.destroyer, { reload: 0.5 }, g.hexaTrapper]),
+                SHOOT_SETTINGS: combineStats([g.trap, g.pounder, g.hexaTrapper, {size: 1.2, speed: 0.9, shudder: 0.1}]),
                 TYPE: "trap",
                 STAT_CALCULATOR: "trap",
                 AUTOFIRE: true,
@@ -176,7 +176,7 @@ Class.terrestrialTrapTurret = {
         }, {
             POSITION: [4, 14, 1.8, 13, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.lowPower, g.pounder, g.destroyer, { reload: 0.5 }, g.hexaTrapper]),
+                SHOOT_SETTINGS: combineStats([g.trap, g.pounder, g.hexaTrapper, {size: 1.2, speed: 0.9, shudder: 0.1}]),
                 TYPE: "trap",
                 STAT_CALCULATOR: "trap",
                 AUTOFIRE: true,
@@ -325,7 +325,7 @@ Class.autoSmasherLauncherTurret = {
         }, {
             POSITION: [18, 20, -0.7, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, { reload: 2 }, { speed: 1.3, maxSpeed: 1.3 }, { speed: 1.3, maxSpeed: 1.3 }, {range: 2.5}]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, { reload: 2, speed: 1.5, maxSpeed: 1.5, range: 2.5 }]),
                 TYPE: "autoSmasherMissile",
             },
         },
@@ -343,7 +343,7 @@ Class.twisterTurret = {
         }, {
             POSITION: [17, 14, -1.4, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, { speed: 1.3, maxSpeed: 1.3 }, { reload: 4/3 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, { speed: 1.3, maxSpeed: 1.3, reload: 4/3 }]),
                 TYPE: "spinmissile",
                 STAT_CALCULATOR: "sustained",
             },
@@ -540,26 +540,6 @@ Class.artilleryTurret = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery]),
                 TYPE: "bullet",
                 LABEL: "Heavy",
-            },
-        },
-    ],
-}
-Class.legionaryTwin = {
-    PARENT: "auto4gun",
-    COLOR: "grey",
-    INDEPENDENT: true,
-    GUNS: [
-        {
-            POSITION: [17.5, 5, 1, 0, -4.5, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [17.5, 5, 1, 0, 4.5, 0, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
-                TYPE: "bullet",
             },
         },
     ],
@@ -870,6 +850,35 @@ Class.basicTurret = {
         },
     ],
 }
+Class.tripletTurret = {
+    PARENT: "genericTank",
+    LABEL: "Triplet",
+    BODY: { FOV: 2 },
+    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
+    INDEPENDENT: true,
+    COLOR: "grey",
+    GUNS: [
+        {
+            POSITION: [18, 10, 1, 0, 5, 0, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
+                TYPE: "bullet",
+            },
+        }, {
+            POSITION: [18, 10, 1, 0, -5, 0, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
+                TYPE: "bullet",
+            },
+        }, {
+            POSITION: [21, 10, 1.2, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
+                TYPE: "bullet",
+            },
+        },
+    ],
+}
 Class.napoleonUpperTurret = {
     PARENT: "genericTank",
     LABEL: "",
@@ -964,33 +973,55 @@ Class.pillboxTurret = {
         },
     ],
 }
-Class.tripletTurret = {
-    PARENT: "genericTank",
-    LABEL: "Triplet",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
+Class.autoSmasherMissileTurret = {
+    PARENT: "autoTurret",
+    LABEL: "",
+    CONTROLLERS: ['nearestDifferentMaster'],
+    BODY: {
+        FOV: 5,
+    },
+    AI: {SKYNET: true, BLIND: true},
+    HAS_NO_RECOIL: true,
     INDEPENDENT: true,
-    COLOR: "grey",
     GUNS: [
         {
-            POSITION: [18, 10, 1, 0, 5, 0, 0.5],
+            POSITION: [19, 6, 1, 0, 4.5, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [18, 10, 1, 0, -5, 0, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [21, 10, 1.2, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
-                TYPE: "bullet",
-            },
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.pelleter, g.power, g.turret]),
+                TYPE: "bullet"
+            }
         },
+        {
+            POSITION: [19, 6, 1, 0, -4.5, 0, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.pelleter, g.power, g.turret]),
+                TYPE: "bullet"
+            }
+        }
+    ],
+}
+Class.legionaryTwin = {
+    PARENT: "auto4gun",
+    COLOR: "grey",
+    INDEPENDENT: true,
+    BODY: {
+        FOV: 5,
+    },
+    GUNS: [
+        {
+            POSITION: [18, 7, 1, 0, 5, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.pelleter, g.power, g.turret, {reload: 0.85}]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: [18, 7, 1, 0, -5, 0, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.pelleter, g.power, g.turret, {reload: 0.85}]),
+                TYPE: "bullet"
+            }
+        }
     ],
 }
 

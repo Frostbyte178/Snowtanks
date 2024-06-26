@@ -1,25 +1,8 @@
-const { combineStats, dereference } = require('../definitions/facilitators');
+const { combineStats } = require('../definitions/facilitators');
 
 let EventEmitter = require('events'),
     events,
     init = g => events = g.events;
-
-function setNatural(natural, type) {
-    type = ensureIsClass(type);
-    if (type.PARENT != null) {
-        if (typeof type.PARENT == 'string') setNatural(natural, type.PARENT)
-        else {
-            for (let i = 0; i < type.PARENT.length; i++) {
-                setNatural(natural, type.PARENT[i]);
-            }
-        }
-    }
-    if (type.BODY != null) {
-        for (let index in type.BODY) {
-            natural[index] = type.BODY[index];
-        }
-    }
-}
 
 class Gun extends EventEmitter {
     constructor(body, info) {
@@ -45,6 +28,7 @@ class Gun extends EventEmitter {
         this.alpha = 1;
         this.strokeWidth = 1;
         this.canShoot = false;
+        this.codeControlOnly = false;
         this.borderless = false;
         this.drawFill = true;
         this.drawAbove = false;
@@ -61,6 +45,7 @@ class Gun extends EventEmitter {
             this.syncsSkills = info.PROPERTIES.SYNCS_SKILLS ?? false;
             this.negativeRecoil = info.PROPERTIES.NEGATIVE_RECOIL ? -1 : 1;
             this.independentChildren = info.PROPERTIES.INDEPENDENT_CHILDREN ?? false;
+            this.codeControlOnly = info.PROPERTIES.CODE_CONTROLLED ?? false;
             if (info.PROPERTIES.COLOR != null) {
                 this.color.interpret(info.PROPERTIES.COLOR);
             }
@@ -126,13 +111,14 @@ class Gun extends EventEmitter {
         this.recoilVelocity = 0;
         if (this.canShoot) {
             this.cycleTimer = this.maxCycleTimer;
+            this.reloadRateFactor = 1;
             this.trueRecoil = this.shootSettings.recoil;
             this.facing = 0;
             this.childrenLimitFactor = 1;
         }
     }
     live() {
-        if (!this.canShoot || this.body.master.invuln) return;
+        if (!this.canShoot || this.codeControlOnly || this.body.master.invuln) return;
         
         // Iterate recoil
         this.recoil();
@@ -212,7 +198,7 @@ class Gun extends EventEmitter {
     findBulletSpawnPosition() {
         // Find out some intermediate values
         let offsetAngle = this.offsetDirection + this.angle + this.body.facing,
-            gunlength = this.length - this.width * this.shootSettings.size / 2,
+            gunlength = this.length + Config.bulletSpawnOffset * this.width * this.shootSettings.size / 2,
 
         // Calculate offset of gun base and gun end based
             offsetBaseX = this.offset * Math.cos(offsetAngle),
@@ -276,6 +262,15 @@ class Gun extends EventEmitter {
     }
     defineIndependentBullet(bullet) {
         bullet.define(this.bulletType);
+        // Keep track of it for child counting
+        if (this.maxChildren) {
+            bullet.parent = this;
+            this.children.push(bullet);
+        } else if (this.body.maxChildren) {
+            bullet.parent = this.body;
+            this.body.children.push(bullet);
+            this.children.push(bullet);
+        }
         bullet.coreSize = bullet.SIZE;
         bullet.team = this.body.team;
     }
@@ -342,7 +337,9 @@ class Gun extends EventEmitter {
         }
         this.bulletType = flattenedType;
         // Set final label to bullet
-        this.bulletType.LABEL = this.master.label + (this.label ? " " + this.label : "") + " " + this.bulletType.LABEL;
+        if (!this.independentChildren) {
+            this.bulletType.LABEL = this.master.label + (this.label ? " " + this.label : "") + " " + this.bulletType.LABEL;
+        }
         // Save a copy of the bullet definition for body stat defining
         this.bulletBodyStats = JSON.parse(JSON.stringify(this.bulletType.BODY));
         this.calculateBulletStats();
@@ -490,11 +487,11 @@ class Gun extends EventEmitter {
 }
 
 class antiNaN {
-    constructor (me) {
+    constructor(me) {
         this.me = me;
         this.nansInARow = 0;
         this.data = { x: 1, y: 1, vx: 0, vy: 0, ax: 0, ay: 0 };
-        this.amNaN = me => [ me.x, me.y, me.velocity.x, me.velocity.y, me.accel.x, me.accel.y ].some(isNaN);
+        this.amNaN = me => [me.x, me.y, me.velocity.x, me.velocity.y, me.accel.x, me.accel.y].some(isNaN);
     }
     update() {
         if (this.amNaN(this.me)) {
@@ -505,8 +502,8 @@ class antiNaN {
                     ["y"         , isNaN(this.me.y)],
                     ["velocity.x", isNaN(this.me.velocity.x)],
                     ["velocity.y", isNaN(this.me.velocity.y)],
-                    ["accel.x"   , isNaN(this.me.accel.x)],
-                    ["accel.y"   , isNaN(this.me.accel.y)],
+                    ["accel.x", isNaN(this.me.accel.x)],
+                    ["accel.y", isNaN(this.me.accel.y)],
                 ].filter(entry => entry[1]).join(', '));
             }
             this.me.x = this.data.x;
@@ -537,9 +534,9 @@ function getValidated(obj, prop, allowedType, from, optional = true) {
 }
 let labelThing = "StatusEffect's effects argument";
 class StatusEffect extends EventEmitter {
-    constructor (duration = 0, multipliers = {}, tick = a=>a) {
+    constructor(duration = 0, multipliers = {}, tick = a => a) {
         super();
-        this.duration = getValidated({duration}, 'duration', 'number', labelThing, false);
+        this.duration = getValidated({ duration }, 'duration', 'number', labelThing, false);
         this.acceleration = getValidated(multipliers, 'acceleration', 'number', labelThing);
         this.topSpeed = getValidated(multipliers, 'topSpeed', 'number', labelThing);
         this.health = getValidated(multipliers, 'health', 'number', labelThing);
@@ -554,7 +551,7 @@ class StatusEffect extends EventEmitter {
         this.pushability = getValidated(multipliers, 'pushability', 'number', labelThing);
         this.recoilReceived = getValidated(multipliers, 'recoilReceived', 'number', labelThing);
         this.size = getValidated(multipliers, 'size', 'number', labelThing);
-        this.tick = getValidated({tick}, 'tick', 'function', "StatusEffect's argument");
+        this.tick = getValidated({ tick }, 'tick', 'function', "StatusEffect's argument");
     }
 }
 
@@ -837,7 +834,7 @@ class Entity extends EventEmitter {
         entities.push(this);
         for (let v of views) v.add(this);
         this.activation.update();
-        events.emit('spawn', this);
+        Events.emit('spawn', this);
     }
     addStatusEffect(effect) {
         this.emit('newStatusEffect', effect);
@@ -872,14 +869,14 @@ class Entity extends EventEmitter {
 
         // Think
         let faucet = this.settings.independent || this.source == null || this.source === this ? {} : this.source.control,
-        b = {
-            target: remapTarget(faucet, this.source, this),
-            goal: undefined,
-            fire: faucet.fire,
-            main: faucet.main,
-            alt: faucet.alt,
-            power: undefined,
-        };
+            b = {
+                target: remapTarget(faucet, this.source, this),
+                goal: undefined,
+                fire: faucet.fire,
+                main: faucet.main,
+                alt: faucet.alt,
+                power: undefined,
+            };
         // Seek attention
         if (this.settings.attentionCraver && !faucet.main && this.range) {
             this.range -= 1;
@@ -890,11 +887,11 @@ class Entity extends EventEmitter {
                 a = AI.think(b);
             if (a != null) {
                 if (a.target != null && (b.target == null || AI.acceptsFromTop)) b.target = a.target;
-                if (a.goal   != null && (b.goal   == null || AI.acceptsFromTop)) b.goal   = a.goal  ;
-                if (a.fire   != null && (b.fire   == null || AI.acceptsFromTop)) b.fire   = a.fire  ;
-                if (a.main   != null && (b.main   == null || AI.acceptsFromTop)) b.main   = a.main  ;
-                if (a.alt    != null && (b.alt    == null || AI.acceptsFromTop)) b.alt    = a.alt   ;
-                if (a.power  != null && (b.power  == null || AI.acceptsFromTop)) b.power  = a.power ;
+                if (a.goal != null && (b.goal == null || AI.acceptsFromTop)) b.goal = a.goal;
+                if (a.fire != null && (b.fire == null || AI.acceptsFromTop)) b.fire = a.fire;
+                if (a.main != null && (b.main == null || AI.acceptsFromTop)) b.main = a.main;
+                if (a.alt != null && (b.alt == null || AI.acceptsFromTop)) b.alt = a.alt;
+                if (a.power != null && (b.power == null || AI.acceptsFromTop)) b.power = a.power;
             }
         }
         this.control.target = b.target == null ? this.control.target : b.target;
@@ -933,7 +930,8 @@ class Entity extends EventEmitter {
         this.controllers = this.controllers.concat(newIO);
     }
     become(player, dom = false) {
-        this.addController(new ioTypes.listenToPlayer(this, { player, static: dom }));
+        this.addController(new ioTypes.listenToPlayer(this, { player, static: dom })); // make it listen.
+        this.sendMessage = (content, displayTime = Config.MESSAGE_DISPLAY_TIME) => player.socket.talk("m", displayTime, content); // make sure that it sends messages.
         this.kick = (reason) => player.socket.kick(reason);
     }
     giveUp(player, name = "Mothership") {
@@ -959,7 +957,7 @@ class Entity extends EventEmitter {
     }
     define(defs, emitEvent = true) {
         if (!Array.isArray(defs)) defs = [defs];
-        
+
         // Define all primary stats
         let set = ensureIsClass(defs[0]);
         this.store = {};
@@ -976,7 +974,10 @@ class Entity extends EventEmitter {
         }
         if (set.LAYER != null) this.layerID = set.LAYER;
         if (set.index != null) this.index = set.index.toString();
-        if (set.NAME != null) this.name = set.NAME;
+        if (set.NAME != null) {
+            this.name = set.NAME;
+            if (this.socket) this.socket.talk("updateName", this.name);
+        };
         if (set.LABEL != null) this.label = set.LABEL;
         if (set.ANGLE != null) this.angle = set.ANGLE;
         if (set.UPGRADE_LABEL != null) this.upgradeLabel = set.UPGRADE_LABEL;
@@ -1021,6 +1022,11 @@ class Entity extends EventEmitter {
             this.particleEmitter.angle.min *= Math.PI / 180;
             this.particleEmitter.angle.max *= Math.PI / 180;
         }
+        if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
+        if (set.MOTION_TYPE != null) this.motionType = set.MOTION_TYPE;
+        if (typeof this.motionType == "string") this.motionType = [this.motionType, {}];
+        if (set.FACING_TYPE != null) this.facingType = set.FACING_TYPE;
+        if (typeof this.facingType == "string") this.facingType = [this.facingType, {}];
         if (set.CONTROLLERS != null) {
             let toAdd = [];
             for (let i = 0; i < set.CONTROLLERS.length; i++) {
@@ -1030,11 +1036,6 @@ class Entity extends EventEmitter {
             }
             this.addController(toAdd);
         }
-        if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
-        if (set.MOTION_TYPE != null) this.motionType = set.MOTION_TYPE;
-        if (typeof this.motionType == "string") this.motionType = [this.motionType, {}];
-        if (set.FACING_TYPE != null) this.facingType = set.FACING_TYPE;
-        if (typeof this.facingType == "string") this.facingType = [this.facingType, {}];
         if (set.MIRROR_MASTER_ANGLE != null) this.settings.mirrorMasterAngle = set.MIRROR_MASTER_ANGLE
         if (set.DRAW_HEALTH != null) this.settings.drawHealth = set.DRAW_HEALTH;
         if (set.DRAW_SELF != null) this.settings.drawShape = set.DRAW_SELF;
@@ -1079,6 +1080,10 @@ class Entity extends EventEmitter {
         };
         if (set.AI != null) this.aiSettings = set.AI;
         if (set.INVISIBLE != null) this.invisible = set.INVISIBLE;
+        if (set.SYNC_WITH_TANK != null) {
+            this.settings.syncWithTank = set.SYNC_WITH_TANK;
+            if (this.socket) this.socket.talk("I", !!set.SYNC_WITH_TANK);
+        }
         if (set.ALPHA != null) {
             this.alpha = ("number" === typeof set.ALPHA) ? set.ALPHA : set.ALPHA[1];
             this.alphaRange = [
@@ -1092,6 +1097,7 @@ class Entity extends EventEmitter {
         if (set.BORDERLESS != null) this.borderless = set.BORDERLESS;
         if (set.BORDER_FIRST != null) this.borderFirst = set.BORDER_FIRST;
         if (set.DRAW_FILL != null) this.drawFill = set.DRAW_FILL;
+        if (set.IS_IMMUNE_TO_TILES) this.immuneToTiles = set.IS_IMMUNE_TO_TILES;
         if (set.TEAM != null) {
             this.team = set.TEAM;
             if (sockets.players.length) {
@@ -1109,7 +1115,7 @@ class Entity extends EventEmitter {
             this.squiggle = this.settings.variesInSize ? ran.randomRange(0.8, 1.2) : 1;
         }
         if (set.RESET_UPGRADES || set.RESET_STATS) {
-            let caps = this.skill.caps.map(x=>x);
+            let caps = this.skill.caps.map(x => x);
             this.skill.setCaps(Array(10).fill(0));
             this.skill.setCaps(caps);
             this.upgrades = [];
@@ -1137,7 +1143,7 @@ class Entity extends EventEmitter {
                     this.upgrades.push({
                         class: trueUpgrades,
                         level: Config.TIER_MULTIPLIER * i,
-                        index: index.substring(0, index.length-1),
+                        index: index.substring(0, index.length - 1),
                         tier: i,
                         branch: 0,
                         branchLabel: this.branchLabel,
@@ -1220,7 +1226,7 @@ class Entity extends EventEmitter {
             let score = this.skill.score;
             this.skill.reset();
             this.skill.score = score;
-            while (this.skill.maintain()) {}
+            while (this.skill.maintain()) { }
         }
         if (set.EXTRA_SKILL != null) {
             this.skill.points += set.EXTRA_SKILL;
@@ -1310,7 +1316,7 @@ class Entity extends EventEmitter {
         // Define additional stats for other split upgrades
         for (let branch = 1; branch < defs.length; branch++) {
             set = ensureIsClass(defs[branch]);
-            
+
             if (set.index != null) this.index += "-" + set.index;
             if (set.PARENT != null) {
                 if (Array.isArray(set.PARENT)) {
@@ -1378,6 +1384,15 @@ class Entity extends EventEmitter {
                 this.SIZE *= set.SIZE * this.squiggle;
                 if (this.coreSize == null) this.coreSize = this.SIZE;
             }
+            if (set.CONTROLLERS != null) {
+                let toAdd = [];
+                for (let i = 0; i < set.CONTROLLERS.length; i++) {
+                    let io = set.CONTROLLERS[i];
+                    if ("string" == typeof io) io = [io];
+                    toAdd.push(new ioTypes[io[0]](this, io[1]));
+                }
+                this.addController(toAdd);
+            }
             if (set.BATCH_UPGRADES != null) this.batchUpgrades = set.BATCH_UPGRADES;
             for (let i = 0; i < Config.MAX_UPGRADE_TIER; i++) {
                 let tierProp = 'UPGRADES_TIER_' + i;
@@ -1395,7 +1410,7 @@ class Entity extends EventEmitter {
                         this.upgrades.push({
                             class: trueUpgrades,
                             level: Config.TIER_MULTIPLIER * i,
-                            index: index.substring(0, index.length-1),
+                            index: index.substring(0, index.length - 1),
                             tier: i,
                             branch,
                             branchLabel: this.branchLabel,
@@ -1450,7 +1465,7 @@ class Entity extends EventEmitter {
             this.upgrades.push({
                 class: upgradeClass,
                 level: Config.TIER_MULTIPLIER * upgradeTier,
-                index: upgradeIndex.substring(0, upgradeIndex.length-1),
+                index: upgradeIndex.substring(0, upgradeIndex.length - 1),
                 tier: upgradeTier,
                 branch: 0,
                 branchLabel: "",
@@ -1521,7 +1536,7 @@ class Entity extends EventEmitter {
             this.skipLife = true;
         }
         // TODO: FIX CLIENT MAKING EVERYTHING FLASH WHEN A VULN TURRET DIES, and display health
-        if (isInvulnerable) this.on('dead', () => {util.remove(this.master.turrets, this.master.turrets.indexOf(this))})
+        if (isInvulnerable) this.on('dead', () => { util.remove(this.master.turrets, this.master.turrets.indexOf(this)) })
         this.settings.drawShape = false;
         // Get my position.
         if (Array.isArray(position)) {
@@ -1665,7 +1680,7 @@ class Entity extends EventEmitter {
                 upgradeBranch = upgrade.branch,
                 redefineAll = upgrade.redefineAll;
             if (redefineAll) {
-                for (let i = 0; i < upgradeClass.length; i++){
+                for (let i = 0; i < upgradeClass.length; i++) {
                     upgradeClass[i] = ensureIsClass(...upgradeClass[i]);
                 }
                 this.upgrades = [];
@@ -1717,9 +1732,9 @@ class Entity extends EventEmitter {
     }
     move() {
         let g = {
-                x: this.control.goal.x - this.x,
-                y: this.control.goal.y - this.y,
-            },
+            x: this.control.goal.x - this.x,
+            y: this.control.goal.y - this.y,
+        },
             gactive = g.x !== 0 || g.y !== 0,
             engine = {
                 x: 0,
@@ -1870,10 +1885,10 @@ class Entity extends EventEmitter {
                 this.x += Math.cos(this.waveAngle) * waveX - Math.sin(this.waveAngle) * waveY;
                 this.y += Math.sin(this.waveAngle) * waveX + Math.cos(this.waveAngle) * waveY;
                 break;
-            }
-            this.accel.x += engine.x * this.control.power;
-            this.accel.y += engine.y * this.control.power;
         }
+        this.accel.x += engine.x * this.control.power;
+        this.accel.y += engine.y * this.control.power;
+    }
     reset(keepPlayerController = true) {
         this.controllers = keepPlayerController ? [this.controllers.filter(con => con instanceof ioTypes.listenToPlayer)[0]] : [];
     }
@@ -2110,8 +2125,8 @@ class Entity extends EventEmitter {
             let name = this.master.name == ""
                 ? this.master.type === "tank"
                     ? "an unnamed " + this.label : this.master.type === "miniboss"
-                    ? "a visiting " + this.label : this.label.substring(0, 3) == 'The'
-                    ? this.label : util.addArticle(this.label)
+                        ? "a visiting " + this.label : this.label.substring(0, 3) == 'The'
+                            ? this.label : util.addArticle(this.label)
                 : this.master.name + "'s " + this.label;
             // Calculate the jackpot
             let jackpot = util.getJackpot(this.skill.score) / this.collisionArray.length;
@@ -2136,23 +2151,23 @@ class Entity extends EventEmitter {
             this.emit('death', { body: this, killers, killTools });
             killers.forEach((e) => e.emit('kill', { body: e, entity: this }));
             // If there's no valid killers (you were killed by food), change the message to be more passive
-            let killText = notJustFood ? "" : "You have been killed by ",
-                dothISendAText = this.settings.givesKillMessage;
+            let killText = "You have been killed by ",
+                doISendAText = this.settings.givesKillMessage;
 
             for (let i = 0; i < killers.length; i++) {
                 let instance = killers[i];
-                
+
                 switch (this.type) {
                     case "tank":
                         killers.length > 1 ? instance.killCount.assists++ : instance.killCount.solo++;
                         break;
-                    
+
                     case "food":
                     case "crasher":
                         instance.killCount.polygons++;
                         break
-                    
-                    case "miniboss": 
+
+                    case "miniboss":
                         instance.killCount.bosses++;
                         break;
                 }
@@ -2168,7 +2183,7 @@ class Entity extends EventEmitter {
                         killText += " and ";
                     }
                     // Only if we give messages
-                    if (dothISendAText) {
+                    if (doISendAText) {
                         instance.sendMessage("You killed " + name + (killers.length > 1 ? " (with some help)." : "."));
                     }
                     if (this.settings.killMessage) {
@@ -2217,7 +2232,9 @@ class Entity extends EventEmitter {
             if (killText === "You have been kille") {
                 killText = "You have died a stupid death";
             }
-            this.sendMessage(killText + ".");
+            if (!this.dontSendDeathMessage) {
+                this.sendMessage(killText + ".");
+            }
             // If I'm the leader, broadcast it:
             if (this.id === room.topPlayerID) {
                 let usurptText = this.name === "" ? "The leader" : this.name;
@@ -2250,8 +2267,8 @@ class Entity extends EventEmitter {
         }
         chats[this.id].unshift({ message, expires: Date.now() + duration });
     }
-    sendMessage(message) {} // Dummy
-    setKillers(killers) {} // Dummy
+    sendMessage(message) { } // Dummy
+    setKillers(killers) { } // Dummy
     kill() {
         this.invuln = false;
         this.health.amount = -100;
@@ -2303,4 +2320,4 @@ class Entity extends EventEmitter {
         return this.health.amount <= 0;
     }
 }
-module.exports = { init, StatusEffect, Gun, Entity };
+module.exports = { StatusEffect, Gun, Entity };

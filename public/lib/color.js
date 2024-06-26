@@ -40,7 +40,7 @@ var color = {
         "lgrey": "#3c3a3a",
         "guiwhite": "#000000",
         "black": "#e5e5e5",
-        "blue": "#379fc6",
+        "blue": "#379FC6",
         "green": "#30b53b",
         "red": "#ff6c6e",
         "gold": "#ffc665",

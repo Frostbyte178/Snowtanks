@@ -653,7 +653,7 @@ class LayeredBoss {
 exports.LayeredBoss = LayeredBoss;
 
 // Food facilitators
-exports.makeRelic = (type, scale = 1, gem, SIZE) => {
+exports.makeRelic = (type, scale = 1, gem, SIZE, yBase = 8.25) => {
     // Code by Damocles (https://discord.com/channels/366661839620407297/508125275675164673/1090010998053818488)
     // Albeit heavily modified because the math in the original didn't work LOL
     type = ensureIsClass(type);
@@ -675,7 +675,7 @@ exports.makeRelic = (type, scale = 1, gem, SIZE) => {
     Class[Math.random().toString(36)] = relicCasing;
     Class[Math.random().toString(36)] = relicBody;
     let width = 6 * scale,
-        y = 8.25 + ((scale % 1) * 5),
+        y = yBase + ((scale % 1) * 5),
         isEgg = type.SHAPE == 0,
         casings = isEgg ? 8 : type.SHAPE,
         fraction = 360 / casings,

@@ -17,7 +17,7 @@ const settings = {
     },
     lag: {
         unresponsive: false,
-        memory: 60
+        memory: 500
     },
     game: {
         autoLevelUp: false

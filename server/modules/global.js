@@ -1,6 +1,6 @@
 // Global Utilities Requires
 let EventEmitter = require('events');
-global.events = new EventEmitter();
+global.Events = new EventEmitter();
 global.ran = require(".././lib/random.js");
 global.util = require(".././lib/util.js");
 global.hshg = require(".././lib/hshg.js");
@@ -46,7 +46,10 @@ global.getWeakestTeam = () => {
             teamcounts[o.team]++;
         }
     }
-    teamcounts = Object.entries(teamcounts);
+    teamcounts = Object.entries(teamcounts).map(([teamId, amount]) => {
+        let weight = teamId in Config.TEAM_WEIGHTS ? Config.TEAM_WEIGHTS[teamId] : 1;
+        return [teamId, amount / weight];
+    });
     let lowestTeamCount = Math.min(...teamcounts.map(x => x[1])),
         entries = teamcounts.filter(a => a[1] == lowestTeamCount);
     return parseInt(!entries.length ? -Math.ceil(Math.random() * Config.TEAMS) : ran.choose(entries)[0]);
@@ -96,7 +99,7 @@ global.Config = new Proxy(new EventEmitter(), {
         let abort;
         prop = TO_SCREAMING_SNAKE_CASE(prop);
 
-        events.emit('change', {
+        obj.emit('change', {
             setting: prop,
             newValue: value,
             oldValue: obj[prop],
@@ -188,7 +191,6 @@ const requires = [
 
 for (let file of requires) {
     const module = require(file);
-    if (module.init) module.init(global);
     for (let key in module) {
         if (module.hasOwnProperty(key)) global[key] = module[key];
     }

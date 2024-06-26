@@ -20,7 +20,6 @@ Class.elite = {
     COLOR: "pink",
     SHAPE: 3,
     SIZE: 27,
-    VARIES_IN_SIZE: true,
     VALUE: 15e4,
     BODY: {
         FOV: 1.25,
@@ -63,8 +62,8 @@ Class.eliteGunner = {
         }, {
             POSITION: [4, 16, 1.5, 14, 0, 180, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper]),
-                TYPE: ["unsetPillbox", {MOTION_TYPE: "glide"}],
+                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {speed: 1.5, range: 0.3}]),
+                TYPE: "unsetPillbox",
                 STAT_CALCULATOR: "trap",
             },
         }, {
@@ -156,8 +155,8 @@ Class.eliteSpawner = {
         }, {
             POSITION: [2, 18, 1, 11, 0, 60, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.weak, g.weak, g.weak, { size: 0.5, health: 2.5 }]),
-                TYPE: ["sentrySwarm", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
+                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.5, maxSpeed: 0.5, heath: 1.35}]),
+                TYPE: "sentrySwarmMinion",
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
                 STAT_CALCULATOR: "drone",
@@ -165,8 +164,8 @@ Class.eliteSpawner = {
         }, {
             POSITION: [2, 18, 1, 11, 0, 180, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.weak, g.weak, g.weak, { size: 0.5, health: 2.5 }]),
-                TYPE: ["sentryTrap", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
+                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.5, maxSpeed: 0.5, heath: 1.35}]),
+                TYPE: "sentryTrapMinion",
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
                 STAT_CALCULATOR: "drone",
@@ -174,8 +173,8 @@ Class.eliteSpawner = {
         }, {
             POSITION: [2, 18, 1, 11, 0, 300, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.weak, g.weak, g.weak, { size: 0.5, health: 2.5 }]),
-                TYPE: ["sentryGun", {CLEAR_ON_MASTER_UPGRADE: true, ACCEPTS_SCORE: false, VARIES_IN_SIZE: false, GIVE_KILL_MESSAGE: false}],
+                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.5, maxSpeed: 0.5, heath: 1.35}]),
+                TYPE: "sentryGunMinion",
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
                 STAT_CALCULATOR: "drone",
@@ -271,6 +270,178 @@ Class.oldEliteSprayer = {
     }, 3)
 };
 
+// Legions
+Class.destroyerLegion = {
+    PARENT: "elite",
+    UPGRADE_LABEL: "Destroyer Legion",
+    UPGRADE_COLOR: "pink",
+    AI: { NO_LEAD: false },
+    SIZE: 30,
+    BODY: {
+        HEALTH: 8 * base.HEALTH,
+    },
+    GUNS: weaponArray({
+        POSITION: [5, 16, 1, 6, 0, 60, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.pounder, g.destroyer, {health: 1.1}]),
+            TYPE: "bullet",
+            LABEL: "Devastator",
+        },
+    }, 3),
+    TURRETS: [
+        ...weaponArray({
+            POSITION: [11, 0, 0, 60, 360, 0],
+            TYPE: ["crasherSpawner", {GUN_STAT_SCALE: {health: 1.1}}],
+        }, 3),
+        {
+            POSITION: [11, 0, 0, 0, 360, 1],
+            TYPE: [ "bigauto4gun", { GUN_STAT_SCALE: {health: 1.1}, INDEPENDENT: true, COLOR: -1 } ],
+        },
+    ],
+}
+Class.gunnerLegion = {
+    PARENT: "elite",
+    UPGRADE_LABEL: "Gunner Legion",
+    UPGRADE_COLOR: "pink",
+    FACING_TYPE: "toTarget",
+    AI: { NO_LEAD: false },
+    SIZE: 30,
+    BODY: {
+        HEALTH: 8 * base.HEALTH,
+    },
+    GUNS: [
+        {
+            POSITION: [14, 16, 1, 0, 0, 180, 0],
+        }, {
+            POSITION: [4, 16, 1.5, 14, 0, 180, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {health: 1.1,speed: 1.5, range: 0.3}]),
+                TYPE: "unsetPillbox",
+                STAT_CALCULATOR: "trap",
+            },
+        }, {
+            POSITION: [6, 14, -2, 2, 0, 60, 0],
+        }, {
+            POSITION: [6, 14, -2, 2, 0, 300, 0],
+        },
+    ],
+    TURRETS: [
+        {
+            POSITION: [14, 8, 0, 60, 180, 0],
+            TYPE: ["auto4gun", {GUN_STAT_SCALE: {health: 1.1}}],
+        }, {
+            POSITION: [14, 8, 0, 300, 180, 0],
+            TYPE: ["auto4gun", {GUN_STAT_SCALE: {health: 1.1}}],
+        },
+    ],
+}
+Class.sprayerLegion = {
+    PARENT: "elite",
+    UPGRADE_LABEL: "Sprayer Legion",
+    UPGRADE_COLOR: "pink",
+    AI: { NO_LEAD: false },
+    SIZE: 30,
+    SKILL: [0, 9, 3, 9, 2, 9, 9, 9, 9, 0],
+    HAS_NO_RECOIL: true,
+    BODY: {
+        HEALTH: 8 * base.HEALTH,
+    },
+    TURRETS: weaponArray({
+        POSITION: [14, 6, 0, 60, 190, 0],
+        TYPE: ["machineGun", {GUN_STAT_SCALE: {health: 1.1, damage: 1.2, speed: 1.1, maxSpeed: 1.1}, COLOR: -1}],
+    }, 3)
+}
+Class.battleshipLegion = {
+    PARENT: "elite",
+    UPGRADE_LABEL: "Battleship Legion",
+    UPGRADE_COLOR: "pink",
+    AI: { NO_LEAD: false },
+    SIZE: 30,
+    BODY: {
+        HEALTH: 8 * base.HEALTH,
+    },
+    GUNS: weaponArray([
+        {
+            POSITION: [4, 6, 0.6, 7, -8, 60, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.swarm, g.battleship, {damage: 1, speed: 1.1, maxSpeed: 1.1}]),
+                TYPE: "autoswarm",
+                STAT_CALCULATOR: "swarm",
+            },
+        }, {
+            POSITION: [4, 6, 0.6, 7, 0, 60, 0.5],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.swarm, g.battleship, {damage: 1, speed: 1.1, maxSpeed: 1.1}]),
+                TYPE: "autoswarm",
+                STAT_CALCULATOR: "swarm",
+            },
+        }, {
+            POSITION: [4, 6, 0.6, 7, 8, 60, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.swarm, g.battleship, {damage: 1, speed: 1.1, maxSpeed: 1.1}]),
+                TYPE: "autoswarm",
+                STAT_CALCULATOR: "swarm",
+            },
+        }, 
+    ], 3),
+    TURRETS: weaponArray({
+        POSITION: [5, 7, 0, 0, 360, 1],
+        TYPE: [ "autoTankGun", { GUN_STAT_SCALE: {health: 1.1}, INDEPENDENT: true, COLOR: -1 } ],
+    }, 3)
+}
+Class.spawnerLegion = {
+    PARENT: "elite",
+    UPGRADE_LABEL: "Spawner Legion",
+    UPGRADE_COLOR: "pink",
+    AI: { NO_LEAD: false },
+    SIZE: 30,
+    BODY: {
+        HEALTH: 8 * base.HEALTH,
+    },
+    GUNS: [
+        {
+            POSITION: [11, 16, 1, 0, 0, 60, 0],
+        }, {
+            POSITION: [11, 16, 1, 0, 0, 180, 0],
+        }, {
+            POSITION: [11, 16, 1, 0, 0, 300, 0],
+        }, {
+            POSITION: [2, 18, 1, 11, 0, 60, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.6, maxSpeed: 0.6, heath: 1.5}]),
+                TYPE: "sentrySwarmMinion",
+                SYNCS_SKILLS: true,
+                AUTOFIRE: true,
+                STAT_CALCULATOR: "drone",
+            },
+        }, {
+            POSITION: [2, 18, 1, 11, 0, 180, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.6, maxSpeed: 0.6, heath: 1.5}]),
+                TYPE: "sentryTrapMinion",
+                SYNCS_SKILLS: true,
+                AUTOFIRE: true,
+                STAT_CALCULATOR: "drone",
+            },
+        }, {
+            POSITION: [2, 18, 1, 11, 0, 300, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.6, maxSpeed: 0.6, heath: 1.5}]),
+                TYPE: "sentryGunMinion",
+                SYNCS_SKILLS: true,
+                AUTOFIRE: true,
+                STAT_CALCULATOR: "drone",
+            },
+        },
+    ],
+    TURRETS: [
+        {
+            POSITION: [11, 0, 0, 0, 360, 1],
+            TYPE: ["auto4gun", { GUN_STAT_SCALE: {health: 1.1}, INDEPENDENT: false, COLOR: -1 }],
+        },
+    ],
+}
+
 // Legionary Crasher
 Class.legionaryCrasherTop = {
     PARENT: "elite",
@@ -299,8 +470,30 @@ Class.legionaryCrasherTop = {
     ], 3),
     TURRETS: weaponArray({
         POSITION: [9.5, 10, 0, 0, 190, 0],
-        TYPE: "auto4gun",
+        TYPE: ["auto4gun", {GUN_STAT_SCALE: {speed: 1.2, maxSpeed: 1.2, range: 1.3}}],
     }, 3),
+}
+Class.legionaryCrasherSpawner = {
+    PARENT: 'genericTank',
+    SHAPE: "",
+    INDEPENDENT: true,
+    GUNS: [{
+        POSITION: [0, 10, 0, 0, 0, 0, 0],
+        PROPERTIES: {
+            TYPE: 'destroyerLegion',
+            SHOOT_SETTINGS: combineStats([{reload: 0.01}]),
+            INDEPENDENT_CHILDREN: true,
+            MAX_CHILDREN: 3,
+            IDENTIFIER: 1,
+            AUTOFIRE: true
+        }
+    }],
+    ON: [{
+        event: "fire",
+        handler: ({ gun }) => {
+            gun.setBulletType(["destroyerLegion", "gunnerLegion", "sprayerLegion", "battleshipLegion", "spawnerLegion"][gun.identifier++ % 5]);
+        }
+    }],
 }
 Class.legionaryCrasher = {
     PARENT: "elite",
@@ -323,7 +516,7 @@ Class.legionaryCrasher = {
             }, {
                 POSITION: [3, 13, 1.7, 14.5, 0, 0, 0],
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, g.destroyer, { speed: 2.5, size: 0.6, maxSpeed: 3 }]),
+                    SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, { reload: 2, speed: 2, size: 0.65, maxSpeed: 2, range: 0.65 }]),
                     TYPE: "legionaryPillbox",
                     STAT_CALCULATOR: "trap",
                 },
@@ -331,7 +524,7 @@ Class.legionaryCrasher = {
         ], 3),
         ...weaponArray({
             POSITION: [5, 12, 1.6, -11, 0, 0, 0],
-        }, 3)
+        }, 3),
     ],
     TURRETS: [
         {
@@ -340,21 +533,14 @@ Class.legionaryCrasher = {
         },
         ...weaponArray({
             POSITION: [14, 8, 0, 60, 180, 0],
-            TYPE: [ "sprayer", { COLOR: -1, } ],
-        }, 3)
+            TYPE: [ "sprayer", { GUN_STAT_SCALE: {speed: 1.1, maxSpeed: 1.1, health: 1.5}, COLOR: -1 } ],
+        }, 3),
+        {
+            POSITION: [12, 0, 0, 0, 0, 0],
+            TYPE: 'legionaryCrasherSpawner'
+        }
     ],
 }
-
-Class.sprayerLegion = {
-    PARENT: "elite",
-    UPGRADE_LABEL: "Sprayer Legion",
-    UPGRADE_COLOR: "pink",
-    AI: { NO_LEAD: false },
-    TURRETS: weaponArray({
-        POSITION: [14, 6, 0, 60, 190, 0],
-        TYPE: ["machineGun", {COLOR: -1}],
-    }, 3)
-};
 
 // STRANGE BOSSES
 Class.sorcerer = {
@@ -376,7 +562,7 @@ Class.sorcerer = {
     GUNS: weaponArray({
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
-            SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.machineGun, g.machineGunner, { size: 0.4, spray: 150, speed: 2, shudder: 1.75 }]),
+            SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.machineGun, g.machineGunner, { damage: 2, size: 0.4, spray: 150, speed: 2, shudder: 1.75 }]),
             TYPE: "minichip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
@@ -405,7 +591,7 @@ Class.summoner = {
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.drone, g.summoner, { size: 0.8 }]),
-            TYPE: ["sunchip"],
+            TYPE: "summonerDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "necro",
@@ -897,8 +1083,8 @@ let ares = new LayeredBoss(null, "Ares", "terrestrial", 7, "purple", "terrestria
 ares.addLayer({gun: {
     POSITION: [3.75, 7, 1.2, 8, 0, null, 0],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { speed: 0.5, maxSpeed: 0.5 }]),
-        TYPE: ["demonchip", { INDEPENDENT: true, }],
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { speed: 0.8, maxSpeed: 0.8 }]),
+        TYPE: ["demonchip", { INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "necro",
@@ -924,8 +1110,8 @@ let ezekiel = new LayeredBoss(null, "Ezekiel", "terrestrial", 7, "orange", "terr
 ezekiel.addLayer({gun: {
     POSITION: [3.75, 7, 1.2, 8, 0, null, 0],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { speed: 0.5, maxSpeed: 0.5 }]),
-        TYPE: ["dorito", { COLOR: "orange", INDEPENDENT: true, }],
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { speed: 0.8, maxSpeed: 0.8 }]),
+        TYPE: ["dorito", { COLOR: "orange", INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "necro",
@@ -942,7 +1128,7 @@ eris.addLayer({gun: {
     POSITION: [3.75, 7, 1.2, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.factory, { size: 0.5 }]),
-        TYPE: ["minion", { INDEPENDENT: true, COLOR: "pink", HAS_NO_RECOIL: true }],
+        TYPE: ["minion", { INDEPENDENT: true, COLOR: "pink" }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "necro",
@@ -958,8 +1144,8 @@ let selene = new LayeredBoss(null, "Selene", "terrestrial", 7, "gold", "terrestr
 selene.addLayer({gun: {
     POSITION: [3.75, 7, 1.2, 8, 0, null, 0],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { speed: 0.5, maxSpeed: 0.5 }]),
-        TYPE: ["sunchip", { COLOR: "gold", INDEPENDENT: true }],
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { speed: 0.8, maxSpeed: 0.8 }]),
+        TYPE: ["summonerDrone", { COLOR: "gold", INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "necro",
@@ -976,7 +1162,7 @@ let paladin = new LayeredBoss(null, "Paladin", "celestial", 9, "purple", "baseTr
 paladin.addLayer({gun: {
     POSITION: [3.8, 6, 1.4, 8, 0, null, 0],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer]),
         TYPE: ["demonchip", {INDEPENDENT: true}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
@@ -1005,8 +1191,8 @@ let zaphkiel = new LayeredBoss(null, "Zaphkiel", "celestial", 9, "orange", "base
 zaphkiel.addLayer({gun: {
     POSITION: [3.8, 6, 1.4, 8, 0, null, 0],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-        TYPE: ["drone", {INDEPENDENT: true,}],
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer]),
+        TYPE: ["dorito", {INDEPENDENT: true}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
     },
@@ -1037,7 +1223,7 @@ let theia = new LayeredBoss(null, "Theia", "celestial", 9, "gold", "baseTrapTurr
 theia.addLayer({gun: {
     POSITION: [3.8, 6, 1.4, 8, 0, null, 1],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, { size: 0.5 }]),
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer]),
         TYPE: ["summonerDrone", {INDEPENDENT: true}],
         AUTOFIRE: true,
         WAIT_TO_CYCLE: true,
@@ -1046,7 +1232,7 @@ theia.addLayer({gun: {
 }}, true, null, 35);
 theia.addLayer({turret: {
     POSITION: [10, 7.5, 0, null, 160, 0],
-    TYPE: ["twisterTurret", {COLOR: "grey"}],
+    TYPE: ["twisterTurret", {INDEPENDENT: true, COLOR: "grey"}],
 }}, true, 6);
 
 // ATLAS
@@ -1123,8 +1309,8 @@ let odin = new LayeredBoss(null, "Odin", "eternal", 11, "aqua", "baseTrapTurret"
 odin.addLayer({gun: {
     POSITION: [2.25, 3.25, -1.6, 9, 0, null, 0],
     PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.factory, { size: 0.5 }, g.pounder, {size: 1.7}]),
-        TYPE: ["gemDrone", {INDEPENDENT: true,}],
+        SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.pounder, g.destroyer]),
+        TYPE: ["realchip", {INDEPENDENT: true, DRAW_HEALTH: true, COLOR: 'hexagon'}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
     },
@@ -2776,3 +2962,254 @@ Class.toothlessBoss.TURRETS = Class.toothlessBoss.TURRETS.concat(weaponArray([{
     POSITION: [8, 6, 5.6, 180, 180, 0],
     TYPE: "toothlessBossTurret",
 }], 3));
+
+Class.MKAura = addAura(5, 0, 0.1, 42);
+Class.MKDoneAura = addAura(2, 1, 0.3, 32);
+Class.MKFactoryAura = addAura(2.6, 1, 0.3, "trans");
+Class.MKCarrierAura = addAura(2.1, 1, 0.3, 1);
+Class.MKMinionAura = addAura(1.1, 1, 0.3, 32);
+Class.MKDrone = {
+    PARENT: "drone",
+    LABEL: "MKShip Drone",
+    TURRETS: [
+        {
+            POSITION: [13, 0, 0, 0, 360, 1],
+            TYPE: "MKDoneAura",
+        },
+    ]
+}
+Class.MKMinion = {
+    PARENT: "minion",
+    LABEL: "MKShip Minion",
+    TURRETS: [
+        {
+            POSITION: [13, 0, 0, 0, 360, 1],
+            TYPE: "MKMinionAura",
+        },
+    ]
+}
+Class.MKTurretFactoryWithController = {
+    PARENT: "MKTurretFactory",
+    CONTROLLERS: ["nearestDifferentMaster"],
+    INDEPENDENT: true,
+    BODY: {
+        FOV: 2,
+    },
+    TURRETS: [
+        {
+            POSITION: [13, 0, 0, 0, 360, 1],
+            TYPE: "MKFactoryAura",
+        },
+    ]
+}
+Class.MKTurretFactory = {
+    PARENT: "genericTank",
+    LABEL: "MKTurret factory",
+    SKILL: [12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+    COLOR: 16,
+    IGNORED_BY_AI: true,
+    DAMAGE_EFFECTS: false,
+    GUNS: [
+        {
+            POSITION: [5, 11, 1, 10.5, 0, 0, 0],
+        },
+        {
+            POSITION: [2, 14, 1, 15.5, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.factory]),
+                TYPE: "MKMinion",
+                MAX_CHILDREN: 6,
+                AUTOFIRE: true,
+                SYNCS_SKILLS: true,
+            },
+        },
+        {
+            POSITION: [12, 14, 1, 0, 0, 0, 0],
+        },
+    ],
+}
+Class.MKTurretCarrier = {
+    PARENT: "carrier",
+    FACING_TYPE: "toTarget",
+    LABEL: "MKTurret carrier",
+    SKILL: [12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+    COLOR: 16,
+    IGNORED_BY_AI: true,
+    DAMAGE_EFFECTS: false,
+}
+Class.MKTurretCarrierWithController = {
+    PARENT: "MKTurretCarrier",
+    CONTROLLERS: ["nearestDifferentMaster"],
+    INDEPENDENT: true,
+    BODY: {
+        FOV: 2,
+    },
+    TURRETS: [
+        {
+            POSITION: [13, 0, 0, 0, 360, 1],
+            TYPE: "MKCarrierAura",
+        },
+    ]
+}
+Class.MKTurretThruster = {
+    PARENT: "genericTank",
+    LABEL: "MKTurret Thruster",
+    FACING_TYPE: "toTarget",
+    IGNORED_BY_AI: true,
+    DAMAGE_EFFECTS: false,
+    COLOR: 16,
+    GUNS: [{
+        POSITION: [14, 12, 1, 4, 0, 180, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.machineGun, g.thruster, { range: 0.375, reload: 0.75, recoil: 1.05 }]),
+            TYPE: "bullet"
+        }
+    }, {
+        POSITION: [12, 12, 1.4, 4, 0, 180, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.machineGun, g.thruster, { range: 0.375, reload: 0.75, recoil: 1.05 }]),
+            TYPE: "bullet"
+        },
+    }]
+}
+Class.MKTurret = {
+    PARENT: "genericTank",
+    FACING_TYPE: "toTarget",
+    IGNORED_BY_AI: true,
+    DAMAGE_EFFECTS: false,
+    LABEL: "MKTurret",
+    COLOR: 16,
+    SHAPE: 5,
+    SKILL: [12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+    TURRETS: [
+        {
+            POSITION: [13, 0, 0, 0, 360, 1],
+            TYPE: "MKTurretFactory",
+        },
+        {
+            POSITION: [10, 16.1, 2.6, 140, 180, 0],
+            TYPE: "MKTurretFactoryWithController",
+        },
+        {
+            POSITION: [10, 16.1, 2.6, 203, 180, 0],
+            TYPE: "MKTurretFactoryWithController",
+        },
+        {
+            POSITION: [10, 16.1, -3.9, 310, 180, 0],
+            TYPE: "MKTurretFactoryWithController",
+        },
+        {
+            POSITION: [10, 16.1, 2.6, 413, 180, 0],
+            TYPE: "MKTurretFactoryWithController",
+        },
+        {
+            POSITION: [10, 10.2, 0, 0, 360, 0],
+            TYPE: "MKTurretCarrier",
+        },
+        {
+            POSITION: [10, 10.2, 0, 105.5, 180, 0],
+            TYPE: "MKTurretCarrierWithController",
+        },
+        {
+            POSITION: [10, 10.2, 0, 180, 180, 0],
+            TYPE: "MKTurretCarrierWithController",
+        },
+        {
+            POSITION: [10, 10.2, 0, 255, 180, 0],
+            TYPE: "MKTurretCarrierWithController",
+        },
+        {
+            POSITION: [8, -10, -2, -45, 90, 0],
+            TYPE: "MKTurretThruster"
+        },
+        {
+            POSITION: [8, -10, 2, 45, 90, 0],
+            TYPE: "MKTurretThruster"
+        },
+    ],
+}
+Class.AEMKShipBoss = {
+    PARENT: "genericTank",
+    LABEL: "MKShip",
+    NAME: "Æ🚫Sports",
+    SYNC_WITH_TANK: true,
+    CONTROLLERS: ["nearestDifferentMaster", "minion"],
+    UPGRADE_TOOLTIP: "Has 4 carrier's, 4 factories, and their own auras. NOW FACE MY DESTRUCTION!",
+    COLOR: 32,
+    UPGRADE_COLOR: 32,
+    GLOW: {
+        RADIUS: 1.5,
+        COLOR: 32,
+        ALPHA: 0.9,
+        RECURSION: 3,
+    },
+    DANGER: 10,
+    LEVEL_CAP: 45,
+    LEVEL: 45,
+    SIZE: Class.genericTank.SIZE * (17 / 3),
+    SHAPE: 16,
+    VALUE: 5e5,
+    SKILL: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+    BODY: {
+        REGEN: 0.4,
+        FOV: 1,
+        SHIELD: 2,
+        ACCEL: 0.2,
+        SPEED: 0.6,
+        HEALTH: 5000,
+        PUSHABILITY: 0.15,
+        DENSITY: 0.2,
+        DAMAGE: 4,
+    },
+    HITS_OWN_TYPE: "pushOnlyTeam",
+    TURRETS: [
+        {
+            POSITION: [18, 0, 0, 0, 360, 1],
+            TYPE: "MKAura",
+        },
+        {
+            POSITION: [11, 0, 0, 0, 360, 1],
+            TYPE: "MKTurret",
+        },
+    ],
+    GUNS: (() => {
+        let e = [],
+            T = [1];
+        for (let e = 1; e < 8.5; e += 0.5) {
+            let t = e / 16;
+            T.push(t);
+        }
+        for (let t = 0; t < 16; t++) {
+            let S = 22.5 * (t + 1),
+                E = {
+                    MAX_CHILDREN: 2,
+                    SHOOT_SETTINGS: combineStats([g.drone, g.overseer, g.mothership]),
+                    TYPE: "MKDrone",
+                    AUTOFIRE: true,
+                    SYNCS_SKILLS: true,
+                    STAT_CALCULATOR: "drone",
+                    WAIT_TO_CYCLE: true,
+                };
+            t % 2 == 0 &&
+            (E.TYPE = [
+                "MKDrone",
+                {
+                    AI: {
+                        skynet: true,
+                    },
+                    INDEPENDENT: true,
+                    LAYER: 10,
+                    BODY: {
+                        FOV: 2,
+                    },
+                },
+            ]);
+            let O = {
+                POSITION: [4.3, 3.1, 1.2, 8, 0, S, T[t]],
+                PROPERTIES: E,
+            };
+            e.push(O);
+        }
+        return e;
+    })(),
+}

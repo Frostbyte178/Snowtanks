@@ -12,6 +12,11 @@ const speedcheckloop = () => {
     let loops = logs.loops.count(),
         active = logs.entities.count();
     global.fps = (1000 / sum).toFixed(2);
+    for (let e of entities) {
+        if (e.isPlayer && e.socket) { // give the debug info i guess.
+            e.socket.talk("svInfo", Config.gameModeName, (sum).toFixed(1));
+        }
+    }
     if (sum > 1000 / Config.runSpeed / 30) {
         //fails++;
         if (Config.LOGS) {

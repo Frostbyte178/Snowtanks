@@ -214,7 +214,6 @@ class io_listenToPlayer extends IO {
             let speed = 0.05 * (alt ? -1 : 1) * this.body.autospinBoost;
             this.body.facingType = ["spin", {speed}];
         }
-
         this.body.autoOverride = this.player.command.override;
         if (this.body.invuln && (fire || alt)) this.body.invuln = false;
         return {
@@ -222,8 +221,8 @@ class io_listenToPlayer extends IO {
             fire,
             alt,
             goal: this.static ? null : {
-                x: this.body.x + this.player.command.right - this.player.command.left,
-                y: this.body.y + this.player.command.down - this.player.command.up,
+                x: this.body.x + this.player.command.movement.x,
+                y: this.body.y + this.player.command.movement.y,
             },
             main: fire,
         };

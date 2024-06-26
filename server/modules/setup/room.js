@@ -16,6 +16,7 @@ for (let filename of Config.ROOM_SETUP) {
 global.room = {
     lastCycle: undefined,
     cycleSpeed: 1000 / 30,
+    regenerateTick: Config.REGENERATE_TICK,
     setup: importedRoom,
     xgrid: importedRoom[0].length,
     ygrid: importedRoom.length,

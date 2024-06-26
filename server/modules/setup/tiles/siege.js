@@ -7,7 +7,7 @@ let spawnPermanentAntiTankMachineGun = (loc) => {
     o.on('dead', () => spawnPermanentAntiTankMachineGun(loc));
 },
 
-atmg = new Tile({ color: "white", init: tile => spawnPermanentAntiTankMachineGun(tile.loc) }),
+atmg = new Tile({ color: "#C5C5C5", init: tile => spawnPermanentAntiTankMachineGun(tile.loc) }),
 
 // we are not yet advanced enough to transition between two color codes
 outside = new Tile({ color: "#C5C5C5" }),
@@ -27,7 +27,7 @@ bossSpawn = new Tile({
     tick: tile => {
         for (let i = 0; i < tile.entities.length; i++) {
             let entity = tile.entities[i];
-            if (entity.pushability) {
+            if (entity.pushability && !entity.immuneToTiles && !entity.master.immuneToTiles) {
                 let dirToCenter = Math.atan2(room.center.y - entity.y, room.center.x - entity.x);
                 entity.velocity.x = Math.cos(dirToCenter) * 25 * entity.pushability;
                 entity.velocity.y = Math.sin(dirToCenter) * 25 * entity.pushability;

@@ -27,24 +27,20 @@ function checkWin() {
     setTimeout(closeArena, 3000);
 }
 
-function init(g) {
-    g.events.on('spawn', entity => {
-        entity.on('dead', () => {
-            if (!Config.TAG || !entity.isPlayer && !entity.isBot) return;
-            let killers = [];
-            for (let entry of entity.collisionArray) {
-                if (isPlayerTeam(entry.team) && entity.team !== entry.team) {
-                    killers.push(entry);
-                }
+Events.on('spawn', entity => {
+    entity.on('dead', () => {
+        if (!Config.TAG || !entity.isPlayer && !entity.isBot) return;
+        let killers = [];
+        for (let entry of entity.collisionArray) {
+            if (isPlayerTeam(entry.team) && entity.team !== entry.team) {
+                killers.push(entry);
             }
-            if (!killers.length) return;
-            let killer = ran.choose(killers);
-            if (entity.socket) {
-                entity.socket.rememberedTeam = killer.team;
-            }
-            setTimeout(checkWin, 1000);
-        });
+        }
+        if (!killers.length) return;
+        let killer = ran.choose(killers);
+        if (entity.socket) {
+            entity.socket.rememberedTeam = killer.team;
+        }
+        setTimeout(checkWin, 1000);
     });
-}
-
-module.exports = { init };
+});

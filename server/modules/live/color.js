@@ -38,11 +38,11 @@ class Color {
     			this.#base = color;
 	            break;
     		case 'object':
-	            this.#base = color.BASE ?? this.#base ?? 16;
-	            this.#hueShift = color.HUE_SHIFT ?? this.#hueShift ?? 0;
-	            this.#saturationShift = color.SATURATION_SHIFT ?? this.#saturationShift ?? 1;
-	            this.#brightnessShift = color.BRIGHTNESS_SHIFT ?? this.#brightnessShift ?? 0;
-	            this.#allowBrightnessInvert = color.ALLOW_BRIGHTNESS_INVERT ?? this.#allowBrightnessInvert ?? false;
+	            this.#base = color.BASE ?? color.base ?? this.#base ?? 16;
+	            this.#hueShift = color.HUE_SHIFT ?? color.hueShift ?? this.#hueShift ?? 0;
+	            this.#saturationShift = color.SATURATION_SHIFT ?? color.saturationShift ?? this.#saturationShift ?? 1;
+	            this.#brightnessShift = color.BRIGHTNESS_SHIFT ?? color.brightnessShift ?? this.#brightnessShift ?? 0;
+	            this.#allowBrightnessInvert = color.ALLOW_BRIGHTNESS_INVERT ?? color.allowBrightnessInvert ?? this.#allowBrightnessInvert ?? false;
 	            break;
     		case 'string':
     			if (!color.includes(" ")) {

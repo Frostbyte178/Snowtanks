@@ -52,15 +52,17 @@ Class.spectator = {
     PARENT: "genericTank",
     LABEL: "Spectator",
     ALPHA: 0,
-    IGNORED_BY_AI: true,
     CAN_BE_ON_LEADERBOARD: false,
     ACCEPTS_SCORE: false,
     DRAW_HEALTH: false,
     HITS_OWN_TYPE: "never",
+    IGNORED_BY_AI: true,
     ARENA_CLOSER: true,
+    IS_IMMUNE_TO_TILES: true,
     TOOLTIP: "Left click to teleport, Right click above or below the screen to change FOV",
     SKILL_CAP: [0, 0, 0, 0, 0, 0, 0, 0, 0, 255],
     BODY: {
+        PUSHABILITY: 0,
         SPEED: 5,
         FOV: 2.5,
         DAMAGE: 0,
@@ -106,6 +108,7 @@ Class.generatorBase = {
     DRAW_HEALTH: false,
     HITS_OWN_TYPE: "never",
     ARENA_CLOSER: true,
+    IS_IMMUNE_TO_TILES: true,
     SKILL_CAP: [31, 0, 0, 0, 0, 0, 0, 0, 0, 31],
     BODY: {
         SPEED: 5,
@@ -218,16 +221,16 @@ function connectMatrix(matrix, matrix2Entrance) {
     }
 }
 let generatorMatrix = [
-    [ "egg"           , "gem"                , "jewel"                  , "crasher"             , "sentry"               , "shinySentry"        , "EggRelic"           ],
-    [ "square"        , "shinySquare"        , "legendarySquare"        , "shadowSquare"        , "rainbowSquare"        , "transSquare"        , "SquareRelic"        ],
-    [ "triangle"      , "shinyTriangle"      , "legendaryTriangle"      , "shadowTriangle"      , "rainbowTriangle"      , "transTriangle"      , "TriangleRelic"      ],
-    [ "pentagon"      , "shinyPentagon"      , "legendaryPentagon"      , "shadowPentagon"      , "rainbowPentagon"      , "transPentagon"      , "PentagonRelic"      ],
-    [ "betaPentagon"  , "shinyBetaPentagon"  , "legendaryBetaPentagon"  , "shadowBetaPentagon"  , "rainbowBetaPentagon"  , "transBetaPentagon"  , "BetaPentagonRelic"  ],
-    [ "alphaPentagon" , "shinyAlphaPentagon" , "legendaryAlphaPentagon" , "shadowAlphaPentagon" , "rainbowAlphaPentagon" , "transAlphaPentagon" , "AlphaPentagonRelic" ],
-    [ "sphere"        , "cube"               , "tetrahedron"            , "octahedron"          , "dodecahedron"         , "icosahedron"        , "tesseract"          ],
+    [ "egg"           , "gem"                , "jewel"                  , "crasher"             , "sentry"               , "shinySentry"        , "EggRelic"           , "sphere"       ],
+    [ "square"        , "shinySquare"        , "legendarySquare"        , "shadowSquare"        , "rainbowSquare"        , "transSquare"        , "SquareRelic"        , "cube"         ],
+    [ "triangle"      , "shinyTriangle"      , "legendaryTriangle"      , "shadowTriangle"      , "rainbowTriangle"      , "transTriangle"      , "TriangleRelic"      , "tetrahedron"  ],
+    [ "pentagon"      , "shinyPentagon"      , "legendaryPentagon"      , "shadowPentagon"      , "rainbowPentagon"      , "transPentagon"      , "PentagonRelic"      , "octahedron"   ],
+    [ "betaPentagon"  , "shinyBetaPentagon"  , "legendaryBetaPentagon"  , "shadowBetaPentagon"  , "rainbowBetaPentagon"  , "transBetaPentagon"  , "BetaPentagonRelic"  , "dodecahedron" ],
+    [ "alphaPentagon" , "shinyAlphaPentagon" , "legendaryAlphaPentagon" , "shadowAlphaPentagon" , "rainbowAlphaPentagon" , "transAlphaPentagon" , "AlphaPentagonRelic" , "icosahedron"  ],
+    [ "hexagon"       , "shinyHexagon"       , "legendaryHexagon"       , "shadowHexagon"       , "rainbowHexagon"       , "transHexagon"       , "HexagonRelic"       , "tesseract"    ],
 ],
 gemRelicMatrix = [];
-for (let tier of [ "", "Egg", "Square", "Triangle", "Pentagon", "BetaPentagon", "AlphaPentagon" ]) {
+for (let tier of [ "", "Egg", "Square", "Triangle", "Pentagon", "BetaPentagon", "AlphaPentagon", "Hexagon" ]) {
     let row = [];
     for (let gem of [ "Power", "Space", "Reality", "Soul", "Time", "Mind" ]) {
         row.push(gem + (tier ? tier + 'Relic' : 'Gem'));
@@ -449,12 +452,6 @@ Class.mmaTest2 = {
 Class.mmaTest1 = {
     PARENT: "genericTank",
     COLOR: -1,
-    // Somehow, removing the gun below causes a crash when the tank is chosen ??????
-    GUNS: [
-        {
-            POSITION: [18, 8, 1, 0, 0, 0, 0],
-        }
-    ],
     TURRETS: [
         {
             POSITION: [10, 0, 0, 0, 360, 1],
@@ -1319,6 +1316,6 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.terrestrials.UPGRADES_TIER_0 = ["ares", "gersemi", "ezekiel", "eris", "selene"]
         Class.celestials.UPGRADES_TIER_0 = ["paladin", "freyja", "zaphkiel", "nyx", "theia", "atlas", "rhea", "julius", "genghis", "napoleon"]
         Class.eternals.UPGRADES_TIER_0 = ["odin", "kronos"]
-        Class.devBosses.UPGRADES_TIER_0 = ["taureonBoss", "zephiBoss", "dogeiscutBoss", "trplnrBoss", "frostBoss", "toothlessBoss"]
+        Class.devBosses.UPGRADES_TIER_0 = ["taureonBoss", "zephiBoss", "dogeiscutBoss", "trplnrBoss", "frostBoss", "toothlessBoss", "AEMKShipBoss"]
 
     Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "makeAutoTest", "imageShapeTest", "turretStatScaleTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "gunBenchmark", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]

@@ -81,6 +81,7 @@ const global = {
     KEY_SUICIDE: 79,// O
     KEY_ZOOM_OUT: 45,// ??
     KEY_ZOOM_IN: 61,// ??
+    KEY_DEBUG: 76,// L
 
     KEY_UPGRADE_ATK: 49,// 1
     KEY_UPGRADE_HTL: 50,// 2
@@ -112,10 +113,15 @@ const global = {
     gameHeight: 0,
     xoffset: -0,
     yoffset: -0,
+    movement: false,
+    motion: { x: 0, y: 0 },
     gameLoading: false,
     gameStart: false,
     disconnected: false,
     autoSpin: false,
+    syncingWithTank: false,
+    respawnTimeout: false,
+    showDebug: false,
     died: false,
     kicked: false,
     continuity: false,
@@ -124,6 +130,7 @@ const global = {
     backgroundColor: '#f2fbff',
     lineColor: '#000000',
     nameColor: "#FFFFFF",
+    message: "",
     player: {},
     messages: [],
     mockups: [],
@@ -135,6 +142,7 @@ const global = {
         upgrade: Region(100),
         hover: Region(1),
         skipUpgrades: Region(1),
+        mobileButtons: Region(20),
     },
     statHover: false,
     upgradeHover: false,

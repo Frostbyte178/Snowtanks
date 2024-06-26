@@ -24,4 +24,4 @@ const nameMap = {
     theFrontier: "The Frontier"
 };
 
-module.exports.gameModeName = output.GAMEMODE_NAME_PREFIXES.join(' ') + ' ' + output.GAME_MODES.map(x => nameMap[x] || (x[0].toUpperCase() + x.slice(1))).join(' ');
+module.exports.gameModeName = output.GAMEMODE_NAME_PREFIXES.join('') + '' + output.GAME_MODES.map(x => nameMap[x] || (x[0].toUpperCase() + x.slice(1))).join(' ');

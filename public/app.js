@@ -21,23 +21,23 @@ let { socketInit, gui, leaderboard, minimap, moveCompensation, lag, getNow } = s
 // });
 
 fetch("changelog.html", { cache: "no-cache" })
-.then(async ChangelogsHTMLFile => {
-    let patchNotes = document.querySelector("#patchNotes");
-    try {
-        let parser = new DOMParser(),
-            RawHTMLString = await ChangelogsHTMLFile.text(),
-            ParsedHTML = parser.parseFromString(RawHTMLString, "text/html"),
-            titles = ParsedHTML.documentElement.getElementsByTagName('h1');
-        for (const title of titles) {
-            title.classList.add('title');
-        }
+    .then(async ChangelogsHTMLFile => {
+        let patchNotes = document.querySelector("#patchNotes");
+        try {
+            let parser = new DOMParser(),
+                RawHTMLString = await ChangelogsHTMLFile.text(),
+                ParsedHTML = parser.parseFromString(RawHTMLString, "text/html"),
+                titles = ParsedHTML.documentElement.getElementsByTagName('h1');
+            for (const title of titles) {
+                title.classList.add('title');
+            }
 
-        patchNotes.innerHTML += ParsedHTML.documentElement.innerHTML;
-    } catch (error) {
-        patchNotes.innerHTML = `<p>An error occured while trying to fetch 'changelogs.html'</p><p>${error}</p>`;
-        console.error(error);
-    }
-});
+            patchNotes.innerHTML += ParsedHTML.documentElement.innerHTML;
+        } catch (error) {
+            patchNotes.innerHTML = `<p>An error occured while trying to fetch 'changelogs.html'</p><p>${error}</p>`;
+            console.error(error);
+        }
+    });
 
 class Animation {
     constructor(start, to, smoothness = 0.05) {
@@ -71,12 +71,18 @@ class Animation {
         return Math.abs(this.to - this.value) < val;
     }
 }
-let animations = window.animations = {
-    connecting: new Animation(1, 0),
-    disconnected: new Animation(1, 0),
-    deathScreen: new Animation(1, 0),
-    error: new Animation(1, 0),
-};
+let controls = document.getElementById("controlSettings"),
+    resetButton = document.getElementById("resetControls"),
+    selectedElement = null,
+    controlsArray = [],
+    defaultKeybinds = {},
+    keybinds = {},
+    animations = window.animations = {
+        connecting: new Animation(1, 0),
+        disconnected: new Animation(1, 0),
+        deathScreen: new Animation(1, 0),
+        error: new Animation(1, 0),
+    };
 
 let particles = [];
 class Particle {
@@ -170,10 +176,15 @@ global.canUpgrade = false;
 global.canSkill = false;
 global.message = "";
 global.time = 0;
+global.enableSlideAnimation = false;
+global.mspt = "?";
+global.serverName = "Unknown";
+// Tips setup :D
+let tips = global.tips[Math.floor(Math.random() * global.tips.length)];
+global.tips = tips[Math.floor(Math.random() * tips.length)];
 // Window setup <3
 global.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-var serverName = "Connected";
-var provider = "Unknown";
+global.mobile && document.body.classList.add("mobile");
 function getMockups() {
     global.mockupLoading = new Promise(Resolve => {
         util.pullJSON("mockups").then(data => {
@@ -182,6 +193,73 @@ function getMockups() {
             Resolve();
         });
     });
+}
+function getKeybinds() {
+    let kb = localStorage.getItem("keybinds");
+    keybinds = typeof kb === "string" && kb.startsWith("{") ? JSON.parse(kb) : {};
+}
+function setKeybinds() {
+    localStorage.setItem("keybinds", JSON.stringify(keybinds));
+}
+function unselectElement() {
+    if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+    }
+    selectedElement.element.parentNode.classList.remove("editing");
+    selectedElement = null;
+}
+function selectElement(element) {
+    selectedElement = element;
+    selectedElement.element.parentNode.classList.add("editing");
+    if (selectedElement.keyCode !== -1 && window.getSelection) {
+        let selection = window.getSelection();
+        selection.removeAllRanges();
+        let range = document.createRange();
+        range.selectNodeContents(selectedElement.element);
+        selection.addRange(range);
+    }
+}
+function setKeybind(key, keyCode) {
+    selectedElement.element.parentNode.classList.remove("editing");
+    resetButton.classList.add("active");
+    if (keyCode !== selectedElement.keyCode) {
+        let otherElement = controlsArray.find(c => c.keyCode === keyCode);
+        if (keyCode !== -1 && otherElement) {
+            otherElement.keyName = selectedElement.keyName;
+            otherElement.element.innerText = selectedElement.keyName;
+            otherElement.keyCode = selectedElement.keyCode;
+            global[otherElement.keyId] = selectedElement.keyCode;
+            keybinds[otherElement.keyId] = [selectedElement.keyName, selectedElement.keyCode];
+        }
+    }
+    selectedElement.keyName = key;
+    selectedElement.element.innerText = key;
+    selectedElement.keyCode = keyCode;
+    global[selectedElement.keyId] = keyCode;
+    keybinds[selectedElement.keyId] = [key, keyCode];
+    setKeybinds();
+}
+function getElements(kb, storeInDefault) {
+    for (let row of controls.rows) {
+        for (let cell of row.cells) {
+            let element = cell.firstChild;
+            if (!element) continue;
+            let key = element.dataset.key;
+            if (storeInDefault) defaultKeybinds[key] = [element.innerText, global[key]];
+            if (kb[key]) {
+                element.innerText = kb[key][0];
+                global[key] = kb[key][1];
+                resetButton.classList.add("active");
+            }
+            let obj = {
+                element,
+                keyId: key,
+                keyName: element.innerText,
+                keyCode: global[key]
+            };
+            controlsArray.push(obj);
+        }
+    }
 }
 window.onload = async () => {
     window.serverAdd = (await (await fetch("/serverData.json")).json()).ip;
@@ -244,6 +322,7 @@ window.onload = async () => {
     util.retrieveFromLocalStorage("optBorders");
     util.retrieveFromLocalStorage("seperatedHealthbars");
     util.retrieveFromLocalStorage("autoLevelUp");
+    util.retrieveFromLocalStorage("optMobile");
     // Set default theme
     if (document.getElementById("optColors").value === "") {
         document.getElementById("optColors").value = "normal";
@@ -251,16 +330,79 @@ window.onload = async () => {
     if (document.getElementById("optBorders").value === "") {
         document.getElementById("optBorders").value = "normal";
     }
+    // Mobile Selection stuff
+    if (document.getElementById("optMobile").value === "") {
+        document.getElementById("optMobile").value = "mobile";
+    }
+    // Keybinds stuff
+    getKeybinds();
+    getElements(keybinds, true);
+    document.addEventListener("click", event => {
+        if (!global.gameStart) {
+            if (selectedElement) {
+                unselectElement();
+            } else {
+                let element = controlsArray.find(({ element }) => element === event.target);
+                if (element) selectElement(element);
+            }
+        }
+    });
+    resetButton.addEventListener("click", () => {
+        keybinds = {};
+        setKeybinds();
+        controlsArray = [];
+        getElements(defaultKeybinds);
+        resetButton.classList.add("spin");
+        setTimeout(() => {
+            resetButton.classList.remove("active"); 
+            resetButton.classList.remove("spin");
+        }, 400);
+    });
     // Game start stuff
     document.getElementById("startButton").onclick = () => startGame();
     document.onkeydown = (e) => {
-        var key = e.which || e.keyCode;
-        if (key === global.KEY_ENTER && (global.dead || !global.gameLoading)) {
-            startGame();
+        if (!(global.gameStart || e.shiftKey || e.ctrlKey || e.altKey)) {
+            let key = e.which || e.keyCode;
+            if (selectedElement) {
+                if (1 !== e.key.length || /[0-9]/.test(e.key) || 3 === e.location) {
+                    if (!("Backspace" !== e.key && "Delete" !== e.key)) {
+                        setKeybind("", -1);
+                    }
+                } else {
+                    setKeybind(e.key.toUpperCase(), e.keyCode);
+                }
+            } else if (key === global.KEY_ENTER) {
+                startGame();
+            }
         }
     };
     window.addEventListener("resize", resizeEvent);
     resizeEvent();
+};
+// Sliding between options menu.
+function toggleOptionsMenu() {
+    let clicked = false,
+      a = document.getElementById("startMenuSlidingTrigger"), // Trigger ID
+      c = document.getElementById("optionArrow"), // Arrow
+      h = document.getElementById("viewOptionText"), // Text (view options)
+      u = document.getElementsByClassName("sliderHolder")[0], // Sliding.
+      y = document.getElementsByClassName("slider"), // For animations things.
+      toggle = () => {
+        c.style.transform = c.style.webkitTransform = clicked // Rotate the arrow.
+          ? "translate(2px, -2px) rotate(45deg)"
+          : "rotate(-45deg)";
+        h.innerText = clicked ? "close options" : "view options"; // Change the text.
+        clicked ? u.classList.add("slided") : u.classList.remove("slided"); // Slide it up.
+        y[0].style.opacity = clicked ? 0 : 1; // Fade it away.
+        y[2].style.opacity = clicked ? 1 : 0; // same for this.
+      };
+    a.onclick = () => { // When the button is triggered, This code runs.
+        clicked = !clicked;
+        toggle();
+    };
+    return () => {
+        clicked || ((clicked = !0), toggle());
+    };
 };
 function resizeEvent() {
     let scale = window.devicePixelRatio;
@@ -280,6 +422,8 @@ var ctx = c.getContext("2d");
 var c2 = document.createElement("canvas");
 var ctx2 = c2.getContext("2d");
 ctx2.imageSmoothingEnabled = true;
+global.mobile && document.getElementById("controlsSection").remove();
+toggleOptionsMenu();
 // Animation things
 function Smoothbar(value, speed, sharpness = 3, lerpValue = 0.025) {
     let time = Date.now();
@@ -316,7 +460,7 @@ global.player = {
     cy: 0,
     screenx: 0,
     screeny: 0,
-    target: calculateTarget(),
+    target: !global.mobile ? calculateTarget() : window.canvas.target,
     name: "",
     lastUpdate: 0,
     time: 0,
@@ -329,10 +473,10 @@ function calculateTarget() {
     else global.reverseTank = 1;
     global.target.x *= global.screenWidth / window.canvas.width;
     global.target.y *= global.screenHeight / window.canvas.height;
-    if (settings.graphical.screenshotMode && Math.abs(Math.atan2(global.target.y, global.target.x) + Math.PI/2) < 0.035) global.target.x = 0; 
+    if (settings.graphical.screenshotMode && Math.abs(Math.atan2(global.target.y, global.target.x) + Math.PI / 2) < 0.035) global.target.x = 0;
     return global.target;
-}
-function parseTheme(string){
+};
+function parseTheme(string) {
     // Decode from base64
     try {
         let stripped = string.replace(/\s+/g, '');
@@ -341,8 +485,8 @@ function parseTheme(string){
         else if (stripped.length % 4 == 3)
             stripped += '=';
         let data = atob(stripped);
-    
-        let name = 'Unknown Theme', 
+
+        let name = 'Unknown Theme',
             author = '';
         let index = data.indexOf('\x00');
         if (index === -1) return null;
@@ -365,33 +509,33 @@ function parseTheme(string){
             colorArray.push('#' + color.toString(16).padStart(6, '0'))
         }
         let content = {
-            teal:     colorArray[0],
-            lgreen:   colorArray[1],
-            orange:   colorArray[2],
-            yellow:   colorArray[3],
-            aqua:     colorArray[4],
-            pink:     colorArray[5],
-            vlgrey:   colorArray[6],
-            lgrey:    colorArray[7],
+            teal: colorArray[0],
+            lgreen: colorArray[1],
+            orange: colorArray[2],
+            yellow: colorArray[3],
+            aqua: colorArray[4],
+            pink: colorArray[5],
+            vlgrey: colorArray[6],
+            lgrey: colorArray[7],
             guiwhite: colorArray[8],
-            black:    colorArray[9],
-    
-            blue:     colorArray[10],
-            green:    colorArray[11],
-            red:      colorArray[12],
-            gold:     colorArray[13],
-            purple:   colorArray[14],
-            magenta:  colorArray[15],
-            grey:     colorArray[16],
-            dgrey:    colorArray[17],
-            white:    colorArray[18],
+            black: colorArray[9],
+
+            blue: colorArray[10],
+            green: colorArray[11],
+            red: colorArray[12],
+            gold: colorArray[13],
+            purple: colorArray[14],
+            magenta: colorArray[15],
+            grey: colorArray[16],
+            dgrey: colorArray[17],
+            white: colorArray[18],
             guiblack: colorArray[19],
-    
+
             paletteSize,
             border,
         }
         return { name, author, content };
-    } catch (e) {}
+    } catch (e) { }
 
     // Decode from JSON
     try {
@@ -399,7 +543,7 @@ function parseTheme(string){
         if (typeof output !== 'object')
             return null;
         let { name = 'Unknown Theme', author = '', content } = output;
-    
+
         for (let colorHex of [
             content.teal,
             content.lgreen,
@@ -411,7 +555,7 @@ function parseTheme(string){
             content.lgrey,
             content.guiwhite,
             content.black,
-    
+
             content.blue,
             content.green,
             content.red,
@@ -425,27 +569,35 @@ function parseTheme(string){
         ]) {
             if (!/^#[0-9a-fA-F]{6}$/.test(colorHex)) return null;
         }
-    
+
         return {
             name: (typeof name === 'string' && name) || 'Unknown Theme',
             author: (typeof author === 'string' && author) || '',
             content,
         }
-    } catch (e) {}
-    
+    } catch (e) { }
+
     return null;
 }
 // This starts the game and sets up the websocket
 function startGame() {
     // Set flag
     global.gameLoading = true;
-    console.log('Started connecting.')
+    console.log('Started connecting.');
+    if (global.mobile) {
+        var d = document.body;
+        d.requestFullscreen ? d.requestFullscreen()
+            : d.msRequestFullscreen ? d.msRequestFullscreen()
+                : d.mozRequestFullScreen ? d.mozRequestFullScreen()
+                    : d.webkitRequestFullscreen && d.webkitRequestFullscreen();
+    }
     // Get options
     util.submitToLocalStorage("optFancy");
     util.submitToLocalStorage("centerTank");
     util.submitToLocalStorage("optBorders");
     util.submitToLocalStorage("optNoPointy");
     util.submitToLocalStorage("autoLevelUp");
+    util.submitToLocalStorage("optMobile");
     util.submitToLocalStorage("optPredictive");
     util.submitToLocalStorage("optScreenshotMode");
     util.submitToLocalStorage("coloredHealthbars");
@@ -458,6 +610,9 @@ function startGame() {
     settings.graphical.screenshotMode = document.getElementById("optScreenshotMode").checked;
     settings.graphical.coloredHealthbars = document.getElementById("coloredHealthbars").checked;
     settings.graphical.seperatedHealthbars = document.getElementById("seperatedHealthbars").checked;
+    if (global.mobile) {
+        settings.graphical.fancyAnimations = false; // this basicly improves the performance.
+    }
     switch (document.getElementById("optBorders").value) {
         case "normal":
             settings.graphical.darkBorders = settings.graphical.neon = false;
@@ -486,6 +641,9 @@ function startGame() {
     // Other more important stuff
     let playerNameInput = document.getElementById("playerNameInput");
     let playerKeyInput = document.getElementById("playerKeyInput");
+    let autolevelUpInput = document.getElementById("autoLevelUp").checked;
+    global.autolvlUp = autolevelUpInput;
+    if (document.getElementById("optMobile").value === "desktop") global.mobile = false;
     // Name and keys
     util.submitToLocalStorage("playerNameInput");
     util.submitToLocalStorage("playerKeyInput");
@@ -494,8 +652,11 @@ function startGame() {
     // Change the screen
     global.screenWidth = window.innerWidth;
     global.screenHeight = window.innerHeight;
-    document.getElementById("startMenuWrapper").style.maxHeight = "0px";
+    document.getElementById("startMenuWrapper").style.top = "-700px";
     document.getElementById("gameAreaWrapper").style.opacity = 1;
+    setTimeout(() => {
+        document.getElementById("startMenuWrapper").remove();
+    }, 1e3);
     // Set up the socket
     if (!global.socket) {
         global.socket = socketInit(26301);
@@ -503,19 +664,21 @@ function startGame() {
     if (!global.animLoopHandle) {
         animloop();
     }
+    // initialize canvas.
     window.canvas.socket = global.socket;
-    setInterval(() => moveCompensation.iterate(global.socket.cmd.getMotion()), 1000 / 30);
+    setInterval(() => moveCompensation.iterate(global.motion), 1000 / 30);
+    canvas.init();
     document.getElementById("gameCanvas").focus();
     window.onbeforeunload = () => true;
 }
-// Background clearing
+
 function clearScreen(clearColor, alpha) {
     ctx.fillStyle = clearColor;
     ctx.globalAlpha = alpha;
     ctx.fillRect(0, 0, global.screenWidth, global.screenHeight);
     ctx.globalAlpha = 1;
 }
-// Text functions
+
 function arrayifyText(rawText) {
     //we want people to be able to use the section sign in writing too
     // string with double §           txt   col   txt                      txt
@@ -539,12 +702,14 @@ function arrayifyText(rawText) {
     }
     return textArray;
 }
-const measureText = (text, fontSize, withHeight = false) => {
+
+function measureText(text, fontSize, withHeight = false) {
     fontSize += settings.graphical.fontSizeBoost;
     ctx.font = "bold " + fontSize + "px Ubuntu";
     let measurement = ctx.measureText(arrayifyText(text).reduce((a, b, i) => (i & 1) ? a : a + b, ''));
     return withHeight ? { width: measurement.width, height: fontSize } : measurement.width;
-};
+}
+
 function drawText(rawText, x, y, size, defaultFillStyle, align = "left", center = false, fade = 1, stroke = true, context = ctx) {
     size += settings.graphical.fontSizeBoost;
     // Get text dimensions and resize/reset the canvas
@@ -815,7 +980,7 @@ function drawTrapezoid(context, x, y, length, height, aspect, angle, borderless,
     points.push([length * 2 - position, -h[0]]);
     points.push([-position, -h[1]]);
     context.globalAlpha = alpha;
-    
+
     // Rotate it to the new angle via vector rotation
     context.beginPath();
     for (let point of points) {
@@ -865,7 +1030,7 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
         t.lerpedFacing == undefined
             ? (t.lerpedFacing = t.facing)
             : (t.lerpedFacing = util.lerpAngle(t.lerpedFacing, t.facing, 0.1, true));
-        
+
         // Break condition
         if (t.layer > 0) {
             upperTurretsIndex = i;
@@ -918,20 +1083,20 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
     }
     
     //just so you know, the glow implimentation is REALLY bad and subject to change in the future
-    context.shadowColor = m.glow.color!=null ? gameDraw.modifyColor(m.glow.color) : gameDraw.mixColors(
+    context.shadowColor = m.glow.color != null ? gameDraw.modifyColor(m.glow.color) : gameDraw.mixColors(
         gameDraw.modifyColor(instance.color),
         render.status.getColor(),
         render.status.getBlend()
     );
-    if (m.glow.radius && m.glow.radius>0){
-      context.shadowBlur = m.glow.radius * ((drawSize / m.size) * m.realSize);
-      context.shadowOffsetX = 0;
-      context.shadowOffsetY = 0;
-      context.globalAlpha = m.glow.alpha;
-      for (var i = 0; i < m.glow.recursion; i++) {
-        drawPoly(context, xx, yy, (drawSize / m.size) * m.realSize, m.shape, rot, true, m.drawFill);
-      }
-      context.globalAlpha = 1;
+    if (m.glow.radius && m.glow.radius > 0) {
+        context.shadowBlur = m.glow.radius * ((drawSize / m.size) * m.realSize);
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.globalAlpha = m.glow.alpha;
+        for (var i = 0; i < m.glow.recursion; i++) {
+            drawPoly(context, xx, yy, (drawSize / m.size) * m.realSize, m.shape, rot, true, m.drawFill);
+        }
+        context.globalAlpha = 1;
     }
     context.shadowBlur = 0;
     context.shadowOffsetX = 0;
@@ -1017,8 +1182,8 @@ function drawHealth(x, y, instance, ratio, alpha) {
         var name = instance.name.substring(7, instance.name.length + 1);
         var namecolor = instance.name.substring(0, 7);
         ctx.globalAlpha = alpha;
-        drawText(name, x, y - realSize - 22 * ratio, 12 * ratio, namecolor, "center");
-        drawText(util.handleLargeNumber(instance.score, 1), x, y - realSize - 12 * ratio, 6 * ratio, namecolor, "center");
+        drawText(name, x, y - realSize - 22 * ratio, 12 * ratio, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
+        drawText(util.handleLargeNumber(instance.score, 1), x, y - realSize - 12 * ratio, 6 * ratio, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
         ctx.globalAlpha = 1;
     }
 }
@@ -1035,7 +1200,7 @@ function drawEntityIcon(model, x, y, len, height, lineWidthMult, angle, alpha, c
         entityX = x + 0.5 * len,
         entityY = y + 0.5 * height,
         baseColor = picture.color;
-    
+
     // Find x and y shift for the entity image
     let xShift = position.middle.x * Math.cos(angle) - position.middle.y * Math.sin(angle),
         yShift = position.middle.x * Math.sin(angle) + position.middle.y * Math.cos(angle);
@@ -1080,6 +1245,7 @@ window.cancelAnimFrame = window.cancelAnimationFrame || window.mozCancelAnimatio
 // Drawing states
 const statMenu = Smoothbar(0, 0.7, 1.5, 0.1);
 const upgradeMenu = Smoothbar(0, 2, 3, 0.1);
+const mobileUpgradeGlide = Smoothbar(0, 2, 3, 0.1);
 // Define the graph constructor
 function graph() {
     var data = [];
@@ -1344,11 +1510,11 @@ function drawEntities(px, py, ratio) {
         }
         instance.render.x = util.lerp(instance.render.x, Math.round(instance.x + instance.vx), 0.1, true);
         instance.render.y = util.lerp(instance.render.y, Math.round(instance.y + instance.vy), 0.1, true);
-        instance.render.f = instance.id === gui.playerid && !global.autoSpin && !instance.twiggle && !global.died ? Math.atan2(global.target.y * global.reverseTank, global.target.x * global.reverseTank) : util.lerpAngle(instance.render.f, instance.facing, 0.15, true);
+        instance.render.f = instance.id === gui.playerid && !global.autoSpin && !global.syncingWithTank && !instance.twiggle && !global.died ? Math.atan2(global.target.y * global.reverseTank, global.target.x * global.reverseTank) : util.lerpAngle(instance.render.f, instance.facing, 0.15, true);
         let x = ratio * instance.render.x - px,
             y = ratio * instance.render.y - py,
             baseColor = instance.color;
-        
+
         if (instance.id === gui.playerid) {
             x = settings.graphical.centerTank && !global.player.isScoping ? 0 : x;
             y = settings.graphical.centerTank && !global.player.isScoping ? 0 : y;
@@ -1380,8 +1546,8 @@ function drawEntities(px, py, ratio) {
             indexes = instance.index.split("-"),
             m = global.mockups[parseInt(indexes[0])],
             realSize = (size / m.size) * m.realSize,
-            x = instance.id === gui.playerid ? 0 : ratio * instance.render.x - px,
-            y = instance.id === gui.playerid ? 0 : ratio * instance.render.y - py;
+            x = instance.id === gui.playerid ? global.player.screenx : ratio * instance.render.x - px,
+            y = instance.id === gui.playerid ? global.player.screeny : ratio * instance.render.y - py;
         x += global.screenWidth / 2;
         y += global.screenHeight / 2 - realSize - 46 * ratio;
         if (instance.id !== gui.playerid && instance.nameplate) y -= 8 * ratio;
@@ -1391,7 +1557,7 @@ function drawEntities(px, py, ratio) {
             let chat = global.chats[instance.id][i],
                 text = chat.text,
                 msgLengthHalf = measureText(text, 15 * ratioForChat) / 2,
-                alpha = Math.max(0, Math.min(1000, chat.expires - now) / 1000);
+                alpha = Math.max(!global.mobile ? 0 : 1, Math.min(1000, chat.expires - now) / 1000);
 
             ctx.globalAlpha = 0.5 * alpha;
             drawBar(x - msgLengthHalf, x + msgLengthHalf, y, 30 * ratioForChat, gameDraw.modifyColor(instance.color));
@@ -1420,10 +1586,10 @@ function drawUpgradeTree(spacing, alcoveSize) {
         let m = util.getEntityImageFromMockup(gui.type), // The mockup that corresponds to the player's tank
             rootName = m.rerootUpgradeTree, // The upgrade tree root of the player's tank
             rootIndex = [];
-            for (let name of rootName) {
-                let ind = name == undefined ? -1 : global.mockups.find(i => i.className == name).index;
-                rootIndex.push(ind); // The index of the mockup that corresponds to the root tank (-1 for no root)
-            }
+        for (let name of rootName) {
+            let ind = name == undefined ? -1 : global.mockups.find(i => i.className == name).index;
+            rootIndex.push(ind); // The index of the mockup that corresponds to the root tank (-1 for no root)
+        }
         if (!rootIndex.includes(-1)) {
             generateTankTree(rootIndex);
         }
@@ -1495,13 +1661,20 @@ function drawUpgradeTree(spacing, alcoveSize) {
     ctx.strokeText(text, global.screenWidth / 2 - w / 2, innerHeight * 0.04);
 }
 
-function drawMessages(spacing) {
+function drawMessages(spacing, alcoveSize) {
     // Draw messages
     let vspacing = 4;
     let len = 0;
     let height = 18;
     let x = global.screenWidth / 2;
     let y = spacing;
+    if (global.mobile) {
+        if (global.canUpgrade) {
+            mobileUpgradeGlide.set(0 + (global.canUpgrade || global.upgradeHover));
+            y += (alcoveSize / 1.4 /*+ spacing * 2*/) * mobileUpgradeGlide.get();
+        }
+        y += global.canSkill || global.showSkill ? (alcoveSize / 2.2 /*+ spacing * 2*/) * statMenu.get() : 0;
+    }
     // Draw each message
     for (let i = global.messages.length - 1; i >= 0; i--) {
         let msg = global.messages[i],
@@ -1540,6 +1713,7 @@ function drawMessages(spacing) {
 
 function drawSkillBars(spacing, alcoveSize) {
     // Draw skill bars
+    if (global.mobile) return drawMobileSkillUpgrades(spacing, alcoveSize);
     statMenu.set(0 + (global.died || global.statHover || (global.canSkill && !gui.skills.every(skill => skill.cap === skill.amount))));
     global.clickables.stat.hide();
     let vspacing = 4;
@@ -1617,7 +1791,78 @@ function drawSkillBars(spacing, alcoveSize) {
         drawText("x" + gui.points, Math.round(x + len - 2) + 0.5, Math.round(y + height - 4) + 0.5, 20, color.guiwhite, "right");
     }
 }
+function drawMobileSkillUpgrades(spacing, alcoveSize) {
+    global.canSkill = gui.points > 0 && gui.skills.some(s => s.amount < s.cap) && !global.canUpgrade;
+    global.showSkill = !global.canUpgrade && !global.canSkill && global.died;
+    statMenu.set(global.canSkill || global.showSkill || global.disconnected ? 1 : 0);
+    let n = statMenu.get();
+    global.clickables.stat.hide();
+    let t = alcoveSize / 2,
+        q = alcoveSize / 3,
+        x = 2 * n * spacing - spacing,
+        statNames = gui.getStatNames(global.mockups[parseInt(gui.type.split("-")[0])].statnames),
+        clickableRatio = canvas.height / global.screenHeight / global.ratio;
+    if (global.canSkill || global.showSkill) {
+        for (let i = 0; i < gui.skills.length; i++) {
+            let skill = gui.skills[i],
+                softcap = skill.softcap;
+            if (softcap <= 0) continue;
+            let amount = skill.amount,
+                skillColor = color[skill.color],
+                cap = skill.cap,
+                name = statNames[9 - i].split(/\s+/),
+                halfNameLength = Math.floor(name.length / 2),
+                [name1, name2] = name.length === 1 ? [name[0], null] : [name.slice(0, halfNameLength).join(" "), name.slice(halfNameLength).join(" ")];
 
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = skillColor;
+            drawGuiRect(x, spacing, t, 2 * q / 3);
+
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = color.black;
+            drawGuiRect(x, spacing + q * 2 / 3 * 2 / 3, t, q * 2 / 3 / 3);
+
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = color.guiwhite;
+            drawGuiRect(x, spacing + q * 2 / 3, t, q / 3);
+
+            ctx.fillStyle = skillColor;
+            drawGuiRect(x, spacing + q * 2 / 3, t * amount / softcap, q / 3);
+
+            ctx.strokeStyle = color.black;
+            ctx.lineWidth = 1;
+            for (let j = 1; j < cap; j++) {
+                let width = x + j / softcap * t;
+                drawGuiLine(width, spacing + q * 2 / 3, width, spacing + q);
+            }
+
+            cap === 0 || !gui.points || softcap !== cap && amount === softcap || global.clickables.stat.place(9 - i, x * clickableRatio, spacing * clickableRatio, t * clickableRatio, q * clickableRatio);
+
+            if (name2) {
+                drawText(name2, x + t / 2, spacing + q * 0.55, q / 5, color.guiwhite, "center");
+                drawText(name1, x + t / 2, spacing + q * 0.3, q / 5, color.guiwhite, "center");
+            } else {
+                drawText(name1, x + t / 2, spacing + q * 0.425, q / 5, color.guiwhite, "center");
+            }
+
+            if (amount > 0) {
+                drawText(amount < softcap ? `+${amount}` : "MAX", x + t / 2, spacing + q * 1.3, q / 4, skillColor, "center");
+            }
+
+            ctx.strokeStyle = color.black;
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = 3;
+            drawGuiLine(x, spacing + q * 2 / 3, x + t, spacing + q * 2 / 3);
+            drawGuiRect(x, spacing, t, q, true);
+
+            x += n * (t + 14);
+        }
+
+        if (gui.points > 1) {
+            drawText(`x${gui.points}`, x, spacing + 20, 20, color.guiwhite, "left");
+        }
+    }
+}
 function drawSelfInfo(spacing, alcoveSize, max) {
     //rendering information
     let vspacing = 4.5;
@@ -1645,14 +1890,19 @@ function drawSelfInfo(spacing, alcoveSize, max) {
     //write the score and name
     drawText("Score: " + util.formatLargeNumber(Math.floor(gui.__s.getScore())), x + len / 2, y + height / 2 + 1, height - 3.5, color.guiwhite, "center", true);
     ctx.lineWidth = 4;
-    drawText(global.player.name, Math.round(x + len / 2) + 0.5, Math.round(y - 10 - vspacing) + 0.5, 32, global.nameColor, "center");
+    drawText(global.player.name, Math.round(x + len / 2) + 0.5, Math.round(y - 10 - vspacing) + 0.5, 32, global.nameColor = "#ffffff" ? color.guiwhite : global.nameColor, "center");
 }
 
-function drawMinimapAndDebug(spacing, alcoveSize) {
+function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
     // Draw minimap and FPS monitors
     //minimap stuff starts here
+    let orangeColor = false;
     let len = alcoveSize; // * global.screenWidth;
     let height = (len / global.gameWidth) * global.gameHeight;
+    if (global.mobile) {
+        height = (len / global.gameWidth / 1.9) * global.gameHeight
+        len = alcoveSize * 0.6;
+    }
     if (global.gameHeight > global.gameWidth || global.gameHeight < global.gameWidth) {
         let ratio = [
             global.gameWidth / global.gameHeight,
@@ -1716,7 +1966,7 @@ function drawMinimapAndDebug(spacing, alcoveSize) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = color.guiblack;
     ctx.fillStyle = color.guiblack;
-    drawGuiCircle(x + (global.player.cx / global.gameWidth) * len - 1, y + (global.player.cy / global.gameHeight) * height - 1, 2, false);
+    drawGuiCircle(x + (global.player.cx / global.gameWidth) * len - 0, y + (global.player.cy / global.gameHeight) * height - 1, !global.mobile ? 2 : 3, false);
     if (global.showDebug) {
         drawGuiRect(x, y - 40, len, 30);
         lagGraph(lag.get(), x, y - 40, len, 30, color.teal);
@@ -1726,17 +1976,20 @@ function drawMinimapAndDebug(spacing, alcoveSize) {
     //minimap stuff ends here
     //debug stuff
     if (!global.showDebug) y += 14 * 3;
+    if ((100 * gui.fps).toFixed(2) < 100) orangeColor = true;
+    if (global.metrics.rendertime < 10) orangeColor = true;
     // Text
     if (global.showDebug) {
-        drawText("Open Source Arras", x + len, y - 50 - 5 * 14 - 2, 15, "#B6E57C", "right");
-        drawText("Prediction: " + Math.round(GRAPHDATA) + "ms", x + len, y - 50 - 4 * 14, 10, color.guiwhite, "right");
-        drawText(`Bandwidth: ${gui.bandwidth.in} in, ${gui.bandwidth.out} out`, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
+        drawText("Open Source Arras", x + len, y - 50 - 5 * 14 - 2, 15, "#1081E5", "right");
+        drawText("Prediction: " + Math.round(GRAPHDATA) + "ms : " + global.mspt + " mspt", x + len, y - 50 - 4 * 14, 10, color.guiwhite, "right");
+        // drawText(`Bandwidth: ${gui.bandwidth.in} in, ${gui.bandwidth.out} out`, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
+        drawText("Memory: " + global.metrics.rendergap + " Mib : " + "Class: " + gui.class, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
         drawText("Update Rate: " + global.metrics.updatetime + "Hz", x + len, y - 50 - 2 * 14, 10, color.guiwhite, "right");
-        drawText((100 * gui.fps).toFixed(2) + "% : " + global.metrics.rendertime + " FPS", x + len, y - 50 - 1 * 14, 10, global.metrics.rendertime > 10 ? color.guiwhite : color.orange, "right");
+        drawText("Server Speed: " + (100 * gui.fps).toFixed(2) + "% : Client Speed: " + global.metrics.rendertime + " FPS", x + len, y - 50 - 1 * 14, 10, orangeColor ? color.orange : color.guiwhite, "right");
         drawText(global.metrics.latency + " ms - " + global.serverName, x + len, y - 50, 10, color.guiwhite, "right");
     } else {
-        drawText("Open Source Arras", x + len, y - 50 - 2 * 14 - 2, 15, "#B6E57C", "right");
-        drawText((100 * gui.fps).toFixed(2) + "% : " + global.metrics.rendertime + " FPS", x + len, y - 50 - 1 * 14, 10, global.metrics.rendertime > 10 ? color.guiwhite : color.orange, "right");
+        drawText("Open Source Arras", x + len, y - 50 - 2 * 14 - 2, 15, "#1081E5", "right");
+        drawText((100 * gui.fps).toFixed(2) + "% : " + global.metrics.rendertime + " FPS", x + len, y - 50 - 1 * 14, 10, orangeColor ? color.orange : color.guiwhite, "right");
         drawText(global.metrics.latency + " ms : " + global.metrics.updatetime + "Hz", x + len, y - 50, 10, color.guiwhite, "right");
     }
     global.fps = global.metrics.rendertime;
@@ -1750,6 +2003,17 @@ function drawLeaderboard(spacing, alcoveSize, max) {
     let height = 14;
     let x = global.screenWidth - len - spacing;
     let y = spacing + height + 7;
+    if (!lb.data.length) return;
+
+    // Animation things
+    let mobileGlide = mobileUpgradeGlide.get();
+    if (global.mobile) {
+        if (global.canUpgrade) {
+            y += (alcoveSize / 1.4) * mobileGlide;
+        }
+        y += global.canSkill || global.showSkill ? (alcoveSize / 2.2 /*+ spacing * 2*/) * statMenu.get() : 0;
+    }
+
     drawText("Leaderboard", Math.round(x + len / 2) + 0.5, Math.round(y - 6) + 0.5, height + 3.5, color.guiwhite, "center");
     y += 7;
     for (let i = 0; i < lb.data.length; i++) {
@@ -1760,7 +2024,7 @@ function drawLeaderboard(spacing, alcoveSize, max) {
         drawBar(x, x + len * shift, y + height / 2, height - 3.5, gameDraw.modifyColor(entry.barColor));
         // Leadboard name + score
         let nameColor = entry.nameColor || "#FFFFFF";
-        drawText(entry.label + (": " + util.handleLargeNumber(Math.round(entry.score))), x + len / 2, y + height / 2, height - 5, nameColor, "center", true);
+        drawText(entry.label + (": " + util.handleLargeNumber(Math.round(entry.score))), x + len / 2, y + height / 2, height - 5, nameColor == "#ffffff" ? color.guiwhite : nameColor, "center", true);
         // Mini-image
         let scale = height / entry.position.axis,
             xx = x - 1.5 * height - scale * entry.position.middle.x * Math.SQRT1_2,
@@ -1780,10 +2044,10 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
         let height = len;
 
         // Animation processing
-        let columnCount = Math.max(3, Math.floor(gui.upgrades.length ** 0.55));
+        global.columnCount = Math.max(global.mobile ? 9 : 3, Math.floor(gui.upgrades.length ** 0.55));
         upgradeMenu.set(0);
         if (!global.canUpgrade) {
-            upgradeMenu.force(-columnCount * 3)
+            upgradeMenu.force(-global.columnCount * 3)
             global.canUpgrade = true;
         }
         let glide = upgradeMenu.get();
@@ -1799,7 +2063,7 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
         let colorIndex = 0;
         let clickableRatio = global.canvas.height / global.screenHeight / global.ratio;
         let lastBranch = -1;
-        let upgradeHoverIndex = global.clickables.upgrade.check({x: global.mouse.x, y: global.mouse.y});
+        let upgradeHoverIndex = global.clickables.upgrade.check({ x: global.mouse.x, y: global.mouse.y });
         upgradeSpin += 0.01;
 
         for (let i = 0; i < gui.upgrades.length; i++) {
@@ -1809,7 +2073,7 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
             let model = upgrade[2];
 
             // Draw either in the next row or next column
-            if (ticker === columnCount || upgradeBranch != lastBranch) {
+            if (ticker === global.columnCount || upgradeBranch != lastBranch) {
                 x = xStart;
                 y += height + internalSpacing;
                 if (upgradeBranch != lastBranch) {
@@ -1832,7 +2096,7 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
             global.clickables.upgrade.place(i, x * clickableRatio, y * clickableRatio, len * clickableRatio, height * clickableRatio);
             let upgradeKey = getClassUpgradeKey(upgradeNum);
 
-            drawEntityIcon(model, x, y, len, height, 1, upgradeSpin, 0.6, colorIndex++, upgradeKey, upgradeNum == upgradeHoverIndex);
+            drawEntityIcon(model, x, y, len, height, 1, upgradeSpin, 0.6, colorIndex++, !global.mobile ? upgradeKey : false, upgradeNum == upgradeHoverIndex);
 
             ticker++;
             upgradeNum++;
@@ -1860,7 +2124,7 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
                     boxPadding = 6,
                     splitTooltip = picture.upgradeTooltip.split("\n"),
                     textY = boxY + boxPadding + alcoveSize / 10;
-                
+
                 // Tooltip box width
                 for (let line of splitTooltip) boxWidth = Math.max(boxWidth, measureText(line, alcoveSize / 15));
 
@@ -1884,7 +2148,119 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
         global.clickables.skipUpgrades.hide();
     }
 }
+// MOBILE UI FUNCTIONS
+function drawMobileJoysticks() {
+    // Draw the joysticks.
+    let radius = Math.min(
+        global.screenWidth * 0.6,
+        global.screenHeight * 0.12
+    );
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(
+        (global.screenWidth * 1) / 6,
+        (global.screenHeight * 2) / 3,
+        radius,
+        0,
+        2 * Math.PI
+    );
+    ctx.arc(
+        (global.screenWidth * 5) / 6,
+        (global.screenHeight * 2) / 3,
+        radius,
+        0,
+        2 * Math.PI
+    );
+    ctx.fill();
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(
+        canvas.movementTouchPos.x + (global.screenWidth * 1) / 6,
+        canvas.movementTouchPos.y + (global.screenHeight * 2) / 3,
+        radius / 2.5,
+        0,
+        2 * Math.PI
+    );
+    ctx.arc(
+        canvas.controlTouchPos.x + (global.screenWidth * 5) / 6,
+        canvas.controlTouchPos.y + (global.screenHeight * 2) / 3,
+        radius / 2.5,
+        0,
+        2 * Math.PI
+    );
+    ctx.fill();
+}
 
+function makeButton(index, x, y, width, height, text, clickableRatio) {
+    // Set the clickable's position
+    global.clickables.mobileButtons.place(index, x * clickableRatio, y * clickableRatio, width * clickableRatio, height * clickableRatio);
+
+    // Draw boxes
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = color.grey;
+    drawGuiRect(x, y, width, height);
+    ctx.globalAlpha = 0.1;
+    ctx.fillStyle = color.black;
+    drawGuiRect(x, y + height * 0.6, width, height * 0.4);
+    ctx.globalAlpha = 1;
+
+    // Draw text
+    drawText(text, x + width / 2, y + height * 0.5, height * 0.6, color.guiwhite, "center", true);
+
+    // Draw the borders
+    ctx.strokeStyle = color.black;
+    ctx.lineWidth = 3;
+    drawGuiRect(x, y, width, height, true);
+}
+
+function makeButtons(buttons, startX, startY, baseSize, clickableRatio, spacing) {
+    let x = startX, y = startY, index = 0;
+
+    for (let row = 0; row < buttons.length; row++) {
+        for (let col = 0; col < buttons[row].length; col++) {
+            makeButton(buttons[row][col][3] ?? index, x, y, baseSize * (buttons[row][col][1] ?? 1), baseSize * (buttons[row][col][2] ?? 1), buttons[row][col][0], clickableRatio);
+            x += baseSize * (buttons[row][col][1] ?? 1) + spacing;
+            index++;
+        }
+
+        x = startX;
+        y += Math.max(...buttons[row].map(b => baseSize * (b[2] ?? 1))) + spacing;
+    }
+}
+
+function drawMobileButtons(spacing, alcoveSize) {
+    if (global.clickables.mobileButtons.active == null) global.clickables.mobileButtons.active = false;
+    if (global.clickables.mobileButtons.altFire == null) global.clickables.mobileButtons.altFire = false;
+
+    // Hide the buttons
+    global.clickables.mobileButtons.hide();
+
+    // Some animations.
+    mobileUpgradeGlide.set(0 + (global.canUpgrade || global.upgradeHover));
+
+    // Some sizing variables
+    let clickableRatio = global.canvas.height / global.screenHeight / global.ratio;
+    let upgradeColumns = Math.ceil(gui.upgrades.length / 9);
+    let yOffset = global.mobile ? global.canUpgrade ? (alcoveSize / 3.5 /*+ spacing * 2*/) * mobileUpgradeGlide.get() * upgradeColumns / 3.5 * (upgradeColumns + 3.55) + 67 : 0 + global.canSkill || global.showSkill ? statMenu.get() * alcoveSize / 2.6 + spacing / 0.75 : 0 : 0;
+    let buttons;
+    let baseSize = (alcoveSize - spacing * 2) / 3;
+
+    if (global.mobile) {
+        buttons = global.clickables.mobileButtons.active ? [
+            [[global.clickables.mobileButtons.active ? "-" : "+"], [`Alt ${global.clickables.mobileButtons.altFire ? "Manual" : "Disabled"}`, 6], [`${!document.fullscreenElement ? "Full" : "Exit Full"} Screen`, 5]],
+            [["Autofire", 3.5], ["Reverse", 3.5], ["Self-Destruct", 5]],
+            [["Autospin", 3.5], ["Override", 3.5], ["Level Up", 5]],
+            [["Action", 3.5], ["Special", 3.5], ["Chat", 5]],
+        ] : [
+            [[global.clickables.mobileButtons.active ? "-" : "+"]],
+        ];
+    }
+    if (global.clickables.mobileButtons.altFire) buttons.push([["\u2756", 2, 2]]);
+
+    makeButtons(buttons, spacing * 2, yOffset + spacing, baseSize, clickableRatio, spacing);
+}
 const gameDrawAlive = (ratio, drawRatio) => {
     let GRAPHDATA = 0;
     // Prep stuff
@@ -1901,7 +2277,7 @@ const gameDrawAlive = (ratio, drawRatio) => {
         py = ratio * global.player.rendery;
 
     // Get the player's target
-    calculateTarget();
+    if (!global.mobile) calculateTarget();
 
     //draw the in game stuff
     drawFloor(px, py, ratio);
@@ -1919,10 +2295,14 @@ const gameDrawAlive = (ratio, drawRatio) => {
     if (global.showTree) {
         drawUpgradeTree(spacing, alcoveSize);
     } else {
-        drawMessages(spacing);
+        if (global.mobile) { // MOBILE UI
+            drawMobileJoysticks();
+            drawMobileButtons(spacing, alcoveSize);
+        }
+        drawMessages(spacing, alcoveSize);
         drawSkillBars(spacing, alcoveSize);
         drawSelfInfo(spacing, alcoveSize, max);
-        drawMinimapAndDebug(spacing, alcoveSize);
+        drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA);
         drawLeaderboard(spacing, alcoveSize, max, lb);
         drawAvailableUpgrades(spacing, alcoveSize);
     }
@@ -1952,8 +2332,8 @@ let getKills = () => {
         : destruction < 75 ? "👺"
         : destruction < 100 ? "🌶️" : "💯"
         ) + " " + (!killCountTexts.length ? "A true pacifist" :
-                    killCountTexts.length == 1 ? killCountTexts.join(" and ") :
-                    killCountTexts.slice(0, -1).join(", ") + " and " + killCountTexts[killCountTexts.length - 1])
+            killCountTexts.length == 1 ? killCountTexts.join(" and ") :
+                killCountTexts.slice(0, -1).join(", ") + " and " + killCountTexts[killCountTexts.length - 1])
     );
 };
 let getDeath = () => {
@@ -1969,11 +2349,55 @@ let getDeath = () => {
     }
     return txt;
 };
+let getTips = () => {
+    let txt = "❓ ";
+    if (global.finalKillers.length) {
+        txt += "Try to get revenge on your enemy to get your score back!";
+    } else if (!global.autolvlUp) {
+        txt += "Enable auto level up at the options menu to get instant level 45!";
+    } else {
+        txt += "Try killing players to earn XP!";
+    }
+    return txt;
+};
 const gameDrawDead = () => {
     clearScreen(color.black, 0.25);
     let ratio = util.getScreenRatio();
     scaleScreenRatio(ratio, true);
     let shift = animations.deathScreen.get();
+    ctx.translate(0, -shift * global.screenHeight);
+    let x = global.screenWidth / 2,
+        y = global.screenHeight / 2 - 50,
+        len = 140,
+        position = global.mockups[parseInt(gui.type.split("-")[0])].position,
+        scale = len / position.axis,
+        xx = global.screenWidth / 2 - scale * position.middle.x * 0.707,
+        yy = global.screenHeight / 2 - 35 + scale * position.middle.y * 0.707,
+        picture = util.getEntityImageFromMockup(gui.type, gui.color),
+        baseColor = picture.color;
+    drawEntity(baseColor, (xx - 190 - len / 2 + 0.5) | 0, (yy - 10 + 0.5) | 0, picture, 1.5, 1, (0.5 * scale) / picture.realSize, 1, -Math.PI / 4, true);
+    drawText("Level " + gui.__s.getLevel(), x - 275, y - -80, 14, color.guiwhite, "center");
+    drawText(picture.name, x - 275, y - -110, 24, color.guiwhite, "center");
+    drawText("Game over, try again!", x, y - 80, 8, color.guiwhite, "center");
+    if (global.player.name == "") {
+        drawText("Your Score: ", x - 170, y - 30, 24, color.guiwhite);
+    } else {
+        drawText(global.player.name + "'s Score: ", x - 170, y - 30, 24, color.guiwhite);
+    }
+    drawText(util.formatLargeNumber(Math.round(global.finalScore.get())), x - 170, y + 25, 50, color.guiwhite);
+    drawText("⌚ Survived for " + util.timeForHumans(Math.round(global.finalLifetime.get())), x - 170, y + 55, 16, color.guiwhite);
+    drawText(getKills(), x - 170, y + 77, 16, color.guiwhite);
+    drawText(getDeath(), x - 170, y + 99, 16, color.guiwhite);
+    drawText(getTips(), x - 170, y + 122, 16, color.guiwhite);
+    drawText("🦆 The server was " + +(100 * gui.fps).toFixed(0) + "%" + " active for the run!", x - 170, y + 144, 16, color.guiwhite);
+    drawText(global.cannotRespawn ? global.respawnTimeout ? "(" + global.respawnTimeout + " Secon" + `${global.respawnTimeout <= 1 ? 'd' : 'ds'} ` + "left to respawn)" : "(You cannot respawn)" : global.mobile ? "(Tap to respawn)" : "(Press enter to respawn)", x, y + 189, 16, color.guiwhite, "center");
+    ctx.translate(0, shift * global.screenHeight);
+};
+const gameDrawOldDead = () => {
+    clearScreen(color.black, 0.25);
+    let ratio = util.getScreenRatio();
+    scaleScreenRatio(ratio, true);
+    let shift = global.enableSlideAnimation ? animations.deathScreen.get() : animations.deathScreen.getNoLerp();
     ctx.translate(0, -shift * global.screenHeight);
     let x = global.screenWidth / 2,
         y = global.screenHeight / 2 - 50;
@@ -1998,17 +2422,18 @@ const gameDrawBeforeStart = () => {
     let ratio = util.getScreenRatio();
     scaleScreenRatio(ratio, true);
     clearScreen(color.white, 0.5);
-    let shift = animations.connecting.get();
+    let shift = global.enableSlideAnimation ? animations.connecting.get() : animations.connecting.getNoLerp();
     ctx.translate(0, -shift * global.screenHeight);
     drawText("Connecting...", global.screenWidth / 2, global.screenHeight / 2, 30, color.guiwhite, "center");
     drawText(global.message, global.screenWidth / 2, global.screenHeight / 2 + 30, 15, color.lgreen, "center");
+    drawText(global.tips, global.screenWidth / 2, global.screenHeight / 2 + 90, 15, color.guiwhite, "center");
     ctx.translate(0, shift * global.screenHeight);
 };
 const gameDrawDisconnected = () => {
     let ratio = util.getScreenRatio();
     scaleScreenRatio(ratio, true);
     clearScreen(gameDraw.mixColors(color.red, color.guiblack, 0.3), 0.25);
-    let shift = animations.disconnected.get();
+    let shift = global.enableSlideAnimation ? animations.disconnected.get() : animations.disconnected.getNoLerp();
     ctx.translate(0, -shift * global.screenHeight);
     drawText("Disconnected", global.screenWidth / 2, global.screenHeight / 2, 30, color.guiwhite, "center");
     drawText(global.message, global.screenWidth / 2, global.screenHeight / 2 + 30, 15, color.orange, "center");
@@ -2018,7 +2443,7 @@ const gameDrawError = () => {
     let ratio = util.getScreenRatio();
     scaleScreenRatio(ratio, true);
     clearScreen(gameDraw.mixColors(color.red, color.guiblack, 0.2), 0.35);
-    let shift = animations.error.get();
+    let shift = global.enableSlideAnimation ? animations.error.get() : animations.error.getNoLerp();
     ctx.translate(0, -shift * global.screenHeight);
     drawText("There has been an error!", global.screenWidth / 2, global.screenHeight / 2 - 50, 50, color.guiwhite, "center");
     drawText("Check the browser console for details.", global.screenWidth / 2, global.screenHeight / 2, 30, color.guiwhite, "center");
@@ -2029,7 +2454,7 @@ const gameDrawError = () => {
 function animloop() {
     global.animLoopHandle = window.requestAnimFrame(animloop);
     gameDraw.reanimateColors();
-    global.player.renderv += (global.player.view - global.player.renderv) / 30;
+    global.player.renderv += (global.player.view - global.player.renderv) / 10;
     var ratio = settings.graphical.screenshotMode ? 2 : util.getRatio();
     // Set the drawing style
     ctx.lineCap = "round";
@@ -2058,19 +2483,19 @@ function animloop() {
         } else if (!global.disconnected) {
             gameDrawBeforeStart();
         }
-        if (global.died) {
+        if (global.died) { // Womp Womp you died
             gameDrawDead();
         }
-        if (global.disconnected) {
+        if (global.disconnected) { // Draw disconnection screen if the client lost connection to the server.
             gameDrawDisconnected();
         }
         ctx.translate(-0.5, -0.5);
 
-    //oh no we need to throw an error!
+        //oh no we need to throw an error!
     } catch (e) {
 
         //hold on....
-        gameDrawError();
+        gameDrawError(); // Draw the error screen.
         ctx.translate(-0.5, -0.5);
 
         //okay, NOW throw the error!
