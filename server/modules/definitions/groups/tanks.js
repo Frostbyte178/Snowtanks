@@ -23,7 +23,15 @@ Class.basic = {
     },*/
     GUNS: [
         {
-            POSITION: [18, 8, 1, 0, 0, 0, 0],
+            POSITION: {
+                LENGTH: 18,
+                WIDTH: 8,
+                ASPECT: 1,
+                X: 0,
+                Y: 0,
+                ANGLE: 0,
+                DELAY: 0
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic]),
                 TYPE: "bullet",
@@ -45,14 +53,23 @@ Class.twin = {
     LABEL: "Twin",
     GUNS: [
         {
-            POSITION: [20, 8, 1, 0, 5.5, 0, 0],
+            POSITION: {
+                LENGTH: 20,
+                WIDTH: 8,
+                Y: 5.5
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [20, 8, 1, 0, -5.5, 0, 0.5],
+            POSITION: {
+                LENGTH: 20,
+                WIDTH: 8,
+                Y: -5.5,
+                DELAY: 0.5
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin]),
                 TYPE: "bullet"
@@ -68,7 +85,10 @@ Class.sniper = {
     },
     GUNS: [
         {
-            POSITION: [24, 8.5, 1, 0, 0, 0, 0],
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 8.5
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper]),
                 TYPE: "bullet"
@@ -81,7 +101,12 @@ Class.machineGun = {
     LABEL: "Machine Gun",
     GUNS: [
         {
-            POSITION: [12, 10, 1.4, 8, 0, 0, 0],
+            POSITION: {
+                LENGTH: 12,
+                WIDTH: 10,
+                ASPECT: 1.4,
+                X: 8
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.machineGun]),
                 TYPE: "bullet"
@@ -96,7 +121,10 @@ Class.flankGuard = {
         SPEED: 1.1 * base.SPEED
     },
     GUNS: weaponArray({
-        POSITION: [18, 8, 1, 0, 0, 0, 0],
+        POSITION: {
+            LENGTH: 18,
+            WIDTH: 8
+        },
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard]),
             TYPE: "bullet"
@@ -112,6 +140,12 @@ Class.director = {
     },
     GUNS: [
         {
+            POSITION: {
+                LENGTH: 6,
+                WIDTH: 11,
+                ASPECT: 1.3,
+                X: 7
+            },
             POSITION: [6, 11, 1.3, 7, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone]),
@@ -130,7 +164,10 @@ Class.pounder = {
     LABEL: "Pounder",
     GUNS: [
         {
-            POSITION: [20.5, 12, 1, 0, 0, 0, 0],
+            POSITION: {
+                LENGTH: 20.5,
+                WIDTH: 12
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pounder]),
                 TYPE: "bullet"
@@ -144,10 +181,18 @@ Class.trapper = {
     STAT_NAMES: statnames.trap,
     GUNS: [
         {
-            POSITION: [15, 7, 1, 0, 0, 0, 0]
+            POSITION: {
+                LENGTH: 15,
+                WIDTH: 7
+            }
         },
         {
-            POSITION: [3, 7, 1.7, 15, 0, 0, 0],
+            POSITION: {
+                LENGTH: 3,
+                WIDTH: 7,
+                ASPECT: 1.7,
+                X: 15
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap]),
                 TYPE: "trap",
@@ -199,10 +244,18 @@ Class.healer = {
     ],
     GUNS: [
         {
-            POSITION: [8, 9, -0.5, 12.5, 0, 0, 0]
+            POSITION: {
+                LENGTH: 8,
+                WIDTH: 9,
+                ASPECT: -0.5,
+                X: 12.5
+            }
         },
         {
-            POSITION: [18, 10, 1, 0, 0, 0, 0],
+            POSITION: {
+                LENGTH: 18,
+                WIDTH: 10
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.healer]),
                 TYPE: "healerBullet"
@@ -242,21 +295,36 @@ Class.tripleShot = {
     },
     GUNS: [
         {
-            POSITION: [19, 8, 1, 0, -2, -17.5, 0.5],
+            POSITION: {
+                LENGTH: 19,
+                WIDTH: 8,
+                Y: -2,
+                ANGLE: -17.5,
+                DELAY: 0.5
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [19, 8, 1, 0, 2, 17.5, 0.5],
+            POSITION: {
+                LENGTH: 19,
+                WIDTH: 8,
+                Y: 2,
+                ANGLE: 17.5,
+                DELAY: 0.5
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [22, 8, 1, 0, 0, 0, 0],
+            POSITION: {
+                LENGTH: 22,
+                WIDTH: 8
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"

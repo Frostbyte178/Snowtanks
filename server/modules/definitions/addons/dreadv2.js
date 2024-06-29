@@ -6,63 +6,68 @@ const eggnoughtBody = {
 	SPEED: base.SPEED * 0.65,
 	HEALTH: base.HEALTH * 1.75,
 	SHIELD: base.SHIELD * 1.5,
-	REGEN: base.REGEN * 1.5,
+	REGEN: base.REGEN * 1.25,
 	FOV: base.FOV,
 	RESIST: base.RESIST,
 	DENSITY: base.DENSITY * 1.5,
+	ACCELERATION: base.ACCEL * 0.8,
 };
 const squarenoughtBody = {
 	SPEED: base.SPEED * 0.6,
 	HEALTH: base.HEALTH * 2.5,
 	SHIELD: base.SHIELD * 2,
-	REGEN: base.REGEN * 2,
+	REGEN: base.REGEN * 1.4,
 	FOV: base.FOV * 0.95,
 	RESIST: base.RESIST,
 	DENSITY: base.DENSITY * 2,
+	ACCELERATION: base.ACCEL * 0.6,
 };
 const trinoughtBody = {
 	SPEED: base.SPEED * 0.55,
 	HEALTH: base.HEALTH * 7.5,
 	SHIELD: base.SHIELD * 2.5,
-	REGEN: base.REGEN * 2.5,
+	REGEN: base.REGEN * 1.5,
 	FOV: base.FOV * 0.95,
 	RESIST: base.RESIST,
 	DENSITY: base.DENSITY * 2.5,
+	ACCELERATION: base.ACCEL * 0.5,
 };
 const pentanoughtBody = {
 	SPEED: base.SPEED * 0.5,
 	HEALTH: base.HEALTH * 4.25,
 	SHIELD: base.SHIELD * 3,
-	REGEN: base.REGEN * 3,
+	REGEN: base.REGEN * 1.55,
 	FOV: base.FOV * 0.95,
 	RESIST: base.RESIST,
 	DENSITY: base.DENSITY * 3,
+	ACCELERATION: base.ACCEL * 0.4,
 };
 const hexnoughtBody = {
 	SPEED: base.SPEED * 0.45,
 	HEALTH: base.HEALTH * 5,
 	SHIELD: base.SHIELD * 3.5,
-	REGEN: base.REGEN * 3.5,
+	REGEN: base.REGEN * 1.6,
 	FOV: base.FOV * 0.95,
 	RESIST: base.RESIST,
 	DENSITY: base.DENSITY * 3.5,
+	ACCELERATION: base.ACCEL * 0.4,
 };
 const hpBuffBodyStats = [
-	{ HEALTH: 1.65, SPEED: 1.2,  SHIELD: 1.4,  REGEN: 1.3  },
-	{ HEALTH: 2,    SPEED: 1.26, SHIELD: 1.65, REGEN: 1.45 },
-	{ HEALTH: 2.3,  SPEED: 1.31, SHIELD: 1.9,  REGEN: 1.6  },
-	{ HEALTH: 2.55, SPEED: 1.35, SHIELD: 2.15, REGEN: 1.7  },
+	{ HEALTH: 1.4, SPEED: 1.25, SHIELD: 1.4,  REGEN: 1.3  },
+	{ HEALTH: 1.7, SPEED: 1.1,  SHIELD: 1.65, REGEN: 1.45 },
+	{ HEALTH: 1.8, SPEED: 1.17, SHIELD: 1.9,  REGEN: 1.6  },
+	{ HEALTH: 1.9, SPEED: 1.17, SHIELD: 2.15, REGEN: 1.7  },
 ];
 const speedBuffBodyStats = [
-	{ HEALTH: 0.85, SPEED: 1.25, SHIELD: 0.9,  REGEN: 1   },
-	{ HEALTH: 0.75, SPEED: 1.4,  SHIELD: 0.83, REGEN: 0.9 },
-	{ HEALTH: 0.65, SPEED: 1.55, SHIELD: 0.75, REGEN: 0.8 },
+	{ HEALTH: 0.85, SPEED: 1.4, SHIELD: 0.9,  REGEN: 1   },
+	{ HEALTH: 0.8,  SPEED: 1.5, SHIELD: 0.83, REGEN: 0.9 },
+	{ HEALTH: 0.75, SPEED: 1.6, SHIELD: 0.75, REGEN: 0.8 },
 ];
 const healerBodyStats = [
-	{ HEALTH: 1.05, SPEED: 1.03, SHIELD: 1.05, REGEN: 1.05 },
-	{ HEALTH: 1.1,  SPEED: 1.04, SHIELD: 1.1,  REGEN: 1.1  },
-	{ HEALTH: 1.15, SPEED: 1.05, SHIELD: 1.15, REGEN: 1.15 },
-]
+	{ HEALTH: 1.1,  SPEED: 1.04, SHIELD: 1.2,  REGEN: 1.15 },
+	{ HEALTH: 1,    SPEED: 0.98, SHIELD: 1.28, REGEN: 1.2  },
+	{ HEALTH: 0.92, SPEED: 0.94, SHIELD: 1.35, REGEN: 1.25 },
+];
 
 function combineBodyStats(...bodies) {
 	let output = {
@@ -163,7 +168,7 @@ Class.supermissile = {
 			POSITION: [14, 6, 1, 0, -2, 130, 0],
 			PROPERTIES: {
 				AUTOFIRE: true,
-				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {speed: 1.3, maxSpeed: 1.3, recoil: 0.65}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {reload: 1.15, speed: 1.3, maxSpeed: 1.3, recoil: 0.75}]),
 				TYPE: ["bullet", {PERSISTS_AFTER_DEATH: true}],
 				STAT_CALCULATOR: "thruster",
 			},
@@ -171,7 +176,7 @@ Class.supermissile = {
 			POSITION: [14, 6, 1, 0, 2, 230, 0],
 			PROPERTIES: {
 				AUTOFIRE: true,
-				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {speed: 1.3, maxSpeed: 1.3, recoil: 0.65}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, {reload: 1.15, speed: 1.3, maxSpeed: 1.3, recoil: 0.75}]),
 				TYPE: ["bullet", {PERSISTS_AFTER_DEATH: true}],
 				STAT_CALCULATOR: "thruster",
 			},
@@ -179,7 +184,7 @@ Class.supermissile = {
 			POSITION: [14, 6, 1, 0, 0, 0, 0.2],
 			PROPERTIES: {
 				AUTOFIRE: true,
-				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, g.skimmer, {speed: 1.15, maxSpeed: 1.15, recoil: 0.65}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.lowPower, g.skimmer, {reload: 1.15, speed: 1.15, maxSpeed: 1.15, recoil: 0.75}]),
 				TYPE: ["bullet", {PERSISTS_AFTER_DEATH: true}],
 			},
 		},
@@ -187,13 +192,33 @@ Class.supermissile = {
 };
 Class.betadrone = {
 	PARENT: "drone",
-	TURRETS: [
+	PROPS: [
 		{
-			POSITION: [10, 0, 0, 180, 0, 1],
+			POSITION: [10, 0, 0, 180, 1],
 			TYPE: ["triangle", {COLOR: -1}],
 		},
 	]
 }
+
+// Auras
+Class.atmosphereAuraOfficialV2 = addAura(1, 1, 0.15);
+Class.coronaAuraOfficialV2 = addAura(1.15, 0.8, 0.15);
+Class.trinoughtBigAura = addAura(1.15, 1.5);
+Class.trinoughtSmallAura = addAura(1.15, 2.1, 0.15);
+Class.pentanoughtBigAura = addAura(1.25, 1.45);
+Class.pentanoughtSmallAura = addAura(1.25, 1.6, 0.15);
+if (useOldPhotosphere) {
+	Class.photosphereSmallAuraOfficialV2 = addAura(1.25, 1.85, 0.15);
+	Class.photosphereBigAuraOfficialV2 = addAura(0.25, 4);
+}
+Class.gladiatorAuraMinionAuraOfficialV2 = addAura(0.35, 1.2);
+
+Class.thermosphereAuraOfficialV2 = addAura(-1, 1.5);
+Class.trinoughtBigHealAura = addAura(-1.15, 1.5);
+Class.trinoughtSmallHealAura = addAura(-1.05, 2.1, 0.15);
+Class.pentanoughtBigHealAura = addAura(-1.3, 1.45);
+Class.pentanoughtSmallHealAura = addAura(-1.2, 1.6, 0.15);
+Class.gladiatorHealAuraMinionAuraOfficialV2 = addAura(-0.25, 1.2);
 
 // T0
 Class.dreadOfficialV2 = {
@@ -205,12 +230,12 @@ Class.dreadOfficialV2 = {
 }
 Class.dreadWeaponOfficialV2 = {
 	LABEL: "",
-	COLOR: 6,
+	COLOR: 'egg',
 	REROOT_UPGRADE_TREE: "dreadWeaponOfficialV2",
 }
 Class.dreadBodyOfficialV2 = {
 	LABEL: "",
-	COLOR: 6,
+	COLOR: 'egg',
 	REROOT_UPGRADE_TREE: "dreadBodyOfficialV2",
 }
 
@@ -273,7 +298,7 @@ Class.invaderOfficialV2 = {
 	GUNS: weaponArray({
 		POSITION: [5, 9, 1.2, 8, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.drone, g.overseer, {reload: 0.9, health: 1.05}]),
+			SHOOT_SETTINGS: combineStats([g.drone, g.overseer, {reload: 0.85, health: 1.05}]),
 			TYPE: "drone",
 			MAX_CHILDREN: 4,
 			AUTOFIRE: true,
@@ -296,7 +321,7 @@ Class.centaurOfficialV2 = {
 		}, {
 			POSITION: [3, 7, 1.5, 13, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.pounder, {shudder: 0.4, speed: 0.85, range: 0.85}]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.pounder, {health: 1.15, shudder: 0.4, speed: 0.85, range: 0.85}]),
 				TYPE: "trap",
 				STAT_CALCULATOR: "trap",
 			},
@@ -338,7 +363,6 @@ Class.byteOfficialV2 = {
 		}
 	]
 }
-Class.atmosphereAuraOfficialV2 = addAura(1, 1, 0.15);
 Class.atmosphereOfficialV2 = {
 	PARENT: "genericEggnought",
 	LABEL: "Atmosphere",
@@ -512,7 +536,7 @@ Class.assailantOfficialV2 = {
 			POSITION: [1.5, 11, 1, 15, 0, 0, 0],
 			PROPERTIES: {
 				MAX_CHILDREN: 4,
-				SHOOT_SETTINGS: combineStats([g.factory, {size: 0.9, reload: 1.65, health: 1.3, damage: 0.7, speed: 0.8, maxSpeed: 0.8}]),
+				SHOOT_SETTINGS: combineStats([g.factory, {size: 0.9, reload: 1.95, health: 1.3, damage: 0.7, speed: 0.8, maxSpeed: 0.8}]),
 				TYPE: "assailantMinionOfficialV2",
 				STAT_CALCULATOR: "drone",
 				AUTOFIRE: true,
@@ -533,7 +557,7 @@ Class.daemonOfficialV2 = {
 		}, {
 			POSITION: [2, 4.5, 1.7, 11, 4.5, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {health: 0.7, speed: 0.7, maxSpeed: 0.7, range: 0.67, shudder: 0.5}]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {health: 0.73, speed: 0.7, maxSpeed: 0.7, range: 0.67, shudder: 0.5}]),
 				TYPE: "trap",
 				STAT_CALCULATOR: "trap",
 			},
@@ -542,7 +566,7 @@ Class.daemonOfficialV2 = {
 		}, {
 			POSITION: [2, 4.5, 1.7, 11, -4.5, 0, 0.5],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {health: 0.7, speed: 0.7, maxSpeed: 0.7, range: 0.67, shudder: 0.5}]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.twin, g.pounder, {health: 0.73, speed: 0.7, maxSpeed: 0.7, range: 0.67, shudder: 0.5}]),
 				TYPE: "trap",
 				STAT_CALCULATOR: "trap",
 			},
@@ -558,7 +582,7 @@ Class.minotaurOfficialV2 = {
 		}, {
 			POSITION: [3.75, 7, 1.75, 13, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {shudder: 0.7, range: 0.6}]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.pounder, {health: 0.95, shudder: 0.7, range: 0.6}]),
 				TYPE: "unsetTrap",
 				STAT_CALCULATOR: "block"
 			},
@@ -610,7 +634,6 @@ Class.kilobyteOfficialV2 = {
 		},
 	]
 }
-Class.coronaAuraOfficialV2 = addAura(1.5, 0.8, 0.15);
 Class.coronaOfficialV2 = {
 	PARENT: "genericSquarenought",
 	LABEL: "Corona",
@@ -627,7 +650,6 @@ Class.coronaOfficialV2 = {
 		},
 	]
 }
-Class.thermosphereAuraOfficialV2 = addAura(-1, 1.5);
 Class.thermosphereOfficialV2 = {
 	PARENT: "genericSquarenought",
 	LABEL: "Thermosphere",
@@ -951,7 +973,6 @@ Class.mechanismOfficialV2 = {
 		},
 	],
 }
-Class.trinoughtBigAura = addAura(2, 1.5);
 Class.fusionOfficialV2 = {
 	PARENT: "genericTrinought",
 	LABEL: "Fusion",
@@ -992,7 +1013,6 @@ Class.binaryOfficialV2 = {
 		},
 	],
 }
-Class.trinoughtBigHealAura = addAura(-1.5, 1.5);
 Class.exosphereOfficialV2 = {
 	PARENT: "genericTrinought",
 	LABEL: "Exosphere",
@@ -1043,7 +1063,6 @@ Class.megabyteOfficialV2 = {
 		},
 	]
 }
-Class.trinoughtSmallAura = addAura(1, 2.1, 0.15);
 Class.trojanOfficialV2 = {
 	PARENT: "genericTrinought",
 	LABEL: "Trojan",
@@ -1064,7 +1083,6 @@ Class.trojanOfficialV2 = {
 		},
 	]
 }
-Class.trinoughtSmallHealAura = addAura(-2/3, 2.1, 0.15);
 Class.hardwareOfficialV2 = {
 	PARENT: "genericTrinought",
 	LABEL: "Hardware",
@@ -1448,7 +1466,6 @@ Class.gladiatorTriswarmMinionOfficialV2 = {
 Class.gladiatorAutoMinionOfficialV2 = makeAuto({
 	PARENT: "gladiatorGenericMinionOfficialV2",
 }, "Minion", {size: 12, angle: 0});
-Class.gladiatorAuraMinionAuraOfficialV2 = addAura(1, 1.2);
 Class.gladiatorAuraMinionOfficialV2 = {
 	PARENT: "gladiatorGenericMinionOfficialV2",
 	TURRETS: [
@@ -1458,7 +1475,6 @@ Class.gladiatorAuraMinionOfficialV2 = {
 		}
 	]
 }
-Class.gladiatorHealAuraMinionAuraOfficialV2 = addAura(-2/3, 1.2);
 Class.gladiatorHealAuraMinionOfficialV2 = {
 	PARENT: "gladiatorGenericMinionOfficialV2",
 	TURRETS: [
@@ -1569,7 +1585,6 @@ Class.skynetOfficialV2 = {
 		}
 	]
 }
-Class.pentanoughtBigAura = addAura(2.5, 1.45);
 Class.supernovaOfficialV2 = {
 	PARENT: "genericPentanought",
 	LABEL: "Supernova",
@@ -1610,7 +1625,6 @@ Class.cipherOfficialV2 = {
 		},
 	]
 }
-Class.pentanoughtBigHealAura = addAura(-2, 1.45);
 Class.interstellarOfficialV2 = {
 	PARENT: "genericPentanought",
 	LABEL: "Interstellar",
@@ -1661,7 +1675,6 @@ Class.gigabyteOfficialV2 = {
 		},
 	]
 }
-Class.pentanoughtSmallAura = addAura(1, 1.6, 0.15);
 Class.malwareOfficialV2 = {
 	PARENT: "genericPentanought",
 	LABEL: "Malware",
@@ -1682,7 +1695,6 @@ Class.malwareOfficialV2 = {
 		},
 	]
 }
-Class.pentanoughtSmallHealAura = addAura(-2/3, 1.6, 0.15);
 Class.softwareOfficialV2 = {
 	PARENT: "genericPentanought",
 	LABEL: "Software",
@@ -1703,10 +1715,6 @@ Class.softwareOfficialV2 = {
 			TYPE: "pentagon",
 		},
 	]
-}
-if (useOldPhotosphere) {
-	Class.photosphereSmallAuraOfficialV2 = addAura(1, 1.85, 0.15);
-	Class.photosphereBigAuraOfficialV2 = addAura(1.5, 4);
 }
 Class.photosphereOfficialV2 = {
 	PARENT: "genericPentanought",

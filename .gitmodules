@@ -1,0 +1,3 @@
+[submodule "server/lib/ws"]
+	path = server/lib/ws
+	url = https://github.com/websockets/ws
