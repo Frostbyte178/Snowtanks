@@ -1,108 +1,85 @@
-const { combineStats, makeDeco, weaponArray } = require('../facilitators.js');
+const { combineStats, makeDeco, weaponArray, makeTurret } = require('../facilitators.js');
 const { base } = require('../constants.js');
 const g = require('../gunvals.js');
 
-// Auto Guns
-Class.autoTankGun = {
-    PARENT: "genericTank",
-    LABEL: "",
-    BODY: {
-        FOV: 3,
-    },
-    CONTROLLERS: ["canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster"],
-    COLOR: "grey",
+// Radial Auto Guns
+Class.autoTankGun = makeTurret({
     GUNS: [
         {
             POSITION: [22, 10, 1, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.autoTurret]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard]),
                 TYPE: "bullet",
             },
         },
     ],
-}
-Class.bansheegun = {
-    PARENT: "autoTankGun",
-    BODY: {
-        FOV: 2,
-    },
-    INDEPENDENT: true,
+}, {canRepel: true, limitFov: true, fov: 3})
+Class.bansheegun = makeTurret({
     GUNS: [
         {
             POSITION: [26, 10, 1, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.autoTurret, { reload: 1.5 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, { reload: 1.5 }]),
                 TYPE: "bullet",
             },
         },
     ],
-}
-Class.auto4gun = {
-    PARENT: "autoTankGun",
-    BODY: {
-        FOV: 2,
-    },
+}, {limitFov: true, independent: true})
+Class.auto4gun = makeTurret({
     GUNS: [
         {
             POSITION: [16, 4, 1, 0, -3.5, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
                 TYPE: "bullet",
             },
         },
         {
             POSITION: [16, 4, 1, 0, 3.5, 0, 0.5],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.twin, g.power, { speed: 0.7, maxSpeed: 0.7 }]),
                 TYPE: "bullet",
             },
         },
     ],
-}
-Class.bigauto4gun = {
-    PARENT: "auto4gun",
+}, {canRepel: true, limitFov: true})
+Class.bigauto4gun = makeTurret({
     GUNS: [
         {
             POSITION: [14, 5, 1, 0, -4.5, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.twin, g.power, { reload: 2 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.twin, g.twin, g.power, { reload: 2 }]),
                 TYPE: "bullet",
             },
         },
         {
             POSITION: [14, 5, 1, 0, 4.5, 0, 0.33],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.twin, g.power, { reload: 2 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.twin, g.twin, g.power, { reload: 2 }]),
                 TYPE: "bullet",
             },
         },
         {
             POSITION: [16, 5, 1, 0, 0, 0, 0.67],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.autoTurret, g.pelleter, g.twin, g.twin, g.power, { reload: 2 }]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.twin, g.twin, g.power, { reload: 2 }]),
                 TYPE: "bullet",
             },
         },
     ],
-}
-Class.megaAutoTankGun = {
-    PARENT: "autoTankGun",
-    BODY: {
-        FOV: 2,
-    },
+}, {canRepel: true, limitFov: true, fov: 3})
+Class.megaAutoTankGun = makeTurret({
     GUNS: [
         {
             POSITION: [22, 14, 1, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.autoTurret]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder]),
                 TYPE: "bullet",
             },
         },
     ],
-}
-Class.architectGun = {
-    PARENT: "autoTurret",
-    LABEL: "",
+}, {canRepel: true, limitFov: true})
+Class.architectGun = makeTurret({
     GUNS: [
         {
             POSITION: [20, 16, 1, 0, 0, 0, 0],
@@ -110,28 +87,16 @@ Class.architectGun = {
         {
             POSITION: [2, 16, 1.1, 20, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.autoTurret]),
+                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap]),
                 TYPE: "setTrap",
                 STAT_CALCULATOR: "block"
             },
         },
     ],
-}
+}, {canRepel: true, limitFov: true, fov: 3})
 
-// Boss turrets
-Class.trapTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    BODY: {
-        FOV: 0.5,
-    },
-    INDEPENDENT: true,
-    CONTROLLERS: ["nearestDifferentMaster", 'onlyAcceptInArc'],
-    COLOR: "grey",
-    AI: {
-        SKYNET: true,
-        FULL_VIEW: true,
-    },
+// NPC turrets
+Class.trapTurret = makeTurret({
     GUNS: [
         {
             POSITION: [16, 14, 1, 0, 0, 0, 0],
@@ -145,12 +110,8 @@ Class.trapTurret = {
             },
         },
     ],
-}
-Class.baseTrapTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    INDEPENDENT: true,
-    COLOR: "grey",
+}, {limitFov: true, aiSettings: {SKYNET: true, FULL_VIEW: true, independent: true, extraStats: []}})
+Class.baseTrapTurret = makeTurret({
     GUNS: [
         {
             POSITION: [16, 14, 1, 0, 0, 0, 0],
@@ -164,12 +125,8 @@ Class.baseTrapTurret = {
             },
         },
     ],
-}
-Class.terrestrialTrapTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    INDEPENDENT: true,
-    COLOR: "grey",
+}, {independent: true, hasAI: false, extraStats: []})
+Class.terrestrialTrapTurret = makeTurret({
     GUNS: [
         {
             POSITION: [13, 14, 1, 0, 0, 0, 0],
@@ -183,26 +140,14 @@ Class.terrestrialTrapTurret = {
             },
         },
     ],
-}
+}, {independent: true, hasAI: false, extraStats: []})
 const shottrapTurretProperties = {
     SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.shotgun, g.machineGun, { speed: 0.7, maxSpeed: 0.2, damage: 1.5, range: 0.6 }]),
     AUTOFIRE: true,
     TYPE: "shotTrapBox",
     STAT_CALCULATOR: "block",
 }
-Class.shottrapTurret = {
-    PARENT: "genericTank",
-    LABEL: 'Turret',
-    BODY: {
-        FOV: 0,
-    },
-    INDEPENDENT: true,
-    CONTROLLERS: ['nearestDifferentMaster', 'onlyAcceptInArc'], 
-    COLOR: "grey",
-    AI: {
-        SKYNET: true,
-        FULL_VIEW: true,
-    },
+Class.shottrapTurret = makeTurret({
     GUNS: [{
         POSITION: [ 4, 1.5, 1, 11, -3, 0, 0 ], PROPERTIES: shottrapTurretProperties,
     }, {
@@ -218,7 +163,7 @@ Class.shottrapTurret = {
     }, {
         POSITION: [ 1, 2,   1, 13, -1, 0, 0 ], PROPERTIES: shottrapTurretProperties,
     }, {
-        POSITION: [ 1, 2,5, 1, 13,  1, 0, 0 ], PROPERTIES: shottrapTurretProperties,
+        POSITION: [ 1, 2.5, 1, 13,  1, 0, 0 ], PROPERTIES: shottrapTurretProperties,
     }, {
         POSITION: [ 1, 2,   1, 13,  2, 0, 0 ], PROPERTIES: shottrapTurretProperties,
     }, {
@@ -238,12 +183,10 @@ Class.shottrapTurret = {
             TYPE: "bullet"
         }
     }]
-}
+}, {limitFov: true, aiSettings: {SKYNET: true, FULL_VIEW: true, independent: true, extraStats: []}})
 Class.machineTripleTurret = {
     PARENT: "genericTank",
-    LABEL: "Machine Gun",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ ["spin", {speed: 0.04}] ],
+    FACING_TYPE: ["spin", {speed: 0.06}],
     INDEPENDENT: true,
     COLOR: -1,
     GUNS: weaponArray({
@@ -255,51 +198,9 @@ Class.machineTripleTurret = {
         },
     }, 3)
 }
-Class.launcherTurret = {
-    PARENT: "genericTank",
-    LABEL: "Launcher",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [10, 9, 1, 9, 0, 0, 0],
-        }, {
-            POSITION: [17, 13, 1, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery]),
-                TYPE: "minimissile",
-                STAT_CALCULATOR: "sustained",
-            },
-        },
-    ],
-}
-Class.skimmerTurret = {
-    PARENT: "genericTank",
-    LABEL: "Skimmer",
-    BODY: { FOV: 2 * base.FOV },
-    COLOR: -1,
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    GUNS: [
-        {
-            POSITION: [10, 14, -0.5, 9, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer]),
-                TYPE: "hypermissile",
-                STAT_CALCULATOR: "sustained",
-            },
-        }, {
-            POSITION: [17, 15, 1, 0, 0, 0, 0],
-        },
-    ],
-}
-Class.kronosSkimmerTurret = {
-    PARENT: "genericTank",
-    LABEL: "Skimmer",
-    BODY: { FOV: 10 },
-    COLOR: "grey",
-    INDEPENDENT: true,
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
+Class.launcherTurret = makeTurret('launcher', {canRepel: true, limitFov: true, extraStats: []})
+Class.skimmerTurret = makeTurret('skimmer', {canRepel: true, limitFov: true, extraStats: [], color: 'mirror'})
+Class.kronosSkimmerTurret = makeTurret({
     GUNS: [
         {
             POSITION: [8, 20, -0.25, 11, 0, 0, 0],
@@ -311,14 +212,8 @@ Class.kronosSkimmerTurret = {
             },
         },
     ],
-}
-Class.autoSmasherLauncherTurret = {
-    PARENT: "genericTank",
-    LABEL: "Launcher",
-    BODY: { FOV: 10 },
-    COLOR: "grey",
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    INDEPENDENT: true,
+}, {canRepel: true, limitFov: true, fov: 10, independent: true, extraStats: []})
+Class.autoSmasherLauncherTurret = makeTurret({
     GUNS: [
         {
             POSITION: [4, 12, 1.2, 16, 0, 0, 0],
@@ -330,32 +225,9 @@ Class.autoSmasherLauncherTurret = {
             },
         },
     ],
-}
-Class.twisterTurret = {
-    PARENT: "genericTank",
-    LABEL: "Twister",
-    BODY: { FOV: 2 },
-    COLOR: -1,
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    GUNS: [
-        {
-            POSITION: [10, 13, -0.5, 9, 0, 0, 0],
-        }, {
-            POSITION: [17, 14, -1.4, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, { speed: 1.3, maxSpeed: 1.3, reload: 4/3 }]),
-                TYPE: "spinmissile",
-                STAT_CALCULATOR: "sustained",
-            },
-        },
-    ],
-}
-Class.hyperTwisterTurret = {
-    PARENT: "genericTank",
-    LABEL: "Twister",
-    BODY: { FOV: 2 },
-    COLOR: -1,
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
+}, {canRepel: true, limitFov: true, fov: 10, independent: true, extraStats: []})
+Class.twisterTurret = makeTurret('twister', {canRepel: true, limitFov: true, color: 'mirror', extraStats: [{speed: 1.3, maxSpeed: 1.3}]})
+Class.hyperTwisterTurret = makeTurret({
     GUNS: [
         {
             POSITION: [10, 13, -0.5, 9, 0, 0, 0],
@@ -368,54 +240,13 @@ Class.hyperTwisterTurret = {
             },
         },
     ],
-}
-Class.rocketeerTurret = {
-    PARENT: "genericTank",
-    LABEL: "Rocketeer",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [10, 12.5, -0.7, 10, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.launcher, g.rocketeer]),
-                TYPE: "rocketeerMissile",
-                STAT_CALCULATOR: "sustained",
-            },
-        }, {
-            POSITION: [17, 18, 0.65, 0, 0, 0, 0],
-        },
-    ],
-}
-Class.boomerTurret = {
-    PARENT: "genericTank",
-    LABEL: "Boomer",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: -1,
-    GUNS: [
-        {
-            POSITION: [7.75, 10, 1, 12, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.boomerang, g.fake]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [6, 10, -1.5, 7, 0, 0, 0],
-        }, {
-            POSITION: [2, 10, 1.3, 18, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.boomerang]),
-                TYPE: "boomerang",
-            },
-        },
-    ],
-}
+}, {canRepel: true, limitFov: true, color: 'mirror', extraStats: []})
+Class.rocketeerTurret = makeTurret('rocketeer', {canRepel: true, limitFov: true})
+Class.boomerTurret = makeTurret('boomer', {canRepel: true, limitFov: true, color: 'mirror', extraStats: []})
 Class.triTrapGuardTurret = {
     PARENT: "genericTank",
     COLOR: -1,
-    CONTROLLERS: [["spin", { independent: true }]],
+    FACING_TYPE: ["spin", { independent: true }],
     GUNS: weaponArray([
         {
             POSITION: [17, 8, 1, 0, 0, 0, 0],
@@ -438,7 +269,7 @@ Class.triTrapGuardTurret = {
 Class.eliteSpinnerCyclone = {
     PARENT: "genericTank",
     COLOR: -1,
-    CONTROLLERS: [["spin", { speed: 0.1, independent: true }]],
+    FACING_TYPE: ["spin", { speed: 0.1, independent: true }],
     GUNS: weaponArray([
         {
             POSITION: [15, 3.5, 1, 0, 0, 0, 0],
@@ -470,115 +301,10 @@ Class.eliteSpinnerCyclone = {
         }
     ], 3)
 }
-Class.barricadeTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    BODY: {
-        FOV: 0.5,
-    },
-    INDEPENDENT: true,
-    CONTROLLERS: ["nearestDifferentMaster"],
-    COLOR: "grey",
-    AI: {
-        SKYNET: true,
-        FULL_VIEW: true,
-    },
-    GUNS: [
-        {
-            POSITION: [24, 8, 1, 0, 0, 0, 0],
-        },
-        {
-            POSITION: [4, 8, 1.3, 22, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.minigun, { range: 0.5 }]),
-                TYPE: "trap",
-                STAT_CALCULATOR: "trap",
-            },
-        },
-        {
-            POSITION: [4, 8, 1.3, 18, 0, 0, 0.333],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.minigun, { range: 0.5 }]),
-                TYPE: "trap",
-                STAT_CALCULATOR: "trap",
-            },
-        },
-        {
-            POSITION: [4, 8, 1.3, 14, 0, 0, 0.667],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.trap, g.minigun, { range: 0.5 }]),
-                TYPE: "trap",
-                STAT_CALCULATOR: "trap",
-            },
-        },
-    ],
-}
-Class.artilleryTurret = {
-    PARENT: "genericTank",
-    LABEL: "Artillery",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [17, 3, 1, 0, -6, -7, 0.25],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.artillery]),
-                TYPE: "bullet",
-                LABEL: "Secondary",
-            },
-        }, {
-            POSITION: [17, 3, 1, 0, 6, 7, 0.75],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.artillery]),
-                TYPE: "bullet",
-                LABEL: "Secondary",
-            },
-        }, {
-            POSITION: [19, 12, 1, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery]),
-                TYPE: "bullet",
-                LABEL: "Heavy",
-            },
-        },
-    ],
-}
-Class.nailgunTurret = {
-    PARENT: "genericTank",
-    LABEL: "Nailgun",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [{
-            POSITION: [19, 2, 1, 0, -2.5, 0, 0.25],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.twin, g.nailgun]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [19, 2, 1, 0, 2.5, 0, 0.75],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.twin, g.nailgun]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [20, 2, 1, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.twin, g.nailgun]),
-                TYPE: "bullet",
-            },
-        }, {
-            POSITION: [5.5, 7, -1.8, 6.5, 0, 0, 0],
-        },
-    ],
-}
-Class.crowbarTurret = {
-    PARENT: "genericTank",
-    COLOR: "grey",
-    LABEL: "Crowbar",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
+Class.barricadeTurret = makeTurret('barricade', {aiSettings: {SKYNET: true, FULL_VIEW: true, independent: true, extraStats: []}})
+Class.artilleryTurret = makeTurret('artillery', {canRepel: true, limitFov: true, extraStats: []})
+Class.nailgunTurret = makeTurret('nailgun', {canRepel: true, limitFov: true, extraStats: []})
+Class.crowbarTurret = makeTurret({
     GUNS: [
         {
             POSITION: [37, 6.5, 1, 0, 0, 0, 0],
@@ -589,23 +315,19 @@ Class.crowbarTurret = {
     TURRETS: [
         {
             POSITION: [6, 38, 0, 0, 360, 1],
-            TYPE: [ "autoTankGun", { INDEPENDENT: true, HAS_NO_RECOIL: true } ],
+            TYPE: [ "autoTankGun", { GUN_STAT_SCALE: [g.flankGuard], INDEPENDENT: true, HAS_NO_RECOIL: true } ],
         }, {
             POSITION: [6, 28, 0, 0, 360, 1],
-            TYPE: [ "autoTankGun", { INDEPENDENT: true, HAS_NO_RECOIL: true } ],
+            TYPE: [ "autoTankGun", { GUN_STAT_SCALE: [g.flankGuard], INDEPENDENT: true, HAS_NO_RECOIL: true } ],
         }, {
             POSITION: [6, 18, 0, 0, 360, 1],
-            TYPE: [ "autoTankGun", { INDEPENDENT: true, HAS_NO_RECOIL: true } ],
+            TYPE: [ "autoTankGun", { GUN_STAT_SCALE: [g.flankGuard], INDEPENDENT: true, HAS_NO_RECOIL: true } ],
         },
     ],
-}
-Class.wrenchTurret = {
-    PARENT: "genericTank",
-    COLOR: "grey",
-    LABEL: "Wrench",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    GUNS: [{
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.wrenchTurret = makeTurret({
+    GUNS: [
+        {
             POSITION: [67, 6.5, 1, 0, 0, 0, 0],
         }, {
             POSITION: [5, 8.5, -1.5, 8, 0, 0, 0],
@@ -614,22 +336,17 @@ Class.wrenchTurret = {
     TURRETS: [
         {
             POSITION: [6, 68, 0, 0, 360, 1],
-            TYPE: [ "autoTankGun", { INDEPENDENT: true, HAS_NO_RECOIL: true } ],
+            TYPE: [ "autoTankGun", { GUN_STAT_SCALE: [g.flankGuard], INDEPENDENT: true, HAS_NO_RECOIL: true } ],
         }, {
             POSITION: [6, 58, 0, 0, 360, 1],
-            TYPE: [ "autoTankGun", { INDEPENDENT: true, HAS_NO_RECOIL: true } ],
+            TYPE: [ "autoTankGun", { GUN_STAT_SCALE: [g.flankGuard], INDEPENDENT: true, HAS_NO_RECOIL: true } ],
         }, {
             POSITION: [6, 48, 0, 0, 360, 1],
-            TYPE: [ "autoTankGun", { INDEPENDENT: true, HAS_NO_RECOIL: true } ],
+            TYPE: [ "autoTankGun", { GUN_STAT_SCALE: [g.flankGuard], INDEPENDENT: true, HAS_NO_RECOIL: true } ],
         },
     ],
-}
-Class.protoSwarmerTurret = {
-    PARENT: "genericTank",
-    LABEL: "Swarmer",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.protoSwarmerTurret = makeTurret({
     GUNS: [
         {
             POSITION: [10, 14, -1.2, 5, 0, 0, 0],
@@ -641,30 +358,38 @@ Class.protoSwarmerTurret = {
             POSITION: [11, 12, 1, 5, 0, 0, 0],
         },
     ],
-}
-Class.swarmTurret = {
-    PARENT: "genericTank",
-    LABEL: "Swarm",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.swarmTurret = makeTurret({
     GUNS: [
         {
             POSITION: [7, 7.5, 0.6, 7, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: ["swarm", {INDEPENDENT: true}],
+                TYPE: 'autoswarm',
                 STAT_CALCULATOR: "swarm",
             },
         },
     ],
-}
-Class.napoleonLowerTurret = {
-    PARENT: "genericTank",
-    LABEL: "",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.genghisLowerTurret = makeTurret({
+    MAX_CHILDREN: 4,
+    GUNS: [
+        {
+            POSITION: [7, 11, 0.6, 6, 0, 0, 0.5],
+        }, {
+            POSITION: [2, 12, 1, 13, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.swarm, g.babyfactory, { reload: 1.5 }]),
+                TYPE: ["tinyMinion", {INDEPENDENT: true}],
+                AUTOFIRE: true,
+                SYNCS_SKILLS: true,
+            },
+        },
+    ],
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.cruiserTurret = makeTurret('cruiser', {canRepel: true, limitFov: true})
+Class.carrierTurret = makeTurret('carrier', {canRepel: true, limitFov: true})
+Class.napoleonLowerTurret = makeTurret({
     GUNS: [
         {
             POSITION: [8, 8, 0.6, 6, 0, 30, 0],
@@ -682,92 +407,8 @@ Class.napoleonLowerTurret = {
             },
         },
     ],
-}
-Class.genghisLowerTurret = {
-    PARENT: "genericTank",
-    LABEL: "",
-    MAX_CHILDREN: 4,
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [7, 11, 0.6, 6, 0, 0, 0.5],
-        }, {
-            POSITION: [2, 12, 1, 13, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.babyfactory, { reload: 1.5 }]),
-                TYPE: ["tinyMinion", {INDEPENDENT: true}],
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-            },
-        },
-    ],
-}
-
-Class.cruiserTurret = {
-    PARENT: "genericTank",
-    LABEL: "Cruiser",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [7, 7.5, 0.6, 7, 4, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: "swarm",
-            },
-        }, {
-            POSITION: [7, 7.5, 0.6, 7, -4, 0, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: "swarm",
-            },
-        },
-    ],
-}
-Class.carrierTurret = {
-    PARENT: "genericTank",
-    LABEL: "Carrier",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    INDEPENDENT: true,
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [7, 8, 0.6, 7, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.battleship, g.carrier, g.pounder, { speed: 1.3, maxSpeed: 1.3 }]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: "swarm",
-            },
-        }, {
-            POSITION: [7, 8, 0.6, 7, 2, 30, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.battleship, g.carrier, g.pounder, { speed: 1.3, maxSpeed: 1.3 }]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: "swarm",
-            },
-        }, {
-            POSITION: [7, 8, 0.6, 7, -2, -30, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.battleship, g.carrier, g.pounder, { speed: 1.3, maxSpeed: 1.3 }]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: "swarm",
-            },
-        },
-    ],
-}
-Class.gunnerCruiserTurret = {
-    PARENT: "genericTank",
-    LABEL: "Launcher",
-    BODY: { FOV: 10 },
-    COLOR: "grey",
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    INDEPENDENT: true,
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.gunnerCruiserTurret = makeTurret({
     GUNS: [
         {
             POSITION: [4, 7.5, 0.6, 6, 4.5, 0, 0],
@@ -797,49 +438,22 @@ Class.gunnerCruiserTurret = {
             },
         },
     ],
-}
-Class.juliusLowerTurret = {
-    PARENT: "genericTank",
-    LABEL: "",
+}, {canRepel: true, limitFov: true, independent: true, fov: 10, extraStats: []})
+Class.juliusLowerTurret = makeTurret({
     MAX_CHILDREN: 3,
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
     GUNS: [
         {
             POSITION: [8.5, 11, 0.6, 6, 0, 0, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.swarm, g.sunchip]),
                 TYPE: "minichip",
-                STAT_CALCULATOR: "swarm",
+                STAT_CALCULATOR: "drone",
             },
         },
     ],
-}
-Class.swarmerTurret = {
-    PARENT: "genericTank",
-    LABEL: "Swarmer",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
-    GUNS: [
-        {
-            POSITION: [14, 14, -1.2, 5, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.hive]),
-                TYPE: "hive",
-            },
-        }, {
-            POSITION: [15, 12, 1, 5, 0, 0, 0],
-        },
-    ],
-}
-Class.basicTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.swarmerTurret = makeTurret('swarmer', {canRepel: true, limitFov: true, extraStats: []})
+Class.basicTurret = makeTurret({
     GUNS: [
         {
             POSITION: [16, 4, 1, 0, 0, 0, 0],
@@ -849,14 +463,8 @@ Class.basicTurret = {
             },
         },
     ],
-}
-Class.tripletTurret = {
-    PARENT: "genericTank",
-    LABEL: "Triplet",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    INDEPENDENT: true,
-    COLOR: "grey",
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.tripletTurret = makeTurret({
     GUNS: [
         {
             POSITION: [18, 10, 1, 0, 5, 0, 0.5],
@@ -878,13 +486,8 @@ Class.tripletTurret = {
             },
         },
     ],
-}
-Class.napoleonUpperTurret = {
-    PARENT: "genericTank",
-    LABEL: "",
-    BODY: { FOV: 2 },
-    CONTROLLERS: [ "canRepel", "onlyAcceptInArc", "mapAltToFire", "nearestDifferentMaster" ],
-    COLOR: "grey",
+}, {canRepel: true, limitFov: true, extraStats: []})
+Class.napoleonUpperTurret = makeTurret({
     GUNS: [
         {
             POSITION: [12, 17, -0.6, 0, 0, 0, 0],
@@ -896,16 +499,10 @@ Class.napoleonUpperTurret = {
             },
         },
     ],
-}
+}, {canRepel: true, limitFov: true, extraStats: []})
 
 // Mounted Turrets
-Class.autoTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    COLOR: "grey",
-    BODY: {
-        FOV: 0.8,
-    },
+Class.autoTurret = makeTurret({
     GUNS: [
         {
             POSITION: [22, 10, 1, 0, 0, 0, 0],
@@ -915,16 +512,8 @@ Class.autoTurret = {
             },
         },
     ],
-}
-Class.droneAutoTurret = {
-    PARENT: "genericTank",
-    LABEL: "Turret",
-    COLOR: "grey",
-    INDEPENDENT: true,
-    CONTROLLERS: ['nearestDifferentMaster'],
-    BODY: {
-        FOV: 0.8,
-    },
+}, {label: "Turret", fov: 0.8, extraStats: []})
+Class.droneAutoTurret = makeTurret({
     GUNS: [
         {
             POSITION: [22, 10, 1, 0, 0, 0, 0],
@@ -934,9 +523,8 @@ Class.droneAutoTurret = {
             },
         },
     ],
-}
-Class.autoSmasherTurret = {
-    PARENT: "autoTurret",
+}, {label: "Turret", fov: 0.8, extraStats: []})
+Class.autoSmasherTurret = makeTurret({
     GUNS: [
         {
             POSITION: [20, 6, 1, 0, 5, 0, 0],
@@ -955,13 +543,8 @@ Class.autoSmasherTurret = {
             },
         },
     ],
-}
-Class.pillboxTurret = {
-    PARENT: "autoTurret",
-    LABEL: "",
-    BODY: {
-        FOV: 2,
-    },
+}, {label: "Turret", fov: 0.8, extraStats: []})
+Class.pillboxTurret = makeTurret({
     HAS_NO_RECOIL: true,
     GUNS: [
         {
@@ -972,17 +555,9 @@ Class.pillboxTurret = {
             },
         },
     ],
-}
-Class.autoSmasherMissileTurret = {
-    PARENT: "autoTurret",
-    LABEL: "",
-    CONTROLLERS: ['nearestDifferentMaster'],
-    BODY: {
-        FOV: 5,
-    },
-    AI: {SKYNET: true, BLIND: true},
+}, {extraStats: []})
+Class.autoSmasherMissileTurret = makeTurret({
     HAS_NO_RECOIL: true,
-    INDEPENDENT: true,
     GUNS: [
         {
             POSITION: [19, 6, 1, 0, 4.5, 0, 0],
@@ -999,14 +574,8 @@ Class.autoSmasherMissileTurret = {
             }
         }
     ],
-}
-Class.legionaryTwin = {
-    PARENT: "auto4gun",
-    COLOR: "grey",
-    INDEPENDENT: true,
-    BODY: {
-        FOV: 5,
-    },
+}, {fov: 5, independent: true, aiSettings: {SKYNET: true, BLIND: true}, extraStats: []})
+Class.legionaryTwin = makeTurret({
     GUNS: [
         {
             POSITION: [18, 7, 1, 0, 5, 0, 0],
@@ -1023,7 +592,7 @@ Class.legionaryTwin = {
             }
         }
     ],
-}
+}, {fov: 5, independent: true, extraStats: []})
 
 // Healer turrets
 Class.sanctuaryHealer = {
@@ -1033,77 +602,36 @@ Class.sanctuaryHealer = {
     BODY: {
         FOV: base.FOV * 1.2,
     },
-    CONTROLLERS: [["spin", { independent: true, speed: -0.05 }]],
+    FACING_TYPE: ["spin", { speed: -0.05 }],
     TURRETS: [{ 
         POSITION: { SIZE: 13, LAYER: 1 },
-        TYPE: ['healerSymbol', { CONTROLLERS: [["spin", { startAngle: Math.PI / 2, speed: 0, independent: true }]] }]
+        TYPE: ['healerSymbol', { FACING_TYPE: ["noFacing", { angle: Math.PI / 2 }] }]
     }],
 }
 Class.surgeonPillboxTurret = {
     PARENT: "genericTank",
     LABEL: "",
     COLOR: "grey",
-    BODY: {
-        FOV: 3,
-    },
     HAS_NO_RECOIL: true,
-    CONTROLLERS: [["spin", { independent: true, speed: 0.08 }]],
+    FACING_TYPE: ["spin", { speed: 0.08 }],
     TURRETS: [
         {
             POSITION: [13, 0, 0, 0, 360, 1],
             TYPE: "healerSymbol",
         },
     ],
-    GUNS: [
-        {
-            POSITION: [17, 11, 1, 0, 0, 90, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
+    GUNS: weaponArray({
+        POSITION: [17, 11, 1, 0, 0, 90, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
+            TYPE: "healerBullet",
+            AUTOFIRE: true,
         },
-        {
-            POSITION: [14, 11, 1, 0, 0, 90, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-        {
-            POSITION: [17, 11, 1, 0, 0, 270, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-        {
-            POSITION: [14, 11, 1, 0, 0, 270, 0.5],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.healer, g.minionGun, g.turret, g.power, g.autoTurret, { density: 0.1 }]),
-                TYPE: "healerBullet",
-                AUTOFIRE: true,
-            },
-        },
-    ],
+    }, 2, 0.5)
 }
 
 // Miscellaneous
-Class.baseSwarmTurret = {
-    PARENT: "genericTank",
-    LABEL: "Protector",
-    COLOR: "grey",
-    BODY: {
-        FOV: 2,
-    },
-    CONTROLLERS: ["nearestDifferentMaster"],
-    AI: {
-        NO_LEAD: true,
-        LIKES_SHAPES: true,
-    },
-    INDEPENDENT: true,
+Class.baseSwarmTurret = makeTurret({
     GUNS: [
         {
             POSITION: [5, 4.5, 0.6, 7, 2, 0, 0.15],
@@ -1130,7 +658,7 @@ Class.baseSwarmTurret = {
             },
         },
     ],
-}
+}, {label: "Protector", independent: true, aiSettings: {NO_LEAD: true, LIKES_SHAPES: true}})
 Class.antiTankMachineGunArm = {
     PARENT: "genericTank",
     COLOR: "grey",
@@ -1164,20 +692,7 @@ Class.antiTankMachineGunArm = {
         },
     ],
 }
-Class.tracker3gun = {
-    PARENT: "genericTank",
-    LABEL: "",
-    COLOR: "timeGem",
-    BODY: {
-        FOV: 3
-    },
-    CONTROLLERS: [
-        "canRepel",
-        "onlyAcceptInArc",
-        "mapAltToFire",
-        "nearestDifferentMaster"
-    ],
-    COLOR: "grey",
+Class.tracker3gun = makeTurret({
     GUNS: [
         {
             POSITION: [22, 10, 1, 0, 0, 0, 0]
@@ -1186,7 +701,7 @@ Class.tracker3gun = {
             POSITION: [10, 10, -2, 20, 0, 0, 0]
         }
     ]
-}
+}, {canRepel: true, limitFov: true, fov: 3})
 
 // Decorations
 Class.overdriveDeco = makeDeco(4)
@@ -1216,14 +731,14 @@ Class.healerSymbol = {
 // Bodies
 Class.smasherBody = {
     LABEL: "",
-    CONTROLLERS: [["spin", { independent: true, speed: 0.1 }]],
+    FACING_TYPE: ["spin", { speed: 0.1 }],
     COLOR: "black",
     SHAPE: 6,
     INDEPENDENT: true
 }
 Class.landmineBody = {
     LABEL: "",
-    CONTROLLERS: [["spin", { independent: true, speed: 0.2 }]],
+    FACING_TYPE: ["spin", { speed: 0.1 }],
     COLOR: 9,
     SHAPE: 6,
     INDEPENDENT: true
@@ -1234,7 +749,7 @@ Class.spikeBody = {
 }
 Class.dominationBody = {
     LABEL: "",
-    CONTROLLERS: [["spin", { startAngle: Math.PI / 2, speed: 0, independent: true }]],
+    FACING_TYPE: ["noFacing", { angle: Math.PI / 2 }],
     COLOR: "black",
     SHAPE: 6,
     INDEPENDENT: true

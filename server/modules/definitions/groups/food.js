@@ -1,4 +1,4 @@
-const { basePolygonDamage, basePolygonHealth, base } = require('../constants.js');
+const { basePolygonDamage, basePolygonHealth } = require('../constants.js');
 const { makeRelic, makeRare, makeCrasher, makeLaby } = require('../facilitators.js');
 
 // EGGS
@@ -152,7 +152,6 @@ Class.betaPentagon = {
         RESIST: Math.pow(1.25, 2),
         PENETRATION: 1.1,
         SHIELD: 20 * basePolygonHealth,
-        REGEN: 0.2,
         ACCELERATION: 0.003
     },
     DRAW_HEALTH: true,
@@ -179,7 +178,6 @@ Class.alphaPentagon = {
         RESIST: Math.pow(1.25, 3),
         PENETRATION: 1.1,
         SHIELD: 40 * basePolygonHealth,
-        REGEN: 0.6,
         ACCELERATION: 0.0025
     },
     DRAW_HEALTH: true,

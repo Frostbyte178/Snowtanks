@@ -566,7 +566,7 @@ Class.sorcerer = {
             TYPE: "minichip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "necro",
+            STAT_CALCULATOR: "drone",
             WAIT_TO_CYCLE: true,
         },
     }, 2)
@@ -594,7 +594,7 @@ Class.summoner = {
             TYPE: "summonerDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "necro",
+            STAT_CALCULATOR: "drone",
             WAIT_TO_CYCLE: true,
         },
     }, 4)
@@ -622,7 +622,7 @@ Class.enchantress = {
             TYPE: "dorito",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "necro",
+            STAT_CALCULATOR: "drone",
             WAIT_TO_CYCLE: true,
         },
     }, 3)
@@ -650,7 +650,7 @@ Class.exorcistor = {
             TYPE: "demonchip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "necro",
+            STAT_CALCULATOR: "drone",
             WAIT_TO_CYCLE: true,
         },
     }, 5)
@@ -678,7 +678,7 @@ Class.shaman = {
             TYPE: "realchip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "necro",
+            STAT_CALCULATOR: "drone",
             WAIT_TO_CYCLE: true,
         },
     }, 6)
@@ -1087,7 +1087,7 @@ ares.addLayer({gun: {
         TYPE: ["demonchip", { INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: "necro",
+        STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: true,
     },
 }}, false, null, 18);
@@ -1114,7 +1114,7 @@ ezekiel.addLayer({gun: {
         TYPE: ["dorito", { COLOR: "orange", INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: "necro",
+        STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: true,
     },
 }}, true, null, 18);
@@ -1131,7 +1131,7 @@ eris.addLayer({gun: {
         TYPE: ["minion", { INDEPENDENT: true, COLOR: "pink" }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: "necro",
+        STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: true,
     },
 }}, false, null, 14);
@@ -1148,7 +1148,7 @@ selene.addLayer({gun: {
         TYPE: ["summonerDrone", { COLOR: "gold", INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
-        STAT_CALCULATOR: "necro",
+        STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: true,
     },
 }}, true, null, 18);
@@ -1618,7 +1618,7 @@ Class.zephiBoss = {
                 MAX_CHILDREN: 8,
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
-                STAT_CALCULATOR: "necro",
+                STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
                 COLOR: "black",
             }
@@ -1630,7 +1630,7 @@ Class.zephiBoss = {
                 MAX_CHILDREN: 8,
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
-                STAT_CALCULATOR: "necro",
+                STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
                 COLOR: "black",
             }
@@ -1642,7 +1642,7 @@ Class.zephiBoss = {
                 MAX_CHILDREN: 4,
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
-                STAT_CALCULATOR: "necro",
+                STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true
             }
         }

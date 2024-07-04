@@ -745,12 +745,12 @@ class io_spin2 extends IO {
         this.body.facingType = ["spin", {speed: this.speed * reverse}];
     }
     think(input) {
-        if (!this.reverseOnTheFly) return;
+        if (!this.reverseOnTheFly || !this.reverseOnAlt) return;
 
         // Live logic
         let alt = this.body.master.control.alt;
         if (this.lastAlt != alt) {
-            let reverse = (this.reverseOnAlt && alt) ? -1 : 1;
+            let reverse = alt ? -1 : 1;
             this.body.facingType = ["spin", {speed: this.speed * reverse}];
             this.lastAlt = alt;
         }

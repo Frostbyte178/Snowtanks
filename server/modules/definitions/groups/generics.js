@@ -180,6 +180,7 @@ Class.food = {
     BODY: {
         STEALTH: 30,
         PUSHABILITY: 1,
+        REGEN: 0
     },
     DAMAGE_EFFECTS: false,
     RATEFFECTS: false,

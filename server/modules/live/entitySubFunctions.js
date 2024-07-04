@@ -190,17 +190,18 @@ class HealthType {
         switch (this.type) {
             case "static":
                 if (this.amount >= this.max || !this.amount) break;
-                this.amount += cons * (this.max / 10 / 60 / 2.5 + boost);
+                this.amount += cons * boost;
                 break;
             case "dynamic":
-                let r = util.clamp(this.amount / this.max, 0, 1);
-                if (!r) {
+                let r = this.amount / this.max;
+                if (r <= 0) {
                     this.amount = 0.0001;
-                }
-                if (r === 1) {
+                } else if (r >= 1) {
                     this.amount = this.max;
                 } else {
-                    this.amount += cons * ((this.regen * Math.exp(-50 * Math.pow(Math.sqrt(0.5 * r) - 0.4, 2))) / 3 + (r * this.max) / 10 / 15 + boost);
+                    // this regen multiplier is this curve: https://www.desmos.com/calculator/ghjggwdp6h
+                    let regenMultiplier = Math.exp(Math.pow(Math.sqrt(r / 2) - 0.4, 2) * -50);
+                    this.amount += cons * (this.regen * regenMultiplier / 3 + (r * this.max) / 150 + boost);
                 }
                 break;
         }

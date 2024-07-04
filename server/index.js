@@ -259,20 +259,18 @@ const gameloop = () => {
     }
 };
 
-setTimeout(closeArena, 60000 * 120); // Restart every 2 hours
+setTimeout(closeArena, 2 * 60 * 60 * 1000); // Restart every 2 hours
 
 global.naturallySpawnedBosses = [];
 global.bots = [];
 let bossTimer = 0;
-// Important function.
 let regenerateHealthAndShield = () => {
-    // Regen health 
     for (let i = 0; i < entities.length; i++) {
         let instance = entities[i];
         if (instance.shield.max) {
             instance.shield.regenerate();
         }
-        if (instance.health.amount) {
+        if (instance.health.max) {
             instance.health.regenerate(instance.shield.max && instance.shield.max === instance.shield.amount);
         }
     }
