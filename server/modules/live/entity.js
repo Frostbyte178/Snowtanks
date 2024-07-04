@@ -111,7 +111,6 @@ class Gun extends EventEmitter {
         this.recoilVelocity = 0;
         if (this.canShoot) {
             this.cycleTimer = this.maxCycleTimer;
-            this.reloadRateFactor = 1;
             this.trueRecoil = this.shootSettings.recoil;
             this.facing = 0;
             this.childrenLimitFactor = 1;
