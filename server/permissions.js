@@ -37,6 +37,7 @@ module.exports = [
         "infiniteLevelUp": true,
         "name": "unnamed#0000",
         "note": "note here",
-        "operator": 3
+        "operator": 3,
+        "administrator": true,
     },
 ]

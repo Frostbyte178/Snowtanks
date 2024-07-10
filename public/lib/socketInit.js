@@ -473,7 +473,7 @@ const process = (z = {}) => {
         z.vy = get.next();
         z.size = get.next();
         z.facing = get.next();
-        z.perceptionAngleIndependence = get.next(); //z.vfacing = get.next();
+        z.perceptionAngleIndependence = get.next();
         z.defaultAngle = get.next();
         z.twiggle = get.next();
         z.layer = get.next();

@@ -3,7 +3,9 @@ let fs = require('fs'),
     groups = fs.readdirSync(path.join(__dirname, './groups')),
     definitionCount = 0,
     definitionGroupsLoadStart = Date.now();
+
 console.log(`Loading ${groups.length} groups...`);
+
 for (let filename of groups) {
     console.log(`Loading group: ${filename}`);
     require('./groups/' + filename);
@@ -18,7 +20,7 @@ function processAddonFolder(directory) {
     let folder = fs.readdirSync(directory);
     for (let filename of folder) {
         let filepath = directory + `/${filename}`;
-        let isDirectory = fs.statSync(path.join(directory, filename)).isDirectory();
+        let isDirectory = fs.statSync(filepath).isDirectory();
         if (isDirectory) {
             processAddonFolder(filepath);
         }
@@ -50,7 +52,6 @@ if (Config.flattenDefintions) {
         flattened[key] = output;
     }
     Class = flattened;
-    definitionCount = Object.keys(Class).length;
     console.log("Definitions flattened in " + (Date.now() - addonsLoadEnd) + " milliseconds. \n");
 }
 

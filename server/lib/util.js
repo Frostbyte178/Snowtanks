@@ -88,9 +88,10 @@ exports.flattenDefinition = (output, definition) => {
 
   if (definition.PARENT) {
       if (!Array.isArray(definition.PARENT)) {
-          exports.flattenDefinition(output, definition.PARENT);
-      } else for (let parent in definition.PARENT) {
-          exports.flattenDefinition(output, definition.PARENT[parent]);
+        exports.flattenDefinition(output, definition.PARENT);
+      } else for (let parent of definition.PARENT) {
+        if(mockupsLoaded) for (let k in parent) console.log(k, parent[k])
+        exports.flattenDefinition(output, parent);
       }
   }
 
@@ -104,7 +105,7 @@ exports.flattenDefinition = (output, definition) => {
       let body = definition.BODY;
       if (!output.BODY) output.BODY = {};
       for (let stat in body) {
-        output.BODY[stat] = definition.BODY[stat];
+        output.BODY[stat] = body[stat];
       }
       continue;
     }

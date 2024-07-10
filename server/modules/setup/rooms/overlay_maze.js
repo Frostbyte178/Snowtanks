@@ -1,8 +1,9 @@
 let { nest } = require('../tiles/misc.js'),
-	room = Array(15).fill(() => Array(15).fill()).map(x => x());
+	room = Array(Config.roomHeight).fill(() => Array(Config.roomWidth).fill()).map(x => x()),
+	nestRadius = 2;
 
-for (let x = 4; x <= 10; x++) {
-	for (let y = 4; y <= 10; y++) {
+for (let x = Math.floor(Config.roomWidth / 2) - nestRadius; x <= Math.floor(Config.roomWidth / 2) + nestRadius; x++) {
+	for (let y = Math.floor(Config.roomHeight / 2) - nestRadius; y <= Math.floor(Config.roomHeight / 2) + nestRadius; y++) {
 		room[y][x] = nest;
 	}
 }

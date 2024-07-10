@@ -1021,7 +1021,7 @@ function flatten(data) {
             /*  6 */ data.vy,
             /*  7 */ data.size,
             /*  8 */ data.facing,
-            /*  9 */ Math.round(255 * data.perceptionAngleIndependence), //data.vfacing,
+            /*  9 */ Math.round(255 * data.perceptionAngleIndependence),
             /* 10 */ data.defaultAngle,
             /* 11 */ data.twiggle,
             /* 12 */ data.layer,

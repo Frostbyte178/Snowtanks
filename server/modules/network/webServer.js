@@ -11,7 +11,13 @@ let fs = require('fs'),
         "png": "image/png",
         "ico": "image/x-icon"
     },
+    wsServer;
+
+try {
     wsServer = new (require('../../lib/ws/index.js').WebSocketServer)({ noServer: true });
+} catch (err) {
+    wsServer = new (require('ws').WebSocketServer)({ noServer: true });
+}
 
 console.log("Web Server initialized.");
 if (Config.host === 'localhost') {

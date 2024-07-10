@@ -75,12 +75,8 @@ function collide(collision) {
                 case 4:
                     mazewallcollide(wall, entity);
                     break;
-                case 0:
-                    mooncollide(wall, entity);
-                    break;
                 default:
-                    let a = entity.type === "bullet" ? 1 + 10 / (entity.velocity.length + 10) : 1;
-                    advancedcollide(wall, entity, false, false, a);
+                    mooncollide(wall, entity);
                     break;
             }
             break;

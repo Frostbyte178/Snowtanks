@@ -2,8 +2,10 @@ let importedRoom = [];
 
 for (let filename of Config.ROOM_SETUP) {
     let currentRoom = require(`./rooms/${filename}.js`);
-    for (let y = 0; y < currentRoom.length; y++) {
-        for (let x = 0; x < currentRoom[0].length; x++) {
+    Config.roomHeight = currentRoom.length;
+    Config.roomWidth = currentRoom[0].length;
+    for (let y = 0; y < Config.roomHeight; y++) {
+        for (let x = 0; x < Config.roomWidth; x++) {
             if (importedRoom[y] == null) {
                 importedRoom[y] = currentRoom[y];
             } else if (currentRoom[y][x]) {

@@ -367,7 +367,7 @@ class Gun extends EventEmitter {
     }
     calculateBulletStats() {
         // Skip if unable to shoot or if we shouldn't care about body stats
-        if (!this.canShoot || this.independentChildren) return;
+        if (!this.canShoot) return;
 
         let sizeFactor = this.master.size / this.master.SIZE;
         let shoot = this.shootSettings;
@@ -418,6 +418,7 @@ class Gun extends EventEmitter {
                 out.RANGE = shoot.range * Math.sqrt(sizeFactor);
                 break;
         }
+        if (this.independentChildren) return;
         // Go through and make sure we respect its natural properties
         for (let property in out) {
             if (this.bulletBodyStats[property] == null)
@@ -768,7 +769,6 @@ class Entity extends EventEmitter {
         this.maxSpeed = 0;
         this.facingLocked = false;
         this.facing = 0;
-        this.vfacing = 0;
         this.range = 0;
         this.angle = 0;
         this.damageReceived = 0;
@@ -1025,10 +1025,24 @@ class Entity extends EventEmitter {
             this.particleEmitter.angle.max *= Math.PI / 180;
         }
         if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
-        if (set.MOTION_TYPE != null) this.motionType = set.MOTION_TYPE;
-        if (typeof this.motionType == "string") this.motionType = [this.motionType, {}];
-        if (set.FACING_TYPE != null) this.facingType = set.FACING_TYPE;
-        if (typeof this.facingType == "string") this.facingType = [this.facingType, {}];
+        if (set.MOTION_TYPE != null) {
+            this.motionType = set.MOTION_TYPE;
+            if (Array.isArray(this.motionType)) {
+                this.motionTypeArgs = this.motionType[1];
+                this.motionType = this.motionType[0];
+            } else {
+                this.motionTypeArgs = {};
+            }
+        }
+        if (set.FACING_TYPE != null) {
+            this.facingType = set.FACING_TYPE;
+            if (Array.isArray(this.facingType)) {
+                this.facingTypeArgs = this.facingType[1];
+                this.facingType = this.facingType[0];
+            } else {
+                this.facingTypeArgs = {};
+            }
+        }
         if (set.CONTROLLERS != null) {
             let toAdd = [];
             for (let i = 0; i < set.CONTROLLERS.length; i++) {
@@ -1105,7 +1119,7 @@ class Entity extends EventEmitter {
             if (sockets.players.length) {
                 for (let i = 0; i < sockets.players.length; i++) {
                     const player = sockets.players[i];
-                    if (player.body.id == this.id) {
+                    if (player.body && player.body.id == this.id) {
                         player.team = this.team;
                     }
                 }
@@ -1509,6 +1523,7 @@ class Entity extends EventEmitter {
             if (effect.size != null) sizeMultiplier *= effect.size;
         }
 
+        this.sizeMultiplier = sizeMultiplier;
         let speedReduce = Math.pow(this.size / (this.coreSize || this.SIZE), 1);
         this.acceleration = (accelerationMultiplier * Config.runSpeed * this.ACCELERATION) / speedReduce;
         if (this.settings.reloadToAcceleration) this.acceleration *= this.skill.acl;
@@ -1524,8 +1539,12 @@ class Entity extends EventEmitter {
         this.density = densityMultiplier * (1 + 0.08 * this.level) * this.DENSITY;
         this.stealth = stealthMultiplier * this.STEALTH;
         this.pushability = pushabilityMultiplier * this.PUSHABILITY;
-        this.sizeMultiplier = sizeMultiplier;
         this.recoilMultiplier = this.RECOIL_MULTIPLIER * recoilReceivedMultiplier;
+        if (Config.SPACE_PHYSICS) {
+            this.maxSpeed = this.topSpeed;
+            this.damp = 100;
+        }
+        this.scaledAcceleration = this.acceleration / Config.runSpeed;
     }
     bindToMaster(position, bond, isInvulnerable) {
         this.bond = bond;
@@ -1570,10 +1589,12 @@ class Entity extends EventEmitter {
         // Initalize.
         this.activation.update();
         this.facing = this.bond.facing + this.bound.angle;
-        if (this.facingType[0].includes('Target') || this.facingType[0].includes('Speed')) {
-            this.facingType = ["bound", {}];
+        if (this.facingType.includes('Target') || this.facingType.includes('Speed')) {
+            this.facingType = "bound";
+            this.facingTypeArgs = {};
         }
-        this.motionType = ["bound", {}];
+        this.motionType = "bound";
+        this.motionTypeArgs = {};
         this.syncSkillsToGuns();
         this.move();
     }
@@ -1634,9 +1655,9 @@ class Entity extends EventEmitter {
             offset: this.bound ? this.bound.offset : 0,
             sizeFactor: this.bound ? this.bound.size : 1,
             mirrorMasterAngle: this.settings.mirrorMasterAngle ?? false,
-            perceptionAngleIndependence: this.perceptionAngleIndependence, //vfacing: this.vfacing,
+            perceptionAngleIndependence: this.perceptionAngleIndependence,
             defaultAngle: this.firingArc[0],
-            twiggle: forceTwiggle.includes(this.facingType[0]) || (this.facingType[0] === "locksFacing" && this.control.alt),
+            twiggle: forceTwiggle.includes(this.facingType) || (this.facingType === "locksFacing" && this.control.alt),
             layer: this.layerID ? this.layerID : this.bond != null ? this.bound.layer : this.type === "wall" ? 11 : this.type === "food" ? 10 : this.type === "tank" ? 5 : this.type === "crasher" ? 1 : 0,
             color: this.color.compiled,
             strokeWidth: this.strokeWidth,
@@ -1742,63 +1763,49 @@ class Entity extends EventEmitter {
             engine = {
                 x: 0,
                 y: 0,
-            },
-            a = this.acceleration / Config.runSpeed;
-        if (Config.SPACE_PHYSICS) {
-            this.maxSpeed = this.topSpeed;
-            this.damp = 100;
-        }
-        let type = this.motionType[0],
-            args = this.motionType[1];
-        switch (type) {
+            };
+        switch (this.motionType) {
             case "grow":
-                this.SIZE += args.growSpeed ?? 1;
+                this.SIZE += this.motionTypeArgs.growSpeed ?? 1;
                 break;
             case "fastgrow":
-                this.SIZE += args.growSpeed ?? 5;
+                this.SIZE += this.motionTypeArgs.growSpeed ?? 5;
                 break;
             case "glide":
                 this.maxSpeed = this.topSpeed;
-                this.damp = args.damp ?? 0.05;
+                this.damp = this.motionTypeArgs.damp ?? 0.05;
                 break;
             case "motor":
                 this.maxSpeed = 0;
                 if (this.topSpeed) {
-                    this.damp = Math.abs(a) / this.topSpeed;
+                    this.damp = Math.abs(this.scaledAcceleration) / this.topSpeed;
                 }
                 if (gactive) {
-                    let len = Math.sqrt(g.x * g.x + g.y * g.y);
+                    let len = Math.sqrt(g.x ** 2 + g.y ** 2);
                     engine = {
-                        x: (a * g.x) / len,
-                        y: (a * g.y) / len,
+                        x: (this.scaledAcceleration * g.x) / len,
+                        y: (this.scaledAcceleration * g.y) / len,
                     };
                 }
                 break;
             case "spgw":
-                this.SIZE += args.growSpeed ?? 0.75;
+                this.SIZE += this.motionTypeArgs.growSpeed ?? 0.75;
                 this.maxSpeed = this.topSpeed;
-                this.damp = args.damp ?? -0.025;
+                this.damp = this.motionTypeArgs.damp ?? -0.025;
                 break;
             case "chonk":
-                this.SIZE += args.growSpeed ?? 50;
+                this.SIZE += this.motionTypeArgs.growSpeed ?? 50;
                 this.maxSpeed = this.topSpeed;
-                this.damp = args.damo ?? -0.025;
+                this.damp = this.motionTypeArgs.damp ?? -0.025;
                 break;
             case "swarm":
                 this.maxSpeed = this.topSpeed;
-                let l =
-                    util.getDistance(
-                        {
-                            x: 0,
-                            y: 0,
-                        },
-                        g
-                    ) + 1;
+                let l = Math.sqrt(g.x ** 2 + g.y ** 2) + 1;
                 if (gactive && l > this.size) {
                     let XvelDesired = (this.topSpeed * g.x) / l,
                         YvelDesired = (this.topSpeed * g.y) / l,
                         turning = Math.sqrt(
-                            (this.topSpeed * Math.max(1, this.range) + 1) / a
+                            (this.topSpeed * Math.max(1, this.range) + 1) / this.scaledAcceleration
                         );
                     engine = {
                         x: (XvelDesired - this.velocity.x) / Math.max(5, turning),
@@ -1807,26 +1814,23 @@ class Entity extends EventEmitter {
                 } else {
                     if (this.velocity.length < this.topSpeed) {
                         engine = {
-                            x: (this.velocity.x * a) / 20,
-                            y: (this.velocity.y * a) / 20,
+                            x: (this.velocity.x * this.scaledAcceleration) / 20,
+                            y: (this.velocity.y * this.scaledAcceleration) / 20,
                         };
                     }
                 }
                 break;
             case "chase":
-                if (gactive) {
-                    let l = util.getDistance({ x: 0, y: 0, }, g);
-                    if (l > this.size * 2) {
-                        this.maxSpeed = this.topSpeed;
-                        let XvelDesired = (this.topSpeed * g.x) / l,
-                            YvelDesired = (this.topSpeed * g.y) / l;
-                        engine = {
-                            x: (XvelDesired - this.velocity.x) * a,
-                            y: (YvelDesired - this.velocity.y) * a,
-                        };
-                    } else {
-                        this.maxSpeed = 0;
-                    }
+                // No DIV/0 protection because it's already protected against
+                let length = Math.sqrt(g.x ** 2 + g.y ** 2);
+                if (length > this.size * 2) {
+                    this.maxSpeed = this.topSpeed;
+                    let XvelDesired = (this.topSpeed * g.x) / length,
+                        YvelDesired = (this.topSpeed * g.y) / length;
+                    engine = {
+                        x: (XvelDesired - this.velocity.x) * this.scaledAcceleration,
+                        y: (YvelDesired - this.velocity.y) * this.scaledAcceleration,
+                    };
                 } else {
                     this.maxSpeed = 0;
                 }
@@ -1834,8 +1838,8 @@ class Entity extends EventEmitter {
             case "drift":
                 this.maxSpeed = 0;
                 engine = {
-                    x: g.x * a,
-                    y: g.y * a,
+                    x: g.x * this.scaledAcceleration,
+                    y: g.y * this.scaledAcceleration,
                 };
                 break;
             case "bound":
@@ -1883,8 +1887,8 @@ class Entity extends EventEmitter {
                     this.velocity.x = ((5 + this.velocity.length * (amount + 2)) * Math.cos(this.waveAngle)) / 7;
                     this.velocity.y = ((5 + this.velocity.length * (amount + 2)) * Math.sin(this.waveAngle)) / 7;
                 }
-                let waveX = this.maxSpeed * 5 * Math.cos((this.RANGE - this.range) / (args.period ?? 4) * 2);
-                let waveY = (args.amplitude ?? 15) * Math.cos((this.RANGE - this.range) / (args.period ?? 4)) * this.waveReversed * (args.invert ? -1 : 1);
+                let waveX = this.maxSpeed * 5 * Math.cos((this.RANGE - this.range) / (this.motionTypeArgs.period ?? 4) * 2);
+                let waveY = (this.motionTypeArgs.amplitude ?? 15) * Math.cos((this.RANGE - this.range) / (this.motionTypeArgs.period ?? 4)) * this.waveReversed * (this.motionTypeArgs.invert ? -1 : 1);
                 this.x += Math.cos(this.waveAngle) * waveX - Math.sin(this.waveAngle) * waveY;
                 this.y += Math.sin(this.waveAngle) * waveX + Math.cos(this.waveAngle) * waveY;
                 break;
@@ -1897,36 +1901,29 @@ class Entity extends EventEmitter {
     }
     face() {
         let t = this.control.target,
-            tactive = t.x !== 0 || t.y !== 0,
-            oldFacing = this.facing,
-            oldVFacing = this.vfacing;
-        let type = this.facingType[0],
-            args = this.facingType[1];
-        switch (type) {
-            case "autospin":
-                this.facing += (args.speed ?? 0.02) / Config.runSpeed;
-                break;
-            case "auraspin":
-                this.facing += (args.speed ?? -0.04) / Config.runSpeed;
-                break;
+            oldFacing = this.facing;
+        switch (this.facingType) {
             case "turnWithSpeed":
                 this.facing += ((this.velocity.length / 90) * Math.PI) / Config.runSpeed;
                 break;
+            case "autospin":
+                this.facing += (this.facingTypeArgs.speed ?? 0.02) / Config.runSpeed;
+                break;
             case "spin":
-                this.facing += (args.speed ?? 0.05) / Config.runSpeed;
+                this.facing += (this.facingTypeArgs.speed ?? 0.05) / Config.runSpeed;
                 break;
             case "fastspin":
-                this.facing += (args.speed ?? 0.1) / Config.runSpeed;
+                this.facing += (this.facingTypeArgs.speed ?? 0.1) / Config.runSpeed;
                 break;
             case "veryfastspin":
-                this.facing += (args.speed ?? 1) / Config.runSpeed;
+                this.facing += (this.facingTypeArgs.speed ?? 1) / Config.runSpeed;
                 break;
             case "withMotion":
                 this.facing = this.velocity.direction;
                 break;
             case "smoothWithMotion":
             case "looseWithMotion":
-                this.facing = util.interpolateAngle(this.facing, this.velocity.direction, Config.runSpeed / (args.speed ?? 4));
+                this.facing = util.interpolateAngle(this.facing, this.velocity.direction, Config.runSpeed / (this.facingTypeArgs.speed ?? 4));
                 break;
             case "withTarget":
             case "toTarget":
@@ -1939,15 +1936,15 @@ class Entity extends EventEmitter {
             case "looseWithTarget":
             case "looseToTarget":
             case "smoothToTarget":
-                this.facing = util.interpolateAngle(this.facing, Math.atan2(t.y, t.x), Config.runSpeed / (args.speed ?? 4));
+                this.facing = util.interpolateAngle(this.facing, Math.atan2(t.y, t.x), Config.runSpeed / (this.facingTypeArgs.speed ?? 4));
                 break;
             case "noFacing":
-                this.facing = args.angle ?? 0;
+                this.facing = this.facingTypeArgs.angle ?? 0;
                 break;
             case "bound":
                 let angleToTarget, angleDiff = 3,
                     reduceIndependence = false,
-                    slowness = this.settings.mirrorMasterAngle ? 1 : (args.slowness ?? 4) / Config.runSpeed;
+                    slowness = this.settings.mirrorMasterAngle ? 1 : (this.facingTypeArgs.slowness ?? 4) / Config.runSpeed;
                 if (this.control.main) {
                     angleToTarget = Math.atan2(t.y, t.x);
                     angleDiff = Math.abs(util.angleDifference(angleToTarget, this.firingArc[0]));
@@ -1975,13 +1972,11 @@ class Entity extends EventEmitter {
         }
         this.facing += this.turnAngle;
         // Loop
-        const TAU = 2 * Math.PI;
         if (this.facingLocked) {
             this.facing = oldFacing;
-            this.vfacing = oldVFacing;
         } else {
-            this.facing = ((this.facing % TAU) + TAU) % TAU;
-            this.vfacing = util.angleDifference(oldFacing, this.facing) * Config.runSpeed;
+            // note: double mod is just as expensive as simple add/subtract - it's not that bad
+            this.facing = ((this.facing % Math.TAU) + Math.TAU) % Math.TAU;
         }
     }
     takeSelfie() {

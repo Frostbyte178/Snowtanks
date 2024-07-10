@@ -486,13 +486,13 @@ class Canvas {
                     global.screenWidth * 0.6,
                     global.screenHeight * 0.12
                 );
-                let cx = mpos.x - (this.cv.width * 1) / 6;
-                let cy = mpos.y - (this.cv.height * 2) / 3;
+                let cx = (mpos.x - (this.cv.width * 1) / 6)  / (radius / 64);
+                let cy = (mpos.y - (this.cv.height * 2) / 3)  / (radius / 64);
                 let r = Math.sqrt(cx ** 2 + cy ** 2);
                 let angle = Math.atan2(cy, cx);
                 if (r > radius) {
-                    cx = Math.cos(angle) * radius;
-                    cy = Math.sin(angle) * radius;
+                    cx = Math.cos(angle) * radius / 1.25;
+                    cy = Math.sin(angle) * radius / 1.25;
                 }
                 this.movementTouchPos = { x: cx, y: cy };
                 global.movement = angle;
@@ -511,13 +511,13 @@ class Canvas {
                 );
                 let cx = mpos.x - (this.cv.width * 5) / 6;
                 let cy = mpos.y - (this.cv.height * 2) / 3;
-                let touchX = cx;
-                let touchY = cy;
+                let touchX = cx / (radius / 64);
+                let touchY = cy / (radius / 64);
                 let r = Math.sqrt(cx ** 2 + cy ** 2);
                 let angle = Math.atan2(cy, cx);
                 if (r > radius) {
-                    touchX = Math.cos(angle) * radius;
-                    touchY = Math.sin(angle) * radius;
+                    touchX = Math.cos(angle) * radius / 1.25;
+                    touchY = Math.sin(angle) * radius / 1.25;
                 }
                 this.controlTouchPos = { x: touchX, y: touchY };
                 if (this.spinLock) {

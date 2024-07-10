@@ -682,12 +682,8 @@ exports.makeRelic = (type, scale = 1, gem, SIZE, yBase = 8.25) => {
         fraction = 360 / casings,
         GUNS = [],
         TURRETS = [{ POSITION: [32.5, 0, 0, 0, 0, 0], TYPE: relicBody }],
-        PARENT = [type],
+        PARENT = type,
         additionalAngle = type.SHAPE % 2 === 0 ? 0 : fraction / 2;
-
-    if (SIZE) {
-        PARENT.push({ SIZE });
-    }
 
     for (let i = 0; i < casings; i++) {
         let angle = i * fraction,
@@ -725,7 +721,7 @@ exports.makeRelic = (type, scale = 1, gem, SIZE, yBase = 8.25) => {
         });
     }
 
-    return {
+    let out = {
         PARENT,
         LABEL: type.LABEL + ' Relic',
         COLOR: "white", // This is the color of the floor, this makes it look hollow.
@@ -737,12 +733,18 @@ exports.makeRelic = (type, scale = 1, gem, SIZE, yBase = 8.25) => {
         GUNS,
         TURRETS
     };
+
+    if (SIZE) {
+        out.SIZE = SIZE;
+    }
+
+    return out;
 }
 
 exports.makeCrasher = type => ({
     PARENT: type,
     COLOR: 'pink',
-    TYPE: "crasher",
+    TYPE: 'crasher',
     LABEL: 'Crasher ' + type.LABEL,
     CONTROLLERS: ['nearestDifferentMaster', 'mapTargetToGoal'],
     MOTION_TYPE: "motor",
@@ -751,7 +753,7 @@ exports.makeCrasher = type => ({
     HAS_NO_MASTER: true,
     VALUE: type.VALUE * 5,
     BODY: {
-        SPEED: 1 + 5 / Math.max(2, type.TURRETS.length + type.SHAPE),
+        SPEED: 1 + 5 / Math.max(2, (type.PROPS.length ?? 0) + type.SHAPE),
         HEALTH: Math.pow(type.BODY.HEALTH, 2/3),
         DAMAGE: Math.pow(type.BODY.HEALTH, 1/3) * type.BODY.DAMAGE,
         ACCELERATION: 5,
@@ -812,9 +814,10 @@ exports.makeLaby = (type, level, baseScale = 1) => {
         DRAW_HEALTH: type.DRAW_HEALTH,
         GIVE_KILL_MESSAGE: type.GIVE_KILL_MESSAGE || level > 1,
         GUNS: type.GUNS ?? [],
-        TURRETS: [...(type.TURRETS ? type.TURRETS : []), ...Array(level).fill().map((_, i) => ({
-            POSITION: [20 * downscale ** (i + 1), 0, 0, !(i & 1) ? 180 / usableSHAPE : 0, 0, 1],
-            TYPE: [type, { COLOR: -1, MIRROR_MASTER_ANGLE: true }]
-        }))]
+        TURRETS: type.TURRETS ?? [],
+        PROPS: Array(level).fill().map((_, i) => ({
+            POSITION: [20 * downscale ** (i + 1), 0, 0, !(i & 1) ? 180 / usableSHAPE : 0, 1],
+            TYPE: [type, { COLOR: 'mirror' }]
+        }))
     };
 }

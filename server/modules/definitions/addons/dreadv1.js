@@ -1,4 +1,4 @@
-const { combineStats, makeAuto, weaponArray } = require('../facilitators.js');
+const { combineStats, makeAuto, weaponArray, makeTurret } = require('../facilitators.js');
 const { smshskl, base } = require('../constants.js');
 const g = require('../gunvals.js');
 const dreadnoughtBody = {
@@ -12,28 +12,43 @@ const dreadnoughtBody = {
 	REGEN: base.REGEN,
 };
 g.dreadv1Generic = {
-	health: 1.4,
+	damage: 1.35,
 	range: 0.8,
 	recoil: 0,
 }
+g.dreadv1Sniper = {
+	speed: 1.07,
+	maxSpeed: 1.07,
+	health: 1.1,
+	reload: 1.13,
+	density: 1.6,
+	pen: 1.05,
+	resist: 1.1,
+	range: 0.8,
+}
 g.dreadv1Slow = {
-	health: 1.5,
+	health: 1.3,
 	speed: 0.65,
 	maxSpeed: 0.65,
 };
 g.dreadv1Drone = {
-	health: 1.32,
+	health: 1.25,
 	speed: 0.68,
 	maxSpeed: 0.68,
 	reload: 0.8,
-	size: 1.2
+	size: 1.2,
+	recoil: 0,
 }
 g.dreadv1Trap = {
 	range: 0.9,
 	shudder: 0.2,
-	speed: 1.15,
-	reload: 3,
-	health: 1.75,
+	speed: 1.05,
+	reload: 1.6,
+	damage: 1.2,
+	health: 1.15,
+	resist: 1.1,
+	recoil: 0,
+	size: 1.3,
 }
 
 // Comment out the line below to enable this addon, uncomment it to disable this addon.
@@ -52,61 +67,24 @@ Class.genericDreadnought1 = {
 	SKILL_CAP: Array(10).fill(smshskl+3),
 	REROOT_UPGRADE_TREE: "dreadOfficialV1",
 }
-Class.mechanismMainTurret = {
-	PARENT: "genericTank",
-	LABEL: "Turret",
-	CONTROLLERS: ["nearestDifferentMaster"],
-	INDEPENDENT: true,
-	BODY: {
-		FOV: 0.8,
-	},
-	COLOR: 16,
+// Turret damage modifiers:
+// Automation secondary: 1x
+// Automation main: 1.6x
+// Mechanism secondary: 1.12x
+// Mechanism main: 1.8x
+Class.dreadv1BodyTurret = makeTurret({
 	GUNS: [{
 		POSITION: [22, 10, 1, 0, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 1.8, speed: 0.4, maxSpeed: 0.4, reload: 0.5 }]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 0.75, speed: 0.4, maxSpeed: 0.4, reload: 0.7 }]),
 			TYPE: "bullet"
 		}
 	}]
-}
-Class.automationMainTurret = {
-	PARENT: "genericTank",
-	LABEL: "Turret",
-	CONTROLLERS: ["onlyAcceptInArc", "nearestDifferentMaster"],
-	INDEPENDENT: true,
-	BODY: {
-		FOV: 0.8,
-	},
-	COLOR: 16,
-	GUNS: [{
-		POSITION: [22, 10, 1, 0, 0, 0, 0],
-		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 1.55, speed: 0.4, maxSpeed: 0.4, reload: 0.5 }]),
-			TYPE: "bullet"
-		}
-	}]
-}
-Class.automationSecondaryTurret = {
-	PARENT: "genericTank",
-	LABEL: "Turret",
-	CONTROLLERS: ["onlyAcceptInArc", "nearestDifferentMaster"],
-	INDEPENDENT: true,
-	BODY: {
-		FOV: 0.8,
-	},
-	COLOR: 16,
-	GUNS: [{
-		POSITION: [22, 10, 1, 0, 0, 0, 0],
-		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.4 }, g.turret, { health: 1.4, speed: 0.4, maxSpeed: 0.4, reload: 0.5 }]),
-			TYPE: "bullet"
-		}
-	}]
-}
+}, {limitFov: true, fov: 0.8, independent: true, label: "Turret", extraStats: []})
 Class.medicareTurret = {
 	PARENT: "genericTank",
 	LABEL: "Turret",
-	CONTROLLERS: [ ["spin", {speed: 0.04}] ],
+	FACING_TYPE: ["spin", {speed: 0.04}],
 	INDEPENDENT: true,
 	COLOR: 16,
 	GUNS: weaponArray([
@@ -129,7 +107,7 @@ Class.medicareTurret = {
 Class.medicaidTurret = {
 	PARENT: "genericTank",
 	LABEL: "Turret",
-	CONTROLLERS: [ ["spin", {speed: 0.04}] ],
+	FACING_TYPE: ["spin", {speed: 0.04}],
 	INDEPENDENT: true,
 	COLOR: 16,
 	GUNS: weaponArray([
@@ -151,19 +129,6 @@ Class.medicaidTurret = {
 }
 Class.turretedTrap = makeAuto("trap", "Auto-Trap", {size: 7.5, type: 'droneAutoTurret'});
 Class.turretedTrap.BODY.RECOIL_MULTIPLIER = 0;
-Class.weakMinion = {
-    PARENT: "minion",
-    GUNS: [
-        {
-            POSITION: [17, 9, 1, 0, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.minionGun, {health: 0.45, speed: 0.8, maxSpeed: 0.8}]),
-                WAIT_TO_CYCLE: true,
-                TYPE: "bullet",
-            },
-        },
-    ]
-}
 
 // T0
 Class.dreadOfficialV1 = {
@@ -182,7 +147,7 @@ Class.swordOfficialV1 = {
 	GUNS: weaponArray({
 		POSITION: [19, 7, 1, 0, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.dreadv1Generic]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.dreadv1Generic, g.dreadv1Sniper]),
 			TYPE: "bullet"
 		}
 	}, 3)
@@ -229,7 +194,7 @@ Class.centaurOfficialV1 = {
 		}, {
 			POSITION: [2.5, 7, 1.6, 12.5, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, {reload: 0.55}]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap",
 			},
@@ -244,11 +209,11 @@ Class.automationOfficialV1 = {
 	TURRETS: [
 		...weaponArray({
 			POSITION: [3.5, 8.25, 0, 30, 180, 1],
-			TYPE: "automationSecondaryTurret",
+			TYPE: "dreadv1BodyTurret",
 		}, 6),
 		{
 			POSITION: [9, 0, 0, 0, 360, 1],
-			TYPE: "automationMainTurret",
+			TYPE: ["dreadv1BodyTurret", {GUN_STAT_SCALE: {damage: 1.6}}],
 		}
 	]
 }
@@ -261,7 +226,7 @@ Class.juggernautOfficialV1 = {
 		HEALTH: 1.7,
 		SHIELD: 2.2,
 		REGEN: 1.5,
-		SPEED: 1.25,
+		SPEED: 1.1,
 	},
 	TURRETS: [{
 		POSITION: [22, 0, 0, 0, 0, 0],
@@ -287,7 +252,7 @@ Class.sabreOfficialV1 = {
 		{
 			POSITION: [26, 7, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, g.dreadv1Generic]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, g.dreadv1Generic, g.dreadv1Sniper]),
 				TYPE: "bullet"
 			}
 		}, {
@@ -305,7 +270,7 @@ Class.gladiusOfficialV1 = {
 		}, {
 			POSITION: [23, 6, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle, g.dreadv1Generic]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle, g.dreadv1Generic, g.dreadv1Sniper, {damage: 1.05}]),
 				TYPE: "bullet"
 			}
 		}
@@ -320,13 +285,13 @@ Class.appeaserOfficialV1 = {
 		{
 			POSITION: [6, 8, 1.3, 7, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {speed: 0.8, maxSpeed: 0.8, range: 0.75, size: 0.55}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {health: 1.1, shudder: 1.05, speed: 0.8, maxSpeed: 0.8, range: 0.7, size: 0.75}]),
 				TYPE: "bullet"
 			}
 		}, {
 			POSITION: [6, 7.5, 1.2, 9, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {speed: 0.8, maxSpeed: 0.8, range: 0.75, size: 0.55 * 8 / 7.5}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {health: 1.1, shudder: 1.05, speed: 0.8, maxSpeed: 0.8, range: 0.7, size: 0.75 * 8 / 7.5}]),
 				TYPE: "bullet"
 			}
 		}
@@ -339,7 +304,7 @@ Class.peacekeeperOfficialV1 = {
 	GUNS: weaponArray({
 		POSITION: [16.5, 10, 1, 0, 0, 0, 0],
 		PROPERTIES: {
-			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.dreadv1Generic, g.dreadv1Slow, {reload: 1.3, health: 1.3}]),
+			SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.dreadv1Generic, g.dreadv1Slow, {reload: 1.3, health: 1.3, range: 1.1}]),
 			TYPE: "bullet",
 		}
 	}, 3)
@@ -352,19 +317,19 @@ Class.diplomatOfficialV1 = {
 		{
 			POSITION: [14, 4.5, 1, 0, 2.75, 0, 0.5],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow, {range: 0.9}]),
 				TYPE: "bullet"
 			}
 		}, {
 			POSITION: [14, 4.5, 1, 0, -2.75, 0, 0.5],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow, {range: 0.9}]),
 				TYPE: "bullet"
 			}
 		}, {
 			POSITION: [15, 4.5, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.dreadv1Generic, g.dreadv1Slow, {range: 0.9}]),
 				TYPE: "bullet"
 			}
 		}
@@ -400,7 +365,7 @@ Class.assailantOfficialV1 = {
 			PROPERTIES: {
 				MAX_CHILDREN: 4,
 				SHOOT_SETTINGS: combineStats([g.factory, g.overseer, g.dreadv1Drone, {damage: 0.6, speed: 0.85, maxSpeed: 0.85}]),
-				TYPE: "weakMinion",
+				TYPE: ["minion", {GUN_STAT_SCALE: {health: 0.45, speed: 0.8, maxSpeed: 0.8}}],
 				STAT_CALCULATOR: "drone",
 				AUTOFIRE: true,
 				SYNCS_SKILLS: true
@@ -448,9 +413,9 @@ Class.cerberusOfficialV1 = {
 		{
 			POSITION: [13.5, 2.25, 1, 0, 4, 0, 0]
 		}, {
-			POSITION: [1.75, 2.25, 1.7, 13.5, 4, 0, 0],
+			POSITION: [1.75, 2.25, 1.7, 13.5, 4, 0, 2/3],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 0.75, damage: 0.8 }]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap",
 			},
@@ -459,16 +424,16 @@ Class.cerberusOfficialV1 = {
 		}, {
 			POSITION: [1.75, 2.25, 1.7, 13.5, -4, 0, 1/3],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 0.75, damage: 0.8 }]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap"
 			}
 		}, {
 			POSITION: [15, 3, 1, 0, 0, 0, 0]
 		}, {
-			POSITION: [2, 3, 1.7, 15, 0, 0, 2/3],
+			POSITION: [2, 3, 1.7, 15, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.flankGuard, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 0.75, damage: 0.8 }]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap"
 			}
@@ -485,7 +450,7 @@ Class.minotaurOfficialV1 = {
 		}, {
 			POSITION: [3, 9, 1.6, 13, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 1.4, size: 1.3 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.59, range: 1.05, health: 1.55 }]),
 				TYPE: ["unsetTrap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "block"
 			}
@@ -501,7 +466,7 @@ Class.sirenOfficialV1 = {
 		}, {
 			POSITION: [2.5, 7, 1.6, 13, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.hexaTrapper, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { size: 1.3 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap]),
 				TYPE: ["turretedTrap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap",
 			}
@@ -516,11 +481,11 @@ Class.mechanismOfficialV1 = {
 	TURRETS: [
 		...weaponArray({
 			POSITION: [4, 8.25, 0, 30, 180, 1],
-		TYPE: "automationMainTurret",
+		TYPE: ["dreadv1BodyTurret", {GUN_STAT_SCALE: {damage: 1.12}}],
 		}, 6),
 		{
 			POSITION: [9.5, 0, 0, 0, 360, 1],
-			TYPE: "mechanismMainTurret",
+			TYPE: ["dreadv1BodyTurret", {GUN_STAT_SCALE: {damage: 1.8}}],
 		}
 	]
 }
@@ -530,10 +495,10 @@ Class.behemothOfficialV1 = {
 	LABEL: "Behemoth",
 	UPGRADE_TOOLTIP: "Health Buff",
 	BODY: {
-		HEALTH: 2.8,
-		SHIELD: 3.3,
-		REGEN: 2.1,
-		SPEED: 1.35,
+		HEALTH: 2.3,
+		SHIELD: 2.8,
+		REGEN: 1.7,
+		SPEED: 1.15,
 	},
 	TURRETS: [{
 		POSITION: [23.5, 0, 0, 0, 0, 0],
