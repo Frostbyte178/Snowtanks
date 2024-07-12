@@ -31,6 +31,7 @@ function collide(collision) {
     let instance = collision[0],
         other = collision[1];
     instance.emit('collide', { body: instance, instance, other });
+    other.emit('collide', { body: other, instance: other, other: instance });
     // Check for ghosts...
     if (other.isGhost) {
         util.error("GHOST FOUND");

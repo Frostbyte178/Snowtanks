@@ -119,4 +119,6 @@ let checkMazeForBlocks = (initX, initY, size, maze) => {
         }
     };
 
-module.exports = { generateMaze };
+if (!global.generateMaze) {
+    module.exports = { generateMaze };
+}

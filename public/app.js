@@ -1454,7 +1454,9 @@ function drawFloor(px, py, ratio) {
 
             //draw it
             let tile = row[j];
-            if (tile.split(' ')[0] == 'none') continue;
+            
+            if (tile.includes('none')) continue;
+
             ctx.globalAlpha = 1;
             ctx.fillStyle = settings.graphical.screenshotMode ? color.guiwhite : color.white;
             ctx.fillRect(left, top, right - left, bottom - top);
@@ -1932,6 +1934,14 @@ function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
         let j = 0;
         for (let xcell = 0; xcell < W; xcell++) {
             let cell = global.roomSetup[ycell][xcell];
+
+            if (cell.includes('none')) {
+                cell = cell.split(' ');
+                cell.shift();
+                cell.unshift('pureBlack');
+                cell = cell.join(' ');
+            }
+
             ctx.fillStyle = gameDraw.modifyColor(cell);
             if (cell.split(' ')[0] == 'none') ctx.fillStyle = color.white;
             if (gameDraw.modifyColor(cell) !== color.white) {

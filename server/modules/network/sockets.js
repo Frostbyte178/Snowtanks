@@ -38,6 +38,8 @@ function close(socket) {
                     timeout: timeout,
                 };
                 disconnections.push(disconnection);
+                player.command.autospin = false;
+                player.body.life();
             }
         }
         // Disconnect everything
@@ -937,6 +939,11 @@ const spawn = (socket, name) => {
         body.become(player); // become it so it can speak and listen.
         socket.spectateEntity = null; // Dont break the camera.
         body.invuln = true; // Make it safe 
+
+        // Default confinement
+        for (let bounds in Config.SPAWN_CONFINEMENT) {
+            body.confinement[bounds] = Config.SPAWN_CONFINEMENT[bounds];
+        }
     }
     body.name = name; // Define the name.
 
@@ -948,6 +955,7 @@ const spawn = (socket, name) => {
             ? Config.RANDOM_COLORS ? ran.choose([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]) : TEAM_RED
             : player.body.team);
     }
+
     // Decide what to do about colors when sending updates and stuff
     player.teamColor = new Color(!Config.RANDOM_COLORS && (Config.GROUPS || (Config.MODE == 'ffa' && !Config.TAG)) ? 10 : getTeamColor(body.team)).compiled; // blue
     player.target = { x: 0, y: 0 };
@@ -1146,6 +1154,7 @@ const eyes = (socket) => {
             if (player.body == null) {
                 // u dead bro
                 setFov = 2000;
+                camera.scoping = false;
                 if (socket.spectateEntity != null) {
                     if (socket.spectateEntity) {
                         camera.x = socket.spectateEntity.x;
@@ -1288,7 +1297,7 @@ let minimapAll = new Delta(5, args => {
         if (my.allowedOnMinimap && (
             my.alwaysShowOnMinimap ||
             (my.type === "wall" && my.alpha > 0.2) ||
-            my.type === "miniboss" ||
+            my.type === "miniboss" || my.type == "portal" || 
             my.isMothership
         )) {
             all.push({

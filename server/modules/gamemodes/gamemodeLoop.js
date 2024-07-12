@@ -12,6 +12,13 @@ if (Config.SPECIAL_BOSS_SPAWNS) bossRush.init();
 if (Config.MAZE > 0) generateMaze(Config.MAZE);
 if (Config.UNDERGROUND_WIDTH > 0 && Config.UNDERGROUND_HEIGHT > 0) generateFrontierMaze(Config.UNDERGROUND_WIDTH, Config.UNDERGROUND_HEIGHT);
 
+// Below maze generation because it relies on the maze data
+let portalLoop;
+if (Config.PORTAL_SPAWNS) {
+    portalLoop = new PortalLoop();
+    portalLoop.init();
+};
+
 let logger = new LagLogger();
 const gamemodeLoop = function() {
     logger.set();

@@ -180,6 +180,7 @@ const requires = [
     "./setup/room.js", // These are the basic room functions, set up by config.json
     "./setup/mockups.js", // This file loads the mockups.
     "./gamemodes/bossRush.js", // Boss Rush
+    "./gamemodes/oldDreadnoughts.js", // Old Dreadnoughts
     "./gamemodes/maze.js", // Maze
     "./gamemodes/mothership.js", // The mothership mode
     "./gamemodes/manhunt.js", // The Manhunt mode
