@@ -2,6 +2,8 @@ module.exports = {
     MODE: "tdm",
     TEAMS: 4,
     TDM_END: 17,
+    TILE_WIDTH: 450,
+    TILE_HEIGHT: 450,
     UNDERGROUND_START: 21,
     UNDERGROUND_END: 51,
     UNDERGROUND_WIDTH: 39,
@@ -14,4 +16,5 @@ module.exports = {
     INK_EROSION_STRENGTH: 100,
     INK_EROSION_DROPOFF: 1.1,
     INK_EROSION_MINIMUM_STRENGTH: 10,
+    SPAWN_CONFINEMENT: {xMax: 7650}
 };

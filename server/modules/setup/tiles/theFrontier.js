@@ -52,11 +52,6 @@ ink = new Tile({
         enemySpawnCooldown: -Config.FOOD_SPAWN_COOLDOWN_INK, enemyCount: 0
     },
     tick: inkTick
-}),
-
-barrier = new Tile({
-    color: 'none',
-    init: tile => {}
 });
 
-module.exports = {underground, ink, barrier}
+module.exports = {underground, ink}

@@ -87,7 +87,7 @@ module.exports = {
     GLASS_HEALTH_FACTOR: 2,
 
     // How strong the force is that confines entities to the map and portals apply to entities.
-    ROOM_BOUND_FORCE: 1,
+    ROOM_BOUND_FORCE: 0.05,
 
 
 

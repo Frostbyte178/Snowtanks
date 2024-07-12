@@ -1,6 +1,7 @@
 let { rock, roid } = require('../tiles/decoration.js'),
     { normal: ____, nest } = require('../tiles/misc.js'),
-    { underground, ink, barrier } = require('../tiles/theFrontier.js'),
+    { underground, ink } = require('../tiles/theFrontier.js'),
+    { outOfBounds } = require('../tiles/old_dreadnoughts.js'),
     bases = require('../tiles/tdm.js'),
     { TEAMS: teams, TDM_END: tdmEnd, UNDERGROUND_START: undergroundStart, UNDERGROUND_END: undergroundEnd } = require('../gamemodeconfigs/theFrontier.js'),
 
@@ -50,7 +51,7 @@ for (let i = 1; i <= teams; i++) {
 
 // Add underground tiles
 for (let row of room) {
-    for (let i = tdmEnd; i < undergroundStart; i++) row.push(barrier);
+    for (let i = tdmEnd; i < undergroundStart; i++) row.push(outOfBounds);
     for (let i = undergroundStart; i < undergroundEnd; i++) row.push(underground);
 }
 
