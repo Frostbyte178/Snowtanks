@@ -192,6 +192,7 @@ Class.portalOfficialV1 = {
 	COLOR: 'pureBlack',
 	FACING_TYPE: 'noFacing',
 	SIZE: 33,
+	DIE_AT_RANGE: true
 }
 Class.spikyPortalSpikesOfficialV1 = {
 	SHAPE: "",

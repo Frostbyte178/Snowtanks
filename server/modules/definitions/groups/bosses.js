@@ -2078,22 +2078,18 @@ Class.trplnrBoss = {
             }
         }
     ],
-    GUNS: [],
-    GUNS: (() => {
-        let output = []
-        for (let i = 0; i<2; i++) {
-            output.push({
-                POSITION: { WIDTH: 10, X: -5, ASPECT: -0.7, ANGLE: ((360 / 3) * i) - 180 },
-                PROPERTIES: {
-                    COLOR: 'white',
-                    SHOOT_SETTINGS: combineStats([g.basic, {reload: 100}]),
-                    TYPE: "trplnrBossAuraBullet",
-                    INDEPENDENT_CHILDREN: true,
-                }
-            })
-        }
-        output.push({
-            POSITION: { WIDTH: 10, X: -5, ASPECT: -0.7, ANGLE: ((360 / 3) * 2) - 180 },
+    GUNS: [
+        ...weaponArray({
+            POSITION: { WIDTH: 10, X: -5, ASPECT: -0.7, ANGLE: 180 },
+            PROPERTIES: {
+                COLOR: 'white',
+                SHOOT_SETTINGS: combineStats([g.basic, {reload: 100}]),
+                TYPE: "trplnrBossAuraBullet",
+                INDEPENDENT_CHILDREN: true,
+            }
+        }, 2),
+        {
+            POSITION: { WIDTH: 10, X: -5, ASPECT: -0.7, ANGLE: 60 },
             PROPERTIES: {
                 COLOR: 'white',
                 SHOOT_SETTINGS: combineStats([g.basic, {reload: 100}]),
@@ -2102,28 +2098,27 @@ Class.trplnrBoss = {
                 IDENTIFIER: 'onHandler',
                 ALPHA: 0,
             }
-        })
-        for (let i = 0; i < 3; i++) {
-            output.push({
-                POSITION: { WIDTH: 5, ASPECT: -0.7, ANGLE: ((360 / 3) * i) - 180 },
-                PROPERTIES: {
-                    COLOR: 'black'
-                }
-            })
-            output.push({
-                POSITION: { WIDTH: 5, HEIGHT: 5, X: -30, ASPECT: 0, ANGLE: ((360 / 3) * i) - 180 },
+        },
+        ...weaponArray({
+            POSITION: { WIDTH: 5, ASPECT: -0.7, ANGLE: 60 },
+            PROPERTIES: {
+                COLOR: 'black'
+            }
+        }, 3),
+        ...weaponArray([
+            {
+                POSITION: { WIDTH: 5, HEIGHT: 5, X: -30, ASPECT: 0, ANGLE: 60 },
                 PROPERTIES: {
                     COLOR: 'black'
                 }
             }, {
-                POSITION: { WIDTH: 5, HEIGHT: 5, X: -25, ASPECT: 0, ANGLE: ((360 / 3) * i) - 180 },
+                POSITION: { WIDTH: 5, HEIGHT: 5, X: -25, ASPECT: 0, ANGLE: 60 },
                 PROPERTIES: {
                     COLOR: 'white'
                 }
-            })
-        }
-        return output
-    })()
+            }
+        ], 3)
+    ]
 }
 
 Class.trplnrBossBulletHellFormPentagonsAuraBullet = {
@@ -2197,41 +2192,40 @@ Class.trplnrBossBulletHellForm = {
             }
         }
     ],
-    GUNS: (() => {
-        let output = []
-        for (let i = 0; i<3; i++) {
-            output.push({
-                POSITION: { WIDTH: 15, HEIGHT: 5, ANGLE: ((360 / 3) * i)-180, ASPECT: 0, X: -25 },
+    GUNS: [
+        ...weaponArray([
+            {
+                POSITION: { WIDTH: 15, HEIGHT: 5, ANGLE: 180, ASPECT: 0, X: -25 },
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.annihilator, { reload: 1 }]),
                     TYPE: 'trplnrBossBulletHellFormPentagonsAuraBullet',
                     COLOR: 'black'
                 }
             }, {
-                POSITION: { WIDTH: 15, HEIGHT: 5, ANGLE: ((360 / 3) * i)-180, ASPECT: 0, X: -20 },
+                POSITION: { WIDTH: 15, HEIGHT: 5, ANGLE: 180, ASPECT: 0, X: -20 },
                 PROPERTIES: {
                     COLOR: 'white'
                 }
             }, {
-                POSITION: { WIDTH: 10, HEIGHT: 5, ASPECT: 1.5, ANGLE: ((360 / 3) * i) - 180 },
+                POSITION: { WIDTH: 10, HEIGHT: 5, ASPECT: 1.5, ANGLE: 180 },
                 PROPERTIES: {
                     SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.annihilator, { reload: 3 }]),
                     TYPE: 'trplnrBossBulletHellFormPentagons',
                     COLOR: 'white'
                 }
             }, {
-                POSITION: { WIDTH: 8, HEIGHT: 3, X: -1, ASPECT: 1.5, ANGLE: ((360 / 3) * i) - 180 },
+                POSITION: { WIDTH: 8, HEIGHT: 3, X: -1, ASPECT: 1.5, ANGLE: 180 },
                 PROPERTIES: {
                     COLOR: 'pureWhite',
                 }
             }, {
-                POSITION: { WIDTH: 5, HEIGHT: 10, X: 5, ASPECT: 0.2, ANGLE: ((360 / 3) * i) - 180 },
+                POSITION: { WIDTH: 5, HEIGHT: 10, X: 5, ASPECT: 0.2, ANGLE: 180 },
                 PROPERTIES: {
                     COLOR: -1,
                 }
-            })
-        }
-        output.push({
+            }
+        ], 3),
+        {
             POSITION: { WIDTH: 0, HEIGHT: 0 },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.annihilator, { reload: 2 }, g.fake]),
@@ -2239,9 +2233,8 @@ Class.trplnrBossBulletHellForm = {
                 IDENTIFIER: 'onHandler',
                 ALPHA: 0
             }
-        })
-        return output
-    })()
+        }
+    ],
 }
 Class.trplnrBossVulnerableForm = {
     PARENT: "miniboss",

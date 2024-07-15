@@ -245,8 +245,6 @@ class PortalLoop {
                 }
                 let entity = new Entity({x: spawnX, y: spawnY});
                 entity.define(portal.type);
-                entity.activation.set(true);
-                entity.settings.diesAtRange = true; // Can't set this on define because then the portal dies immediately
                 entity.on('collide', ({instance, other}) => {
                     // Swap order if the portal is the 'other' in the pair
                     if (other.type == 'portal') other = instance;

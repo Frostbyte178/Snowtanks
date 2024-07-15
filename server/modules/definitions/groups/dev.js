@@ -498,17 +498,11 @@ Class.vulnturrettest = {
             TYPE: 'bullet'
         }
     }],
-    TURRETS: (() => {
-        let output = []
-        for (let i = 0; i < 10; i++) {
-            output.push({
-                POSITION: {SIZE: 20, X: 40, ANGLE: (360/10)*i},
-                TYPE: "vulnturrettest_turret",
-                VULNERABLE: true
-            })
-        }
-        return output
-    })(),
+    TURRETS: weaponArray({
+        POSITION: {SIZE: 20, X: 40},
+        TYPE: "vulnturrettest_turret",
+        VULNERABLE: true
+    }, 10)
 };
 
 Class.turretLayerTesting = {

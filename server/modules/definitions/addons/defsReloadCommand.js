@@ -12,7 +12,7 @@ Events.on('chatMessage', ({ message, socket, preventDefault }) => {
     preventDefault();
 
     // Rate limiter for anti-lag
-    let time = Date.now();
+    let time = performance.now();
     let sinceLastReload = time - lastReloadTime;
     if (sinceLastReload < 5000) {
         socket.talk('m', Config.MESSAGE_DISPLAY_TIME, `Wait ${Math.floor((5000 - sinceLastReload) / 100) / 10} seconds and try again.`);

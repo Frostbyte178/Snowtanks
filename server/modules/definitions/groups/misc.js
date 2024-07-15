@@ -72,6 +72,7 @@ Class.dominator = {
     LEVEL_CAP: 45,
     SIZE: 50,
     SYNC_WITH_TANK: true,
+    ALWAYS_ACTIVE: true,
     BODY: {
         RESIST: 100,
         SPEED: 1.32,
@@ -169,22 +170,18 @@ let sancHealerTiers = [2, 3, 4]
 for (let tier of sancHealerTiers) {
     Class['sanctuaryHealerTier' + (sancHealerTiers.indexOf(tier) + 1)] = {
         PARENT: "sanctuaryHealer",
-        GUNS: (() => {
-            let output = []
-            for (let i = 0; i < tier; i++) {
-                output.push({
-                    POSITION: { LENGTH: 8, WIDTH: 9, ASPECT: -0.5, X: 12.5, ANGLE: (360 / tier) * i },
-                }, {
-                    POSITION: { LENGTH: 8, WIDTH: 10, X: 10, ANGLE: (360 / tier) * i },
-                    PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.basic, { range: 0.5 }, g.healer]),
-                        TYPE: "healerBullet",
-                        AUTOFIRE: true,
-                    }
-                })
+        GUNS: weaponArray([
+            {
+                POSITION: { LENGTH: 8, WIDTH: 9, ASPECT: -0.5, X: 12.5 },
+            }, {
+                POSITION: { LENGTH: 8, WIDTH: 10, X: 10 },
+                PROPERTIES: {
+                    SHOOT_SETTINGS: combineStats([g.basic, { range: 0.5 }, g.healer]),
+                    TYPE: "healerBullet",
+                    AUTOFIRE: true,
+                }
             }
-            return output
-        })()
+        ], tier)
     }
 }
 
@@ -216,23 +213,19 @@ for (let tier of sancTiers) {
         PARENT: "sanctuary",
         TURRETS: [],
         UPGRADE_LABEL: 'Tier ' + (sancIndex + 1),
-        GUNS: (() => {
-            let output = []
-            for (let i = 0; i < tier; i++) {
-                output.push({
-                    POSITION: {LENGTH: 12, WIDTH: 4, ANGLE: (360/tier)*i}
-                }, {
-                    POSITION: {LENGTH: 1.5, WIDTH: 4, ASPECT: 1.7, X: 12, ANGLE: (360/tier)*i},
-                    PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.trap, {shudder: 0.15, speed: 0.8, health: 3, reload: 1.5}]),
-                        TYPE: "trap",
-                        STAT_CALCULATOR: "trap",
-                        AUTOFIRE: true,
-                    },
-                })
+        GUNS: weaponArray([
+            {
+                POSITION: {LENGTH: 12, WIDTH: 4}
+            }, {
+                POSITION: {LENGTH: 1.5, WIDTH: 4, ASPECT: 1.7, X: 12},
+                PROPERTIES: {
+                    SHOOT_SETTINGS: combineStats([g.trap, {shudder: 0.15, speed: 0.8, health: 3, reload: 1.5}]),
+                    TYPE: "trap",
+                    STAT_CALCULATOR: "trap",
+                    AUTOFIRE: true,
+                },
             }
-            return output
-        })()
+        ], tier)
     }
     Class['sanctuaryTier' + (sancIndex + 1)].TURRETS.push({
         POSITION: { SIZE: 22 },
@@ -568,6 +561,7 @@ Class.baseProtector = {
     CAN_BE_ON_LEADERBOARD: false,
     IGNORED_BY_AI: true,
     HITS_OWN_TYPE: "pushOnlyTeam",
+    ALWAYS_ACTIVE: true,
     SKILL: skillSet({
         rld: 1,
         dam: 1,

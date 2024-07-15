@@ -1,16 +1,16 @@
 let fails = 0;
 const speedcheckloop = () => {
-    let activationtime = logs.activation.sum(),
-        collidetime = logs.collide.sum(),
-        movetime = logs.entities.sum(),
-        playertime = logs.network.sum(),
-        maptime = logs.minimap.sum(),
-        physicstime = logs.physics.sum(),
-        lifetime = logs.life.sum(),
-        selfietime = logs.selfie.sum();
-    let sum = logs.master.record();
-    let loops = logs.loops.count(),
-        active = logs.entities.count();
+    let activationtime = logs.activation.sumLogTimes(),
+        collidetime = logs.collide.sumLogTimes(),
+        movetime = logs.entities.sumLogTimes(),
+        playertime = logs.network.sumLogTimes(),
+        maptime = logs.minimap.sumLogTimes(),
+        physicstime = logs.physics.sumLogTimes(),
+        lifetime = logs.life.sumLogTimes(),
+        selfietime = logs.selfie.sumLogTimes();
+    let sum = logs.master.averageLogTimes();
+    let loops = logs.loops.getTallyCount(),
+        active = logs.entities.getTallyCount();
     global.fps = (1000 / sum).toFixed(2);
     for (let e of entities) {
         if (e.isPlayer && e.socket) { // give the debug info i guess.

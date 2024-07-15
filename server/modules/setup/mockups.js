@@ -1,9 +1,3 @@
-const { serverStartTime } = require("../../lib/util");
-
-function rounder(val) {
-    if (Math.abs(val) < 0.00001) val = 0;
-    return +val.toPrecision(6);
-}
 // Define mocking up functions
 function getMockup(e, positionInfo) {
     let turretsAndProps = e.turrets.concat(e.props);
@@ -12,8 +6,8 @@ function getMockup(e, positionInfo) {
         name: e.label,
         upgradeName: e.upgradeLabel,
         upgradeTooltip: e.upgradeTooltip,
-        x: rounder(e.x),
-        y: rounder(e.y),
+        x: util.rounder(e.x),
+        y: util.rounder(e.y),
         color: e.color.compiled,
         strokeWidth: e.strokeWidth,
         upgradeColor: e.upgradeColor,
@@ -25,9 +19,9 @@ function getMockup(e, positionInfo) {
         shape: e.shapeData,
         heightScale: e.heightScale,
         imageInterpolation: e.imageInterpolation,
-        size: rounder(e.size),
-        realSize: rounder(e.realSize),
-        facing: rounder(e.facing),
+        size: util.rounder(e.size),
+        realSize: util.rounder(e.realSize),
+        facing: util.rounder(e.facing),
         mirrorMasterAngle: e.settings.mirrorMasterAngle,
         layer: e.layer,
         statnames: e.settings.skillNames,
@@ -40,12 +34,12 @@ function getMockup(e, positionInfo) {
         })),
         guns: e.guns.map(function(gun) {
             return {
-                offset: rounder(gun.offset),
-                direction: rounder(gun.offsetDirection),
-                length: rounder(gun.length),
-                width: rounder(gun.width),
-                aspect: rounder(gun.aspect),
-                angle: rounder(gun.angle),
+                offset: util.rounder(gun.offset),
+                direction: util.rounder(gun.offsetDirection),
+                length: util.rounder(gun.length),
+                width: util.rounder(gun.width),
+                aspect: util.rounder(gun.aspect),
+                angle: util.rounder(gun.angle),
                 color: gun.color.compiled,
                 strokeWidth: gun.strokeWidth,
                 alpha: gun.alpha,
@@ -57,11 +51,11 @@ function getMockup(e, positionInfo) {
         }),
         turrets: turretsAndProps.map(function(t) {
             let out = getMockup(t, {});
-            out.sizeFactor = rounder(t.bound.size);
-            out.offset = rounder(t.bound.offset);
-            out.direction = rounder(t.bound.direction);
-            out.layer = rounder(t.bound.layer);
-            out.angle = rounder(t.bound.angle);
+            out.sizeFactor = util.rounder(t.bound.size);
+            out.offset = util.rounder(t.bound.offset);
+            out.direction = util.rounder(t.bound.direction);
+            out.layer = util.rounder(t.bound.layer);
+            out.angle = util.rounder(t.bound.angle);
             return out;
         }),
     };
@@ -82,7 +76,7 @@ function getFurthestFrom(x, y) {
         }
     }
     endPoints.splice(furthestIndex, 1);
-    return [rounder(furthestPoint[0]), rounder(furthestPoint[1])];
+    return [util.rounder(furthestPoint[0]), util.rounder(furthestPoint[1])];
 }
 
 function checkIfSamePoint(p1, p2) {
@@ -139,13 +133,13 @@ function getDimensions(entity) {
 
 // Find circumcircle and circumcenter
 function constructCircumcirle(point1, point2, point3) {
-    // Rounder to avoid floating point nonsense
-    let x1 = rounder(point1[0]);
-    let y1 = rounder(point1[1]);
-    let x2 = rounder(point2[0]);
-    let y2 = rounder(point2[1]);
-    let x3 = rounder(point3[0]);
-    let y3 = rounder(point3[1]);
+    // util.rounder to avoid floating point nonsense
+    let x1 = util.rounder(point1[0]);
+    let y1 = util.rounder(point1[1]);
+    let x2 = util.rounder(point2[0]);
+    let y2 = util.rounder(point2[1]);
+    let x3 = util.rounder(point3[0]);
+    let y3 = util.rounder(point3[1]);
 
     // Invalid math protection
     if (x3 == x1 || x3 == x2) {
@@ -218,7 +212,7 @@ function sizeEntity(entity, x = 0, y = 0, angle = 0, scale = 1) {
 }
 
 console.log("Started loading mockups...");
-let mockupsLoadStartTime = Date.now();
+let mockupsLoadStartTime = performance.now();
 
 let mockupData = [];
 for (let k in Class) {
@@ -252,10 +246,10 @@ for (let k in Class) {
 // Remove them
 purgeEntities();
 
-let mockupsLoadEndTime = Date.now();
+let mockupsLoadEndTime = performance.now();
 console.log("Finished compiling " + mockupData.length + " classes into mockups.");
-console.log("Mockups generated in " + (mockupsLoadEndTime - mockupsLoadStartTime) + " milliseconds.\n");
-console.log("Server loaded in " + (mockupsLoadEndTime - serverStartTime) + " milliseconds.\n");
+console.log("Mockups generated in " + util.rounder(mockupsLoadEndTime - mockupsLoadStartTime, 3) + " milliseconds.\n");
+console.log("Server loaded in " + util.rounder(mockupsLoadEndTime, 4) + " milliseconds.\n");
 mockupsLoaded = true;
 
 let mockupJsonData = JSON.stringify(mockupData);

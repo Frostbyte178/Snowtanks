@@ -167,7 +167,7 @@ class Gun extends EventEmitter {
     }
     fire() {
         // Recoil
-        this.lastShot.time = util.time();
+        this.lastShot.time = performance.now();
         this.lastShot.power = 3 * Math.log(Math.sqrt(this.bulletSkills.spd) + this.trueRecoil + 1) + 1;
         this.recoilVelocity += this.lastShot.power;
         this.facing = this.body.facing + this.angle;
@@ -528,6 +528,41 @@ class antiNaN {
     }
 }
 
+class Activation {
+    constructor(body) {
+        this.body = body;
+        this.active = true;
+        this.lastActive = false;
+    }
+    update() {
+        // Force activation conditions
+        if (this.body.alwaysActive || this.body.isPlayer || this.body.isBot) {
+            return this.active = true;
+        }
+        if (this.body.skipLife || this.body.isDead()) {
+            return this.active = false;
+        }
+
+        // Update activity and other properties based on views
+        this.active = views.some((v) => v.check(this.body));
+
+        if (!this.active && this.lastActive) {
+            this.body.removeFromGrid();
+            this.lastActive = false;
+            // Save range ticking
+            this.deactivationTime = performance.now();
+        } else if (this.active && !this.lastActive) {
+            this.lastActive = true;
+            this.body.addToGrid();
+            // Retrieve range ticking
+            if (this.body.diesAtRange) {
+                // Time since deactivation, converted to number of ticks, factoring in the run speed
+                this.body.range -= (performance.now() - this.deactivationTime) / room.cycleSpeed / Config.runSpeed;
+            }
+        }
+    }
+}
+
 function getValidated(obj, prop, allowedType, from, optional = true) {
     let type = typeof obj[prop];
     if (allowedType === type || (optional && 'undefined' === type)) {
@@ -703,39 +738,7 @@ class Entity extends EventEmitter {
                 this.isInGrid = true;
             }
         };
-        this.activation = (() => {
-            let active = true;
-            let timer = ran.irandom(15);
-            return {
-                update: () => {
-                    if (this.skipLife) {
-                        return active = false;
-                    }
-                    if (this.isDead()) {
-                        return 0;
-                    }
-                    if (!active) {
-                        this.removeFromGrid();
-                        if (this.settings.diesAtRange) {
-                            this.kill();
-                        }
-                        if (!timer--) {
-                            active = true;
-                        }
-                    } else {
-                        this.addToGrid();
-                        timer = 15;
-                        active = this.alwaysActive || this.isPlayer || this.isBot || views.some((v) => v.check(this, 0.6));
-                    }
-                },
-                check: () => {
-                    return active;
-                },
-                set: (isActive) => {
-                    active = isActive;
-                }
-            };
-        })();
+        this.activation = new Activation(this);
         this.autoOverride = false;
         this.healer = false;
         this.controllers = [];
