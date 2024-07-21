@@ -72,7 +72,6 @@ Class.dominator = {
     LEVEL_CAP: 45,
     SIZE: 50,
     SYNC_WITH_TANK: true,
-    ALWAYS_ACTIVE: true,
     BODY: {
         RESIST: 100,
         SPEED: 1.32,
@@ -561,7 +560,6 @@ Class.baseProtector = {
     CAN_BE_ON_LEADERBOARD: false,
     IGNORED_BY_AI: true,
     HITS_OWN_TYPE: "pushOnlyTeam",
-    ALWAYS_ACTIVE: true,
     SKILL: skillSet({
         rld: 1,
         dam: 1,

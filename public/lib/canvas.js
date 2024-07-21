@@ -44,7 +44,7 @@ class Canvas {
         global.canvas = this;
     }
     init() {
-        global.mobile && optMobile.value == "mobile" ? ( // Mobile
+        global.mobile && optMobile.value == "mobile" || optMobile.value == "mobileWithBigJoysticks" ? ( // Mobile
             this.mobilecv = this.cv,
             this.controlTouch = null,
             this.movementTouch = null,
@@ -218,6 +218,12 @@ class Canvas {
                     global.treeScale = 1;
                     global.showTree = !global.showTree;
                     break;
+                case global.KEY_RECORD:
+                    this.record();
+                    break;
+                case global.KEY_SCREENSHOT:
+                    this.screenshot();
+                    break;
             }
             if (global.canSkill) {
                 let skill = [
@@ -371,6 +377,7 @@ class Canvas {
             this.socket.talk("s", global.playerName, 0, 1 * settings.game.autoLevelUp);
             global.died = false;
             global.autoSpin = false;
+            global.resetTarget();
         } else {
             for (let touch of e.changedTouches) {
                 let mpos = {
@@ -491,8 +498,8 @@ class Canvas {
                 let r = Math.sqrt(cx ** 2 + cy ** 2);
                 let angle = Math.atan2(cy, cx);
                 if (r > radius) {
-                    cx = Math.cos(angle) * radius / 1.25;
-                    cy = Math.sin(angle) * radius / 1.25;
+                    cx = Math.cos(angle) * radius / 1.05;
+                    cy = Math.sin(angle) * radius / 1.05;
                 }
                 this.movementTouchPos = { x: cx, y: cy };
                 global.movement = angle;
@@ -505,19 +512,20 @@ class Canvas {
                     this.moving = true;
                 }
             } else if (this.controlTouch === id) {
+                global.mobileStatus.showCrosshair = true;
                 let radius = Math.min(
                     global.screenWidth * 0.6,
                     global.screenHeight * 0.12
                 );
-                let cx = mpos.x - (this.cv.width * 5) / 6;
-                let cy = mpos.y - (this.cv.height * 2) / 3;
+                let cx = (mpos.x - (this.cv.width * 5) / 6)  / (radius / 64);
+                let cy = (mpos.y - (this.cv.height * 2) / 3)  / (radius / 64);
                 let touchX = cx / (radius / 64);
                 let touchY = cy / (radius / 64);
                 let r = Math.sqrt(cx ** 2 + cy ** 2);
                 let angle = Math.atan2(cy, cx);
                 if (r > radius) {
-                    touchX = Math.cos(angle) * radius / 1.25;
-                    touchY = Math.sin(angle) * radius / 1.25;
+                    touchX = Math.cos(angle) * radius / 1.05;
+                    touchY = Math.sin(angle) * radius / 1.05;
                 }
                 this.controlTouchPos = { x: touchX, y: touchY };
                 if (this.spinLock) {
@@ -550,8 +558,67 @@ class Canvas {
                 this.controlTouch = null;
                 this.controlTouchPos = { x: 0, y: 0 };
                 this.socket.cmd.set(1, false);
+                global.mobileStatus.showCrosshair = false;
             }
         }
     }
+    record() {
+        if (this.cv.captureStream && window.MediaRecorder)
+              if (this.videoRecorder)
+                switch (this.videoRecorder.state) {
+                  case "inactive":
+                    global.createMessage("Recorder Started!", 2_000);
+                    this.videoRecorder.start();
+                    break;
+                  case "recording":
+                    global.createMessage("Recorder Stopped! Saving file...", 5_000);
+                    this.videoRecorder.stop();
+                }
+              else {
+                if (!global.gameStart) return;
+                let e = [];
+                this.videoRecorder = new MediaRecorder(this.cv.captureStream(60));
+                this.videoRecorder.ondataavailable = (a) => e.push(a.data);
+                this.videoRecorder.onstop = () => {
+                  let a = new Blob(e, {
+                    type: this.videoRecorder.mimeType,
+                  });
+                  e.length = 0;
+                  let k = URL.createObjectURL(a),
+                    q = document.createElement("a");
+                  q.style.display = "none";
+                  q.setAttribute("download", "arras.mp4");
+                  q.setAttribute("href", k);
+                  document.body.appendChild(q);
+                  setTimeout(() => {
+                    URL.revokeObjectURL(k);
+                    document.body.removeChild(q);
+                  }, 100);
+                  q.click();
+                };
+                global.createMessage("Recorder Started!", 2_000);
+                this.videoRecorder.start();
+              }
+            else
+            global.createMessage("Cannot record due to outdated/unsupported browser. Please update your browser!", 6_000);
+      }
+      screenshot() {
+        var x = this.cv.toDataURL(),
+            k = atob(x.split(",")[1]);
+        x = x.split(",")[0].split(":")[1].split(";")[0];
+        let p = new Uint8Array(k.length);
+        for (let a = 0; a < k.length; a++) p[a] = k.charCodeAt(a);
+        let q = URL.createObjectURL(new Blob([p], {type: x})),
+        w = document.createElement("a");
+        w.style.display = "none";
+        w.setAttribute("download", "arras.png");
+        w.setAttribute("href", q);
+        document.body.appendChild(w);
+        setTimeout(() => {
+            URL.revokeObjectURL(q);
+            document.body.removeChild(w);
+        }, 100);
+        w.click();
+      }
 }
 export { Canvas };

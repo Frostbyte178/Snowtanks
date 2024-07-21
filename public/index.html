@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
@@ -16,6 +17,7 @@
     <meta name="msapplication-TileColor" content="#8abc3f">
     <meta name="theme-color" content="#8abc3f">
 </head>
+
 <body oncontextmenu="return false" id="mainBody">
     <div id="gameAreaWrapper">
         <canvas id="gameCanvas" tabindex="1"></canvas>
@@ -24,95 +26,192 @@
     <div id="mainWrapper">
         <div id="startMenuWrapper">
             <div id="startMenu">
-                <div class="startMenuHolder linkHolder">
-                  <center>This Arras.io Private Server runs on Open Source Arras.<br>For more info, visit <a href="https://github.com/Taureon/aps-plus-plus">the GitHub Repository</a>.<br><br>Not an official Arras.io project. We are not associated with Arras.io or Momentum Studios.</center>
-                </div>
+                <div class="startMenuHolder linkHolder"><center>This Arras.io Private Server runs on Open Source Arras.<br>For more info, visit <a href="https://github.com/Taureon/aps-plus-plus">the GitHub Repository</a>.<br><br>Not an official Arras.io project. We are not associated with Arras.io or Momentum Studios.</center></div>
                 <div class="startMenuHolder">
                     <div class="sliderHolder">
                         <div class="slider" id="startMenuSlidingContent">
                             <center><img width=112 height=112 src="/round.png" /></center>
                             <h1 id="gameName">Open Source Arras<h1>
-                            <div id="serverName">
-                                <h4 class="nopadding">Connecting...</h4>
-                            </div>
+                            <div id="serverName"><h4 class="nopadding">Connecting...</h4></div>
                             <table id="serverSelector" style="display:none;"></table>
-                            <input type="text" autofocus tabindex="1" spellcheck="false" placeholder="This is the tale of" id="playerNameInput" maxlength="24"/>
+                            <input type="text" autofocus tabindex="1" spellcheck="false" placeholder="This is the tale of" id="playerNameInput" maxlength="24" />
                             <input type="text" class="conceal" tabindex="3" placeholder="Insert token here" id="playerKeyInput" maxlength="64" />
                         </div>
                         <div class="slider" id="startMenuSlidingTrigger">
-                            <h3>
-                              <span class="nopadding" id="viewOptionText">view options</span>&nbsp;&nbsp;<i class="arrow" id="optionArrow" style="transform:rotate(-45deg);-webkit-transform:rotate(-45deg)"></i>
-                            </h3>
+                            <h3><span class="nopadding" id="viewOptionText">view options</span>&nbsp;&nbsp;<i class="arrow" id="optionArrow" style="transform:rotate(-45deg);-webkit-transform:rotate(-45deg)"></i></h3>
                         </div>
-                        <div class="slider">
-                            <div id="controlsSection">
-                                <options_header>Advanced Controls:<i id="resetControls" class="reset resetControls" title="Reset controls"></i></options_header>
+                        <div class="slider startMenuSlidingContent">
+                            <div class="horizontalSelector" id="optionMenuTabs"><span class="active">Appearance</span><span>Options</span><span class="desktopControlTab">Controls</span><span>Links</span></div>
+                            <div id="tabAppearance">
+                                <div class="optionsHeader">Themes</div>
+                                <select id="optColors" tabindex="-1">
+                                    <option value="normal">Light Colors (by Neph)</option>
+                                    <option value="dark">Dark Colors (by Neph)</option>
+                                    <option value="natural">Natural (by Neph)</option>
+                                    <option value="classic">Classic (by Neph)</option>
+                                    <option value="forest">Forest (by Sterlon)</option>
+                                    <option value="midnight">Midnight (by uoiea)</option>
+                                    <option value="snow">Snow (by Deolveopoler)</option>
+                                    <option value="coralReef">Coral Reef (by Celestea)</option>
+                                    <option value="badlands">Badlands (by Incognious)</option>
+                                    <option value="bleach">Bleach (by definitelynot.)</option>
+                                    <option value="pumpkinSkeleton">Pumpkin Skeleton (by Road)</option>
+                                    <option value="retro">Retro (by Damocles)</option>
+                                    <option value="pastel">Pastel (by Damocles)</option>
+                                    <option value="discord">Discord (by Damocles)</option>
+                                    <option value="wrSheetTheme">WR Sheet Theme (by alettera)</option>
+                                    <option value="descent">Descent (by Rog456)</option>
+                                    <option value="solarizedDark">Solarized Dark (by Road)</option>
+                                    <option value="eggplant">Eggplant (by Road)</option>
+                                    <option value="gruvbox">Gruvbox (by Road)</option>
+                                    <option value="lyric">Lyric (by evil isopod)</option>
+                                    <option value="blindness">Blindness (by Damocles)</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                                <select id="optMobile" tabindex="-1">
+                                    <option value="mobile">Mobile</option>
+                                    <option value="mobileWithBigJoysticks">Mobile + Big joysticks</option>
+                                    <option value="desktop">Desktop</option>
+                                </select>
+                                <select id="optBorders" tabindex="-1">
+                                    <option value="normal">Soft Borders</option>
+                                    <option value="dark">Dark Borders</option>
+                                    <option value="neon">Neon Mode</option>
+                                    <option value="glass">Glass Mode</option>
+                                </select>
+                                <input type="hidden" placeholder="Insert Custom Theme" id="optCustom" />
+                                <table>
+                                    <tr>
+                                        <td><div><label class="container"><input id="optScreenshotMode" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Screenshot Mode</label></div></td>
+                                        <td><div><label class="container"><input id="optNoPointy" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Classic Traps</label></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div><label class="container"><input id="optNoGrid" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Hide Grid</label></div></td>
+                                        <td><div><label class="container"><input id="optPredictive" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Disable Hyperactivity</label></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div><label class="container"><input id="seperatedHealthbars" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Seperated Health Bars</label></div></td>
+                                        <td><div><label class="container"><input id="coloredHealthbars" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Colored Health Bars</label></div></td>
+                                    </tr>
+                                </table>
+                                <div class="optionsHeader">UI Elements</div>
+                                <table>
+                                    <tr>
+                                        <td><div><label class="container"><input id="optRenderGui" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>GUI</label></div></td>
+                                        <td><div><label class="container"><input id="optRenderLeaderboard" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Leaderboard</label></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div><label class="container"><input id="optRenderNames" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Player Names</label></div></td>
+                                        <td><div><label class="container"><input id="optRenderHealth" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Health Bars</label></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td><div><label class="container"><input id="optRenderScores" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Player Scores</label></div></td>
+                                        <td><div><label class="container"><input id="optReducedInfo" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Reduced Info Bar</label></div></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="tabOptions">
+                                <div class="optionsHeader">Performance</div>
+                                <table>
+                                    <tr>
+                                        <td><div><label class="container"><input id="optFancy" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Fancy Animations</label></div></td>
+                                        <td><div><label class="container"><input id="optLowResolution" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Low Resolution</label></div></td>
+                                    </tr>
+                                </table>
+                                <div class="optionsHeader">Miscellaneous</div>
+                                <table>
+                                    <tr>
+                                        <td><div><label class="container"><input id="autoLevelUp" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Auto-Level Up</label></div></td>
+                                        <td><div><label class="container"><input id="centerTank" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Center Camera</label></div></td>
+                                    </tr>
+                                </table>
+                                <table>
+                                    <div class="mobileOptionsHeader">Mobile Miscellaneous</div>
+                                    <tr>
+                                        <td><div><label class="container mobileOptions"><input id="showCrosshair" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Show Crosshair</label></div></td>
+                                        <td><div><label class="container mobileOptions"><input id="showJoystick" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Show Joystick</label></div></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="tabControls">
+                                <div class="controlTable optionsHeader">Advanced Controls <i id="resetControls"
+                                        class="reset resetControls" title="Reset controls"></i><i id="moreControls"
+                                        class="moreControls cross"></i></div>
                                 <table class="controlTable" id="controlSettings">
                                     <tbody>
-                                        <tr> <td><b data-key="KEY_AUTO_FIRE">E</b> - auto-fire</td>         <td><b data-key="KEY_AUTO_SPIN">C</b> - auto-spin</td> </tr>
-                                        <tr> <td><b data-key="KEY_OVER_RIDE">R</b> - disable AI</td>        <td><b data-key="KEY_LEVEL_UP">N</b> - level up</td> </tr>
-                                        <tr> <td><b data-key="KEY_REVERSE_TANK">V</b> - reverse tank</td>   <td><b data-key="KEY_AUTO_ALT">G</b> - auto-alt</td> </tr>
-                                        <tr> <td><b data-key="KEY_REVERSE_MOUSE">B</b> - reverse mouse</td> <td><b data-key="KEY_SUICIDE">O</b> - self-destruct</td> </tr>
-                                        <tr> <td><b data-key="KEY_CLASS_TREE">T</b> - show tank tree</td>   <td><b data-key="KEY_MAX_STAT">M</b> - maximize stat</td> </tr>
-                                        <tr> <td><b data-key="KEY_SPIN_LOCK">X</b> - spin lock</td>         <td><b data-key="KEY_FUCK_YOU">P</b> - developer tank*</td> </tr>
-                                        <tr> <td><b data-key="KEY_BECOME">F</b> - action</td>               <td class="greyText"><b>*</b> = requires valid token</td> </tr>
+                                        <tr>
+                                            <td><div></div></td>
+                                            <td class="greyText"><div><e>*</e> = Needs token</div></td>
+                                            <td><div></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div><b data-key="KEY_AUTO_FIRE">E</b><span> - </span>Auto-fire</div></td>
+                                            <td><div><b data-key="KEY_AUTO_SPIN">C</b><span> - </span>Auto-spin</div></td>
+                                            <td><div><b data-key="KEY_OVER_RIDE">R</b><span> - </span>Disable AI</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div><b data-key="KEY_LEVEL_UP">N</b><span> - </span>Level up</div></td>
+                                            <td><div><b data-key="KEY_REVERSE_TANK">V</b><span> - </span>Reverse tank</div></td>
+                                            <td><div><b data-key="KEY_REVERSE_MOUSE">B</b><span> - </span>Reverse mouse</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div><b data-key="KEY_AUTO_ALT">G</b><span> - </span>Auto-alt</div></td>
+                                            <td><div><b data-key="KEY_SUICIDE">O</b><span> - </span>Self-destruct</div></td>
+                                            <td><div><b data-key="KEY_CLASS_TREE">T</b><span> - </span>Show tank tree</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div><b data-key="KEY_BECOME">F</b><span> - </span>Action</div></td>
+                                            <td><div><b data-key="KEY_MAX_STAT">M</b><span> - </span>Maximize stat</div></td>
+                                            <td><div><b data-key="KEY_SPIN_LOCK">X</b><span> - </span>Spin lock</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div><b data-key="KEY_FUCK_YOU">P</b><span> - </span>Special Tank*</div></td>
+                                            <td><div><b data-key="KEY_RECORD">Z</b><span> - </span>Record</div></td>
+                                            <td><div><b data-key="KEY_SCREENSHOT">Q</b><span> - </span>Screenshot</div></td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td><div></div></td>
+                                            <td><div><b data-key="KEY_UP">W</b><span> - </span>Move up</div></td>
+                                            <td><div></div></td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td><div><b data-key="KEY_LEFT">A</b><span> - </span>Move left</div></td>
+                                            <td><div><b data-key="KEY_DOWN">S</b><span> - </span>Move down</div></td>
+                                            <td><div><b data-key="KEY_RIGHT">D</b><span> - </span>Move right</div></td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td><div><b data-key="KEY_CHOOSE_1">Y</b><span> - </span>Upgrade 1</div></td>
+                                            <td><div><b data-key="KEY_CHOOSE_2">U</b><span> - </span>Upgrade 2</div></td>
+                                            <td><div><b data-key="KEY_CHOOSE_3">I</b><span> - </span>Upgrade 3</div></td>
+                                        </tr>
+                                        <tr class="hidden">
+                                            <td><div><b data-key="KEY_CHOOSE_4">H</b><span> - </span>Upgrade 4</div></td>
+                                            <td><div><b data-key="KEY_CHOOSE_5">J</b><span> - </span>Upgrade 5</div></td>
+                                            <td><div><b data-key="KEY_CHOOSE_6">K</b><span> - </span>Upgrade 6</div></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <options_header>Themes & Graphics</options_header>
-                            <select id="optColors" tabindex="-1">
-                                <option value="normal">Light Colors (by Neph)</option>
-                                <option value="dark">Dark Colors (by Neph)</option>
-                                <option value="natural">Natural (by Neph)</option>
-                                <option value="classic">Classic (by Neph)</option>
-                                <option value="forest">Forest (by Sterlon)</option>
-                                <option value="midnight">Midnight (by uoiea)</option>
-                                <option value="snow">Snow (by Deolveopoler)</option>
-                                <option value="coralReef">Coral Reef (by Celestea)</option>
-                                <option value="badlands">Badlands (by Incognious)</option>
-                                <option value="bleach">Bleach (by definitelynot.)</option>
-                                <option value="pumpkinSkeleton">Pumpkin Skeleton (by Road)</option>
-                                <option value="retro">Retro (by Damocles)</option>
-                                <option value="pastel">Pastel (by Damocles)</option>
-                                <option value="discord">Discord (by Damocles)</option>
-                                <option value="wrSheetTheme">WR Sheet Theme (by alettera)</option>
-                                <option value="descent">Descent (by Rog456)</option>
-                                <option value="solarizedDark">Solarized Dark (by Road)</option>
-                                <option value="eggplant">Eggplant (by Road)</option>
-                                <option value="gruvbox">Gruvbox (by Road)</option>
-                                <option value="lyric">Lyric (by evil isopod)</option>
-                                <option value="blindness">Blindness (by Damocles)</option>
-                                <option value="custom">Custom</option>
-                            </select>
-                            <select id="optMobile" tabindex="-1">
-                                <option value="mobile">Mobile</option>
-                                <option value="desktop">Desktop</option>
-                            <select>
-                            <select id="optBorders" tabindex="-1">
-                                <option value="normal">Soft Borders</option>
-                                <option value="dark">Dark Borders</option>
-                                <option value="neon">Neon Mode</option>
-                                <option value="glass">Glass Mode</option>
-                            </select>
-                            <input type="hidden" placeholder="Insert Custom Theme" id="optCustom" />
-                            <table>
-                                <tr>
-                                    <td><div><label class="container"><input id="optScreenshotMode"   tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Screenshot Mode</label></div></td>
-                                    <td><div><label class="container"><input id="optNoPointy"         tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Classic Traps</label></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div><label class="container"><input id="optFancy"            tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Low Graphics</label></div></td>
-                                    <td><div><label class="container"><input id="optPredictive"       tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Disable Hyperactivity</label></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div><label class="container"><input id="coloredHealthbars"   tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Colored Health Bars</label></div></td>
-                                    <td><div><label class="container"><input id="seperatedHealthbars" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Seperated Health Bars</label></div></td>
-                                </tr>
-                                <tr>
-                                    <td><div><label class="container"><input id="autoLevelUp"         tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Auto-Level Up</label></div></td>
-                                    <td><div><label class="container"><input id="centerTank"          tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span> Center Camera</label></div></td>
-                                </tr>
-                            </table>
+                            <div id="tabAbout">
+                                <div class="optionsHeader">Community</div>
+                                <div class="moreLinks">
+                                    <a class="link developer" href="https://github.com/Taureon/">Main Developer</a>
+                                    <a class="link developer" href="https://github.com/Zephiii/">Original Creator</a>
+                                    <a class="link discord" href="https://discord.gg/kvCAZfUCjy">Discord Server</a>
+                                </div>
+                                <div class="optionsHeader">Template</div>
+                                <div class="moreLinks">
+                                    <a class="link github" href="https://github.com/Taureon/aps-plus-plus">Source Code</a>
+                                    <a class="link github" href="https://github.com/Taureon/aps-plus-plus/issues/new">Report Bugs</a>
+                                    <a class="link github" href="https://github.com/Taureon/aps-plus-plus/discussions/new?category=suggestions">Suggest Features</a>
+                                </div>
+                                <div class="optionsHeader">Resources</div>
+                                <div class="moreLinks">
+                                    <span data-ccpa-link="1"></span>
+                                    <a tabindex="-1" href="https://codepen.io/road-to-100k/full/GRpvMzb/">Road's Custom Theme Maker</a><br>
+                                    <a tabindex="-1" href="https://glitch.com/edit/#!/arras-template">Old Official Private Server Template</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div style="position: relative; bottom: -10px;">
@@ -122,20 +221,6 @@
                 <div class="startMenuHolder shrinkable">
                     <span class="titleSpan">Changelog</span>
                     <div id="patchNotes" class="shadowScroll"></div>
-                    <div id="bottomHolder">
-                        <!--
-                        <a class="link youtube"   href="https://www.youtube.com/arrasio">Arras.io YouTube</a>
-                        <a class="link reddit"    href="https://reddit.com/r/arrasio">Arras.io Subreddit</a>
-                        <a class="link original"  href="https://arras.io/">Arras.io Game</a>
-                        <a class="link discord"   href="https://discord.gg/arras">Arras.io Discord</a>
-                        -->
-                        <a class="link discord"   href="https://discord.gg/kvCAZfUCjy">Discord Server</a>
-                        <a class="link developer" href="https://github.com/Taureon/">Main Developer</a>
-                        <a class="link developer" href="https://github.com/Zephiii/">Original Creator</a>
-                        <a class="link github"    href="https://github.com/Taureon/aps-plus-plus">Source Code</a>
-                        <a class="link github"    href="https://github.com/Taureon/aps-plus-plus/issues/new">Report Bugs</a>
-                        <a class="link github"    href="https://github.com/Taureon/aps-plus-plus/discussions/new?category=suggestions">Suggest Features</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -153,11 +238,11 @@
     <script type="module" src="./lib/socketInit.js"></script>
     <script type="module" src="./app.js"></script>
     <script>
-        $("#optColors").change( function () {
+        $("#optColors").change(function () {
             if ($(this).val() == "custom") document.getElementById("optCustom").type = "text";
             else document.getElementById("optCustom").type = "hidden";
         });
-        $("#startMenuSlidingTrigger").on('click', function() {
+        $("#startMenuSlidingTrigger").on('click', function () {
             if ($("#optColors").val() == "custom") document.getElementById("optCustom").type = "text";
         });
         if (navigator.serviceWorker) navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).then(registration => console.log('Service Worker Registered'));

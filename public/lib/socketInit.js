@@ -53,16 +53,17 @@ var serverStart = 0,
                 }
             },
             update: () => {
-                levelscore = Math.ceil(1.8 * Math.pow(level + 1, 1.8) - 2 * level + 1);
-                if (sscore.get() - deduction >= levelscore - 0.001) {
-                    deduction += levelscore;
+                levelscore = Math.ceil(Math.pow(level, 3) * 0.3083);
+                if (sscore.get() >= levelscore - 0.01) {
+                    deduction = levelscore;
                     level += 1;
                 }
             },
-            getProgress: () => levelscore ? Math.min(1, Math.max(0, (sscore.get() - deduction) / levelscore)) : 0,
+            getProgress: () => levelscore ? Math.min(1, Math.max(0, (sscore.get() - deduction) / (levelscore - deduction))) : 0,
             getScore: () => sscore.get(),
             getLevel: () => level,
         },
+        showhealthtext: false,
         type: 0,
         root: "",
         class: "",
@@ -484,11 +485,15 @@ const process = (z = {}) => {
         // Update health, flagging as injured if needed
         if (isNew) {
             z.health = get.next() / 65535;
+            z.healthN = get.next();
+            z.maxHealthN = get.next();
             z.shield = get.next() / 65535;
         } else {
             let hh = z.health,
                 ss = z.shield;
             z.health = get.next() / 65535;
+            z.healthN = get.next();
+            z.maxHealthN = get.next();
             z.shield = get.next() / 65535;
             // Update stuff
             if (z.health < hh || z.shield < ss) {
@@ -631,6 +636,7 @@ const convert = {
         let index = get.next(),
             // Translate the encoded index
             indices = {
+                showhealthtext: index & 0x0800,
                 class: index & 0x0400,
                 root: index & 0x0200,
                 topspeed: index & 0x0100,
@@ -696,6 +702,9 @@ const convert = {
         }
         if (indices.class) {
             gui.class = get.next();
+        }
+        if (indices.showhealthtext) {
+            gui.showhealthtext = get.next();
         }
     },
     broadcast: () => {

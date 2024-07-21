@@ -30,6 +30,7 @@ global.TEAM_YELLOW = -5;
 global.TEAM_ORANGE = -6;
 global.TEAM_BROWN = -7;
 global.TEAM_CYAN = -8;
+global.TEAM_DREADNOUGHTS = -10;
 global.TEAM_ROOM = -100;
 global.TEAM_ENEMIES = -101;
 global.getSpawnableArea = team => ran.choose((team in room.spawnable && room.spawnable[team].length) ? room.spawnable[team] : room.spawnableDefault).randomInside();

@@ -59,6 +59,7 @@ class Skill {
         this.score = 0;
         this.deduction = 0;
         this.level = 0;
+        this.levelUpScore = 1;
         if (resetLSPF) this.LSPF = null;
         this.set([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         this.maintain();
@@ -117,14 +118,18 @@ class Skill {
     }
     maintain() {
         if (this.score - this.deduction >= this.levelScore) {
-            this.deduction += this.levelScore;
+            this.deduction = this.levelUpScore;
             this.level += 1;
+            this.levelUpScore = this.scoreForLevel;
             this.points += this.levelPoints;
             this.update();
         }
     }
+    get scoreForLevel() {
+        return Math.ceil(Math.pow(this.level, 3) * 0.3083);
+    }
     get levelScore() {
-        return Math.ceil(1.8 * Math.pow(this.level + 1, 1.8) - 2 * this.level + 1);
+        return this.levelUpScore - this.deduction;
     }
     get progress() {
         return this.levelScore ? (this.score - this.deduction) / this.levelScore : 0;

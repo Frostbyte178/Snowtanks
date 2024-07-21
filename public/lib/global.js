@@ -83,6 +83,9 @@ const global = {
     KEY_ZOOM_IN: 61,// ??
     KEY_DEBUG: 76,// L
 
+    KEY_SCREENSHOT: 81,//Q
+    KEY_RECORD: 90,//Z
+
     KEY_UPGRADE_ATK: 49,// 1
     KEY_UPGRADE_HTL: 50,// 2
     KEY_UPGRADE_SPD: 51,// 3
@@ -156,6 +159,20 @@ const global = {
         lastrender: 0,
         rendergap: 0,
         lastuplink: 0,
+    },
+    mobileStatus: {
+        enableCrosshair: false,
+        showCrosshair: false,
+        useBigJoysticks: false,
+        showJoysticks: false,
+    },
+    GUIStatus: {
+        renderGUI: false,
+        renderLeaderboard: false,
+        renderhealth: false,
+        renderPlayerNames: false,
+        renderPlayerScores: false,
+        minimapReducedInfo: false,
     },
     mouse: { x: 0, y: 0},
     target: { x: 0, y: 0 },

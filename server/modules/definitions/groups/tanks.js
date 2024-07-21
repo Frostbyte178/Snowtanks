@@ -207,17 +207,17 @@ Class.desmos = {
     STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [20, 10, 0.8, 0, 0, 0, 0],
+            POSITION: [20, 8, -4/3, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, -6.25, 90, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, -6.25, 90, 0]
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, 6.25, -90, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, 6.25, -90, 0]
         }
     ]
 }
@@ -415,28 +415,28 @@ Class.pentaShot = {
     },
     GUNS: [
         {
-            POSITION: [16, 8, 1, 0, -3, -30, 0.667],
+            POSITION: [16, 8, 1, 0, -3, -30, 2/3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [16, 8, 1, 0, 3, 30, 0.667],
+            POSITION: [16, 8, 1, 0, 3, 30, 2/3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [19, 8, 1, 0, -2, -15, 0.333],
+            POSITION: [19, 8, 1, 0, -2, -15, 1/3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"
             }
         },
         {
-            POSITION: [19, 8, 1, 0, 2, 15, 0.333],
+            POSITION: [19, 8, 1, 0, 2, 15, 1/3],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot]),
                 TYPE: "bullet"
@@ -669,6 +669,51 @@ Class.rifle = {
             POSITION: [24, 7, 1, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle]),
+                TYPE: "bullet"
+            }
+        }
+    ]
+}
+Class.marksman = {
+    PARENT: "genericTank",
+    LABEL: "Marksman",
+    DANGER: 6,
+    BODY: {
+        FOV: 1.2 * base.FOV
+    },
+    UPGRADE_TOOLTIP: "[DEV NOTE] This tank does not function as intended yet!",
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 8
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 18
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 8.5
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper]),
                 TYPE: "bullet"
             }
         }
@@ -925,6 +970,193 @@ Class.crossbow = {
             POSITION: [24, 7, 1, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle, g.crossbow, { speed: 0.7, maxSpeed: 0.7 }, { recoil: 0.5 }]),
+                TYPE: "bullet"
+            }
+        }
+    ]
+}
+
+// Marksman upgrades
+Class.deadeye = {
+    PARENT: "genericTank",
+    LABEL: "Deadeye",
+    DANGER: 7,
+    BODY: {
+        SPEED: 0.85 * base.SPEED,
+        FOV: 1.4 * base.FOV
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8,
+                ASPECT: 1.3,
+                X: 10
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8,
+                ASPECT: 1.3,
+                X: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 23,
+                WIDTH: 8,
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, { pen: 2 }]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: [5, 8, -1.4, 8, 0, 0, 0]
+        }
+    ]
+}
+Class.nimrod = {
+    PARENT: "genericTank",
+    LABEL: "Nimrod",
+    DANGER: 7,
+    BODY: {
+        SPEED: base.SPEED * 0.9,
+        FOV: base.FOV * 1.25
+    },
+    CONTROLLERS: ["zoom"],
+    TOOLTIP: "Hold right click to zoom.",
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 12,
+                ASPECT: 1.25,
+                X: 8
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 12,
+                ASPECT: 1.25,
+                X: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.hunterSecondary, { pen: 2 }]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 21,
+                WIDTH: 12,
+                DELAY: 0.25
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, { pen: 2 }]),
+                TYPE: "bullet"
+            }
+        }
+    ]
+}
+Class.revolver = {
+    PARENT: "genericTank",
+    LABEL: "Revolver",
+    DANGER: 7,
+    BODY: {
+        FOV: base.FOV * 1.225
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 12,
+                ASPECT: 1.25,
+                X: 8
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 12,
+                ASPECT: 1.25,
+                X: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 20,
+                WIDTH: 12
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 7
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle, { pen: 2 }]),
+                TYPE: "bullet"
+            }
+        }
+    ]
+}
+Class.fork = {
+    PARENT: "genericTank",
+    LABEL: "Fork",
+    DANGER: 7,
+    BODY: {
+        FOV: 1.2 * base.FOV
+    },
+    UPGRADE_TOOLTIP: "[DEV NOTE] This tank does not function as intended yet!",
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 8
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 18
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 8.5,
+                ASPECT: 1.3,
+                X: 23
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 29,
+                WIDTH: 8.5
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, { pen: 2 }]),
                 TYPE: "bullet"
             }
         }
@@ -2827,14 +3059,14 @@ Class.helix = {
     STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [20, 8, 0.75, 0, -5, 0, 0],
+            POSITION: [20, 6, -4/3, 0, -5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             },
         },
         {
-            POSITION: [20, 8, 0.75, 0, 5, 0, 0],
+            POSITION: [20, 6, -4/3, 0, 5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
@@ -2862,10 +3094,10 @@ Class.sidewinder = {
             POSITION: [10, 8.5, 1.4, 7, 0, 0, 0]
         },
         {
-            POSITION: [20, 10, 0.8, 0, 0, 0, 0],
+            POSITION: [20, 8, -4/3, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: "desmos"}]
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
@@ -2905,7 +3137,7 @@ Class.repeater = {
             POSITION: [20, 10, 0.8, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
-                TYPE: ["splitterBullet", {MOTION_TYPE: "desmos"}]
+                TYPE: ["splitterBullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
@@ -2931,21 +3163,21 @@ Class.triplex = {
     STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [18, 10, 0.7, 0, 0, 0, 0],
+            POSITION: [18, 7, -4/3, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, {shudder: 0, spray: 0, size: 0.8}]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, {speed: 1.25, maxSpeed: 1.25}]),
                 TYPE: "bullet",
             },
         },
         {
-            POSITION: [18, 10, 0.7, 0, 0, 45, 0.5],
+            POSITION: [18, 7, -4/3, 0, 0, 45, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, g.desmos]),
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             },
         },
         {
-            POSITION: [18, 10, 0.7, 0, 0, -45, 0.5],
+            POSITION: [18, 7, -4/3, 0, 0, -45, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, g.desmos]),
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
@@ -2972,56 +3204,56 @@ Class.quadruplex = {
     STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [20, 10, 0.8, 0, 0, 45, 0],
+            POSITION: [20, 8, -4/3, 0, 0, 45, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true, amplitude: 180, yOffset: 50}]]}]
             }
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, -6.25, 135, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, -6.25, 135, 0]
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, 6.25, -45, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, 6.25, -45, 0]
         },
         {
-            POSITION: [20, 10, 0.8, 0, 0, -45, 0],
+            POSITION: [20, 8, -4/3, 0, 0, -45, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: false, amplitude: 180, yOffset: -50}]]}]
             }
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, -6.25, 45, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, -6.25, 45, 0]
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, 6.25, -135, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, 6.25, -135, 0]
         },
         {
-            POSITION: [20, 10, 0.8, 0, 0, 135, 0],
+            POSITION: [20, 8, -4/3, 0, 0, 135, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: false, amplitude: 180, yOffset: 50}]]}]
             }
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, -6.25, -135, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, -6.25, -135, 0]
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, 6.25, 45, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, 6.25, 45, 0]
         },
         {
-            POSITION: [20, 10, 0.8, 0, 0, -135, 0],
+            POSITION: [20, 8, -4/3, 0, 0, -135, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos, g.twin, { reload: 2 }]),
-                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true, amplitude: 180, yOffset: -50}]]}]
             }
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, -6.25, -45, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, -6.25, -45, 0]
         },
         {
-            POSITION: [3.75, 10, 2.125, 1.25, 6.25, 135, 0]
+            POSITION: [3.75, 10, 2.125, 1.5, 6.25, 135, 0]
         },
     ],
 }
@@ -3038,14 +3270,14 @@ Class.coil = {
             POSITION: [20, 8, 0.75, 0, -5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: false}]}]
+                TYPE: ["bullet", {CONTROLLERS: [["snake", {invert: false}]]}]
             },
         },
         {
             POSITION: [20, 8, 0.75, 0, 5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["bullet", {MOTION_TYPE: ["desmos", {invert: true}]}]
+                TYPE: ["bullet", {CONTROLLERS: [["snake", {invert: true}]]}]
             },
         },
         {
@@ -3211,10 +3443,10 @@ Class.iterator = {
     STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [22, 10, 0.8, 0, 0, 0, 0],
+            POSITION: [22, 8, -4/3, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.desmos]),
-                TYPE: ["superSplitterBullet", {MOTION_TYPE: "desmos"}]
+                TYPE: ["superSplitterBullet", {CONTROLLERS: ['snake']}]
             }
         },
         {
@@ -3244,17 +3476,17 @@ Class.duplicator = {
     STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [20, 10, 0.8, 0, 0, 20, 0],
+            POSITION: [20, 8, -4/3, 0, 0, 20, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["splitterBullet", {MOTION_TYPE: ["desmos", {invert: false}]}]
+                TYPE: ["splitterBullet", {CONTROLLERS: [["snake", {invert: false}]]}]
             }
         },
         {
-            POSITION: [20, 10, 0.8, 0, 0, -20, 0],
+            POSITION: [20, 8, -4/3, 0, 0, -20, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["splitterBullet", {MOTION_TYPE: ["desmos", {invert: true}]}]
+                TYPE: ["splitterBullet", {CONTROLLERS: [["snake", {invert: true}]]}]
             }
         },
         {
@@ -3619,11 +3851,12 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.doubleTwin.UPGRADES_TIER_3 = ["tripleTwin", "hewnDouble", "autoDouble", "bentDouble"]
         Class.tripleShot.UPGRADES_TIER_3 = ["pentaShot", "spreadshot", "bentHybrid", "bentDouble", "triplet", "triplex"]
 
-    Class.sniper.UPGRADES_TIER_2 = ["assassin", "hunter", "minigun", "rifle"]
+    Class.sniper.UPGRADES_TIER_2 = ["assassin", "hunter", "minigun", "rifle", "marksman"]
         Class.sniper.UPGRADES_TIER_3 = ["bushwhacker"]
-        Class.assassin.UPGRADES_TIER_3 = ["ranger", "falcon", "stalker", "autoAssassin", "single"]
-        Class.hunter.UPGRADES_TIER_3 = ["predator", "xHunter", "poacher", "ordnance", "dual"]
-        Class.rifle.UPGRADES_TIER_3 = ["musket", "crossbow", "armsman"]
+        Class.assassin.UPGRADES_TIER_3 = ["ranger", "falcon", "stalker", "autoAssassin", "single", "deadeye"]
+        Class.hunter.UPGRADES_TIER_3 = ["predator", "xHunter", "poacher", "ordnance", "dual", "nimrod"]
+        Class.rifle.UPGRADES_TIER_3 = ["musket", "crossbow", "armsman", "revolver"]
+        Class.marksman.UPGRADES_TIER_3 = ["deadeye", "nimrod", "revolver", "fork"]
 
     Class.machineGun.UPGRADES_TIER_2 = ["artillery", "minigun", "gunner", "sprayer"]
         Class.minigun.UPGRADES_TIER_3 = ["streamliner", "nailgun", "cropDuster", "barricade", "vulture"]

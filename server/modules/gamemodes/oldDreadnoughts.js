@@ -98,7 +98,7 @@ let generateLabyrinth = (size) => {
     for (let x = padding; x < size + padding; x++) {
         for (let y = padding; y < size + padding; y++) {
             // Find spawn location and size
-            if (!maze[x - 1][y - 1]) continue;
+            if (!maze[y - 1][x - 1]) continue;
 
             let d = {
                 x: x * mazeWallScale + mazeWallScale / 2,
@@ -118,7 +118,7 @@ let generateLabyrinth = (size) => {
             o.life();
             makeHitbox(o);
             walls.push(o);
-            validPositions[x][y] = false;
+            validPositions[y][x] = false;
         }
     }
 
@@ -148,7 +148,6 @@ delete Class.food.LEVEL_CAP;
 // Portal loop
 class PortalLoop {
     constructor() {
-        this.spawnInterval = 120_000;
         this.initialized = false;
         this.spawnBuffer = 50;
         this.openBounds = {
@@ -170,6 +169,7 @@ class PortalLoop {
             yMax: 6500,
         };
         this.locationArrayVariance = 80;
+        this.readyToSpawn = true;
         this.spawnBatches = [
             {
                 bounds: this.labyrinthBounds,
@@ -178,7 +178,14 @@ class PortalLoop {
                         type: "spikyPortalOfficialV1",
                         destination: this.openBounds,
                         buffer: 1500,
-                        spawnArray: validPositions
+                        spawnArray: validPositions,
+                        handler: (entity) => {
+                            // Spawn in default spawnable area if on a tank team
+                            if (entity.team == TEAM_DREADNOUGHTS) return;
+                            let {x, y} = getSpawnableArea(entity.team);
+                            entity.x = x;
+                            entity.y = y;
+                        }
                     },
                     {
                         type: "bluePortalOfficialV1",
@@ -191,10 +198,12 @@ class PortalLoop {
                                 STAT_NAMES: {},
                                 IS_SMASHER: false,
                                 ALPHA: [0, 1],
+                                INVISIBLE: [0, 0],
                             });
                             entity.destroyAllChildren();
                             entity.upgrades = [];
                             entity.define('dreadOfficialV1');
+                            entity.team = TEAM_DREADNOUGHTS;
                         },
                         entryBarrier: (entity) => {
                             return entity.skill.level >= 150;
@@ -232,6 +241,7 @@ class PortalLoop {
         ]
     }
     spawnCycle() {
+        this.readyToSpawn = true;
         for (let batch of this.spawnBatches) {
             for (let portal of batch.types) {
                 let spawnX, spawnY;
@@ -252,14 +262,15 @@ class PortalLoop {
                     // Validity checking
                     if (other.type != 'tank') {
                         if (
-                            other.type != "miniboss" && other.type != "food" && other.type != "aura" && other.type != "wall" && other.type != "unknown" &&
+                            other.type != "miniboss" && other.type != "food" && other.type != "crasher" && other.type != "aura" && other.type != "wall" && other.type != "unknown" &&
                             (other.x - entity.x) ** 2 + (other.y - entity.y) ** 2 <= 625
                         ) {
                             other.kill();
                         }
                         return;
                     }
-                    if ((other.x - entity.x) ** 2 + (other.y - entity.y) ** 2 > 625) return;
+                    if (other.invuln) return;
+                    if ((other.x - entity.x) ** 2 + (other.y - entity.y) ** 2 > (other.size ** 2)) return;
                     if (portal.entryBarrier && !portal.entryBarrier(other)) return;
 
                     // Spawn in target region
@@ -284,21 +295,24 @@ class PortalLoop {
                         portal.handler(other);
                     }
                 });
+                entity.on('death', ({body}) => {
+                    if (arenaClosed || !this.readyToSpawn) return;
+
+                    // Spawn after 20 seconds if a portal dies
+                    this.readyToSpawn = false;
+                    setTimeout(() => {
+                        this.spawnCycle();
+                    }, 20_000);
+                });
             }
         }
     }
-    spawnLoop() {
-        if (global.arenaCosed) return;
-        setTimeout(() => {
-            this.spawnCycle();
-            this.spawnLoop();
-        }, this.spawnInterval);
-    }
     init() {
         this.spawnCycle();
-        this.spawnLoop();
     }
 }
 
-global.generateMaze = generateLabyrinth;
+if (Config.GAME_MODES.includes('old_dreadnoughts')) {
+    global.generateMaze = generateLabyrinth;
+}
 module.exports = { generateLabyrinth, PortalLoop };

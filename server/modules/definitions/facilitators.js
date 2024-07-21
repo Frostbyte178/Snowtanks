@@ -776,14 +776,14 @@ exports.makeRare = (type, level) => {
         COLOR: ["lightGreen", "teal", "darkGrey", "rainbow", "trans"][level],
         ALPHA: level == 2 ? 0.25 : 1,
         BODY: {
-            DAMAGE: type.BODY.DAMAGE + level,
-            DENSITY: type.BODY.DENSITY + level,
-            HEALTH: [10, 20, 40, 80, 100][level] * type.BODY.HEALTH,
-            PENETRATION: type.BODY.PENETRATION + level,
+            DAMAGE: [1, 1, 2, 2.5, 2.5][level] * type.BODY.DAMAGE,
+            DENSITY: [1, 1, 2, 2.5, 2.5][level] * type.BODY.DENSITY,
+            HEALTH: [2, 4, 4, 6, 8][level] * type.BODY.HEALTH,
+            PENETRATION: [1.5, 1.5, 2, 2.5, 2.5][level] * type.BODY.PENETRATION,
             ACCELERATION: type.BODY.ACCELERATION
         },
         DRAW_HEALTH: true,
-        INTANGIBLE: false,
+        INTANGIBLE: type.INTANGIBLE,
         GIVE_KILL_MESSAGE: true,
     }
 }
@@ -792,7 +792,7 @@ exports.makeLaby = (type, level, baseScale = 1) => {
     type = ensureIsClass(type);
     let usableSHAPE = Math.max(type.SHAPE, 3),
         downscale = Math.cos(Math.PI / usableSHAPE),
-        strengthMultiplier = 6 ** level;
+        strengthMultiplier = 5 ** level;
     return {
         PARENT: "food",
         LABEL: ["", "Beta ", "Alpha ", "Omega ", "Gamma ", "Delta "][level] + type.LABEL,

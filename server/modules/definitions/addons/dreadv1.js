@@ -3,11 +3,11 @@ const { smshskl, base, basePolygonDamage, basePolygonHealth } = require('../cons
 const g = require('../gunvals.js');
 const dreadnoughtBody = {
     SPEED: base.SPEED * 0.5,
-    HEALTH: base.HEALTH * 5,
-    DAMAGE: base.DAMAGE * 2.5,
+    HEALTH: base.HEALTH * 7,
+    DAMAGE: base.DAMAGE * 3.5,
     PENETRATION: base.PENETRATION * 2,
     SHIELD: base.SHIELD * 2.5,
-    FOV: base.FOV * 1.4,
+    FOV: base.FOV * 1.25,
     DENSITY: base.DENSITY * 6,
 	REGEN: base.REGEN,
 };
@@ -40,14 +40,14 @@ g.dreadv1Drone = {
 	recoil: 0,
 }
 g.dreadv1Trap = {
-	range: 0.9,
+	range: 1.3,
 	shudder: 0.2,
 	speed: 1.05,
-	reload: 1.6,
-	damage: 1.2,
-	health: 1.15,
+	reload: 2.8,
+	damage: 1.8,
+	health: 1.35,
 	resist: 1.1,
-	size: 1.3,
+	size: 1.25,
 }
 
 // Comment out the line below to enable this addon, uncomment it to disable this addon.
@@ -192,7 +192,8 @@ Class.portalOfficialV1 = {
 	COLOR: 'pureBlack',
 	FACING_TYPE: 'noFacing',
 	SIZE: 33,
-	DIE_AT_RANGE: true
+	DIE_AT_RANGE: true,
+	INTANGIBLE: true
 }
 Class.spikyPortalSpikesOfficialV1 = {
 	SHAPE: "",
@@ -476,13 +477,13 @@ Class.appeaserOfficialV1 = {
 		{
 			POSITION: [8.5, 8.875, 1.25, 7, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {health: 1.1, shudder: 1.05, speed: 0.85, maxSpeed: 0.8, range: 0.7, size: 0.75}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {health: 1.13, shudder: 1.2, speed: 0.9, maxSpeed: 0.7, range: 0.7, size: 0.6}]),
 				TYPE: "bullet"
 			}
 		}, {
 			POSITION: [8.5, 7.875, 1.2, 9, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {health: 1.1, shudder: 1.05, speed: 0.85, maxSpeed: 0.8, range: 0.7, size: 0.75 * 8.5 / 7.5}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.dreadv1Generic, g.dreadv1Slow, {health: 1.13, shudder: 1.2, speed: 0.9, maxSpeed: 0.7, range: 0.7, size: 0.6 * 8.5 / 7.5}]),
 				TYPE: "bullet"
 			}
 		}
@@ -606,7 +607,7 @@ Class.cerberusOfficialV1 = {
 		}, {
 			POSITION: [1.75, 2.25, 1.7, 13.25, 4, 0, 2/3],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 0.75, damage: 0.8 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.22, health: 0.67, damage: 0.7 }]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap",
 			},
@@ -615,7 +616,7 @@ Class.cerberusOfficialV1 = {
 		}, {
 			POSITION: [1.75, 2.25, 1.7, 13.25, -4, 0, 1/3],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 0.75, damage: 0.8 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.22, health: 0.67, damage: 0.7 }]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap"
 			}
@@ -624,7 +625,7 @@ Class.cerberusOfficialV1 = {
 		}, {
 			POSITION: [2, 3, 1.7, 14.75, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.5, health: 0.75, damage: 0.8 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.22, health: 0.67, damage: 0.7 }]),
 				TYPE: ["trap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "trap"
 			}
@@ -641,7 +642,7 @@ Class.minotaurOfficialV1 = {
 		}, {
 			POSITION: [3, 9.5, 1.6, 13, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.59, range: 1.05, health: 1.55 }]),
+				SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.dreadv1Generic, g.dreadv1Slow, g.dreadv1Trap, { reload: 1.55, range: 0.93, health: 1.55 }]),
 				TYPE: ["unsetTrap", {HITS_OWN_TYPE: "never"} ],
 				STAT_CALCULATOR: "block"
 			}
@@ -651,6 +652,7 @@ Class.minotaurOfficialV1 = {
 Class.sirenOfficialV1 = {
 	PARENT: "genericDreadnought1",
 	LABEL: "Siren",
+	UPGRADE_TOOLTIP: "Auto-Traps",
 	GUNS: weaponArray([
 		{
 			POSITION: [6, 7, -1.5, 7, 0, 0, 0],
@@ -706,8 +708,16 @@ Class.medicaidOfficialV1 = {
 	}]
 }
 
+// Account for lower level cap
+let tier1 = 10;
+let tier2 = 12;
+if (Config.MAX_UPGRADE_TIER < 10) {
+	tier1 = 0;
+	tier2 = 0;
+}
+
 Class.addons.UPGRADES_TIER_0.push("dreadOfficialV1");
-	Class.dreadOfficialV1.UPGRADES_TIER_10 = ["swordOfficialV1", "pacifierOfficialV1", "invaderOfficialV1", "centaurOfficialV1"];
+	Class.dreadOfficialV1[`UPGRADES_TIER_${tier1}`] = ["swordOfficialV1", "pacifierOfficialV1", "invaderOfficialV1", "centaurOfficialV1"];
 		Class.swordOfficialV1.UPGRADES_TIER_M1 = ["sabreOfficialV1", "gladiusOfficialV1"];
 		Class.pacifierOfficialV1.UPGRADES_TIER_M1 = ["appeaserOfficialV1", "peacekeeperOfficialV1", "diplomatOfficialV1"];
 		Class.invaderOfficialV1.UPGRADES_TIER_M1 = ["inquisitorOfficialV1", "assailantOfficialV1", "infiltratorOfficialV1"];
@@ -722,10 +732,10 @@ if (!enableHealers) {
 }
 
 // Build both tiers of dreads
-for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_10) {
+for (let primary of Class.dreadOfficialV1[`UPGRADES_TIER_${tier1}`]) {
 	let primaryName = primary;
 	primary = ensureIsClass(primary);
-	primary.UPGRADES_TIER_10 = [];
+	primary[`UPGRADES_TIER_${tier1}`] = [];
 
 	for (let secondary of t1Bodies) {
 		let secondaryName = secondary;
@@ -764,10 +774,10 @@ for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_10) {
 		// Actually make that guy
 		Class[definitionName] = {
 			PARENT: "genericDreadnought1",
-			UPGRADES_TIER_12: [],
 			BODY, LABEL, UPGRADE_TOOLTIP, GUNS, TURRETS,
 		};
-		Class[primaryName].UPGRADES_TIER_10.push(definitionName);
+		Class[primaryName][`UPGRADES_TIER_${tier1}`].push(definitionName);
+		Class[definitionName][`UPGRADES_TIER_${tier2}`] = [];
 
 		// Compile T2
 		for (let primary2 of primary.UPGRADES_TIER_M1) {
@@ -813,7 +823,7 @@ for (let primary of Class.dreadOfficialV1.UPGRADES_TIER_10) {
 					PARENT: "genericDreadnought1",
 					BODY, LABEL, UPGRADE_TOOLTIP, GUNS, TURRETS
 				};
-				Class[definitionName].UPGRADES_TIER_12.push(definitionName2);
+				Class[definitionName][`UPGRADES_TIER_${tier2}`].push(definitionName2);
 			}
 		}
 	}

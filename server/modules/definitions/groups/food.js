@@ -14,6 +14,7 @@ Class.egg = {
         DAMAGE: 0,
         DENSITY: 2,
         HEALTH: 0.5 * basePolygonHealth,
+        PENETRATION: 1,
         PUSHABILITY: 0,
         ACCELERATION: 0.015
     },

@@ -13,7 +13,7 @@ spawn = (tile, team, color, type = false) => {
     o.skill.score = 111069;
     o.name = "Dominator";
     o.nameColor = "#ffffff";
-    o.SIZE = room.tileWidth / 10;
+    o.SIZE = room.tileWidth / 15;
     o.isDominator = true;
     o.controllers = [new ioTypes.nearestDifferentMaster(o), new ioTypes.spin(o, { onlyWhenIdle: true })];
 
@@ -71,14 +71,14 @@ spawn = (tile, team, color, type = false) => {
     });
 },
 
-makeDefenderDominator = (tile, mainTeam, team, aliveDef) => {
+makeDefenderDominator = (tile, mainTeam, team, deadTeam, aliveDef) => {
     aliveDef = aliveDef ? aliveDef : ran.choose(dominatorTypes);
     let o = new Entity(tile.loc);
     o.define(mainTeam == team ? aliveDef : "dominator");
     o.team = team;
     o.color.base = getTeamColor(team);
     o.skill.score = 111069;
-    o.SIZE = room.tileWidth / 10;
+    o.SIZE = room.tileWidth / 15;
     o.isDominator = true;
 
     tile.color.base = getTeamColor(team);
@@ -104,16 +104,16 @@ makeDefenderDominator = (tile, mainTeam, team, aliveDef) => {
             sockets.broadcast(`A ${o.label} has been repaired!`);
         }
 
-        makeDefenderDominator(tile, mainTeam, team === mainTeam ? TEAM_ENEMIES : mainTeam, aliveDef);
+        makeDefenderDominator(tile, mainTeam, team === mainTeam ? deadTeam : mainTeam, deadTeam, aliveDef);
         sockets.broadcastRoom();
     });
 };
 
-let dominatorBlue = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_BLUE, TEAM_BLUE) }),
-    dominatorGreen = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_GREEN, TEAM_GREEN) }),
+let dominatorBlue = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_BLUE, TEAM_BLUE, TEAM_ENEMIES) }),
+    dominatorGreen = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_GREEN, TEAM_GREEN, TEAM_BLUE) }),
     dominatorContested = new Tile({ init: tile => spawn(tile, TEAM_ENEMIES, getTeamColor(TEAM_ENEMIES)) }),
-    sanctuaryBlue = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_BLUE, TEAM_BLUE, 'sanctuaryTier1') }),
-    sanctuaryGreen = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_GREEN, TEAM_GREEN, 'sanctuaryTier1') }),
+    sanctuaryBlue = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_BLUE, TEAM_BLUE, TEAM_ENEMIES, 'sanctuaryTier1') }),
+    sanctuaryGreen = new Tile({ init: tile => makeDefenderDominator(tile, TEAM_GREEN, TEAM_GREEN, TEAM_BLUE, 'sanctuaryTier3') }),
     sanctuaryContested = new Tile({ init: tile => spawn(tile, TEAM_ENEMIES, getTeamColor(TEAM_ENEMIES), 'sanctuaryTier1') });
 
 

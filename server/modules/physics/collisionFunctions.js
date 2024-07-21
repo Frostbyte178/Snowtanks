@@ -287,21 +287,43 @@ function advancedcollide(my, n, doDamage, doInelastic, nIsFirmCollide = false) {
 
 }
 
-function mooncollide(moon, n) {
-    let dx = moon.x - n.x;
-    let dy = moon.y - n.y;
-    let d2 = dx * dx + dy * dy;
-    let totalRadius = moon.realSize + n.realSize;
-    if (d2 > totalRadius ** 2) {
-        return;
-    }
+function mooncollide(moon, bounce) {
+    let collisionRadius = util.getDistance(moon, bounce);
+    let properCollisionRadius = moon.size + bounce.size
+    // Exit if too far
+    if (collisionRadius >= properCollisionRadius) return;
+    
+    // Get elasticity
+    let elasticity = bounce.type == 'tank' ? 0 : bounce.type == "bullet" ? 1 : bounce.pushability;
 
-    let dist = Math.sqrt(d2);
-    let sink = totalRadius - dist;
-    dx /= dist;
-    dy /= dist;
-    n.x -= dx * n.pushability * sink;
-    n.y -= dy * n.pushability * sink;
+    // Place at edge of the moon
+    let angleFromMoonToBounce = Math.atan2(bounce.y - moon.y, bounce.x - moon.x);
+    bounce.x = moon.x + properCollisionRadius * Math.cos(angleFromMoonToBounce);
+    bounce.y = moon.y + properCollisionRadius * Math.sin(angleFromMoonToBounce);
+    
+    // Find relative velocity vectors to the moon's surface
+    let velocityDirection = bounce.velocity.direction;
+    let tangentVelocity = bounce.velocity.length * Math.sin(angleFromMoonToBounce - velocityDirection);
+    let perpendicularVelocity = bounce.velocity.length * Math.cos(angleFromMoonToBounce - velocityDirection) * elasticity * -1;
+
+    // Exit if the reflection moves the bounced entity closer to the moon
+    if (perpendicularVelocity < 0) return;
+
+    // Get angle and magnitude of new velocity
+    let newVelocityMagnitude = Math.sqrt(tangentVelocity ** 2 + perpendicularVelocity ** 2);
+    let relativeVelocityAngle = Math.atan2(perpendicularVelocity, tangentVelocity);
+
+    // Assign velocity after rotating to the new angle
+    bounce.velocity.x = newVelocityMagnitude * Math.sin(Math.PI - relativeVelocityAngle - angleFromMoonToBounce);
+    bounce.velocity.y = newVelocityMagnitude * Math.cos(Math.PI - relativeVelocityAngle - angleFromMoonToBounce);
+}
+
+function mazewallcollidekill(bounce, wall) {
+    if (bounce.type !== 'tank' && bounce.type !== 'miniboss' && bounce.type !== 'food' && bounce.type !== 'crasher') {
+        bounce.kill();
+    } else {
+        bounce.collisionArray.push(wall);
+    }
 }
 
 function mazewallcollide(wall, bounce) {
@@ -313,73 +335,79 @@ function mazewallcollide(wall, bounce) {
         bounce.x - bounce.size > wall.x + trueWallSize ||
         bounce.y + bounce.size < wall.y - trueWallSize ||
         bounce.y - bounce.size > wall.y + trueWallSize) return 0;
-    if (wall.intangibility) return 0
-    let left = bounce.x < wall.x - trueWallSize
-    let right = bounce.x > wall.x + trueWallSize
-    let top = bounce.y < wall.y - trueWallSize
-    let bottom = bounce.y > wall.y + trueWallSize
-    let leftExposed = bounce.x - bounce.size < wall.x - trueWallSize
-    let rightExposed = bounce.x + bounce.size > wall.x + trueWallSize
-    let topExposed = bounce.y - bounce.size < wall.y - trueWallSize
-    let bottomExposed = bounce.y + bounce.size > wall.y + trueWallSize
+    if (wall.intangibility) return 0;
+    
+    // Get collision face
+    // [left, top, right, bottom]
+    let collisionFaces = [
+        bounce.x < wall.x,
+        bounce.y < wall.y,
+        bounce.x >= wall.x, // Biased just in case something ends up directly at the center of the wall
+        bounce.y > wall.y,
+    ];
+    
+    // For corner checking
+    // [left, top, right, bottom]
+    let extendedOverFaces = [
+        bounce.x < wall.x - trueWallSize,
+        bounce.y < wall.y - trueWallSize,
+        bounce.x > wall.x + trueWallSize,
+        bounce.y > wall.y + trueWallSize,
+    ];
 
-    let intersected = true
+    // Push to position if colliding with a given face
+    let wallPushPositions = [
+        {x: wall.x - trueWallSize - bounce.size},
+        {y: wall.y - trueWallSize - bounce.size},
+        {x: wall.x + trueWallSize + bounce.size},
+        {y: wall.y + trueWallSize + bounce.size},
+    ]
 
-    if (left && right) {
-        left = right = false
-    }
-    if (top && bottom) {
-        top = bottom = false
-    }
-    if (leftExposed && rightExposed) {
-        leftExposed = rightExposed = false
-    }
-    if (topExposed && bottomExposed) {
-        topExposed = bottomExposed = false
-    }
-    if ((left && !top && !bottom) || (leftExposed && !topExposed && !bottomExposed)) {
-        bounce.x -= (bounce.x + bounce.size - wall.x + trueWallSize)
-    } else if ((right && !top && !bottom) || (rightExposed && !topExposed && !bottomExposed)) {
-        bounce.x -= (bounce.x - bounce.size - wall.x - trueWallSize)
-    } else if ((top && !left && !right) || (topExposed && !leftExposed && !rightExposed)) {
-        bounce.y -= (bounce.y + bounce.size - wall.y + trueWallSize)
-    } else if ((bottom && !left && !right) || (bottomExposed && !leftExposed && !rightExposed)) {
-        bounce.y -= (bounce.y - bounce.size - wall.y - trueWallSize)
-    } else {
-        let x = leftExposed ? -trueWallSize : rightExposed ? trueWallSize : 0
-        let y = topExposed ? -trueWallSize : bottomExposed ? trueWallSize : 0
+    // Face collisions
+    for (let i = 0; i < 4; i++) {
+        // if not hitting a face or extending over neighboring faces, continue to the next face
+        if (!collisionFaces[i] | extendedOverFaces[(i + 3) % 4] | extendedOverFaces[(i + 1) % 4]) continue;
 
-        let point = new Vector(wall.x + x - bounce.x, wall.y + y - bounce.y)
+        // Decide to kill bounce type
+        mazewallcollidekill(bounce, wall);
 
-        if (!x || !y) {
-            if (bounce.x + bounce.y < wall.x + wall.y) { // top left
-                if (bounce.x - bounce.y < wall.x - wall.y) { // bottom left
-                    bounce.x -= (bounce.x + bounce.size - wall.x + trueWallSize)
-                } else { // top right
-                    bounce.y -= (bounce.y + bounce.size - wall.y + trueWallSize)
-                }
-            } else { // bottom right
-                if (bounce.x - bounce.y < wall.x - wall.y) { // bottom left
-                    bounce.y -= (bounce.y - bounce.size - wall.y - trueWallSize)
-                } else { // top right
-                    bounce.x -= (bounce.x - bounce.size - wall.x - trueWallSize)
-                }
-            }
-        } else if (!(left || right || top || bottom) || point.isShorterThan(bounce.size)) {
-            let force = bounce.size / point.length - 1;
-            bounce.x -= point.x * force
-            bounce.y -= point.y * force
-        } else {
-            intersected = false
+        // Push and fix velocity to zero
+        for (let axis in wallPushPositions[i]) {
+            bounce[axis] = wallPushPositions[i][axis];
+            bounce.velocity[axis] = 0;
+            return true;
         }
     }
 
-    if (intersected) {
-        if (bounce.type !== 'tank' && bounce.type !== 'miniboss' && bounce.type !== 'food' && bounce.type !== 'crasher') {
-            bounce.kill();
-        } else {
-            bounce.collisionArray.push(wall);
-        }
+    // Corner collision points
+    // [left & top, top & right, right & bottom, bottom & left]
+    let cornerPositions = [
+        {x: wall.x - trueWallSize, y: wall.y - trueWallSize},
+        {x: wall.x + trueWallSize, y: wall.y - trueWallSize},
+        {x: wall.x + trueWallSize, y: wall.y + trueWallSize},
+        {x: wall.x - trueWallSize, y: wall.y + trueWallSize},
+    ]
+
+    // Corner collisions
+    for (let i = 0; i < 4; i++) {
+        // Check for current face and next face simultanously, as well as if we're sticking over that face
+        if (
+            !collisionFaces[i] | !collisionFaces[(i + 1) % 4] | 
+            !extendedOverFaces[i] | !extendedOverFaces[(i + 1) % 4]
+        ) continue;
+
+        let cornerX = cornerPositions[i].x;
+        let cornerY = cornerPositions[i].y;
+        // Exit if too far away from the corner
+        if (util.getDistance(bounce, {x: cornerX, y: cornerY}) > bounce.size) return;
+
+        // Decide to kill bounce type
+        mazewallcollidekill(bounce, wall);
+        
+        let angleFromCornerToBounce = Math.atan2(bounce.y - cornerY, bounce.x - cornerX);
+        bounce.x = cornerX + bounce.size * Math.cos(angleFromCornerToBounce);
+        bounce.y = cornerY + bounce.size * Math.sin(angleFromCornerToBounce);
+        return true;
     }
 };
 

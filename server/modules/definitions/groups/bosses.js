@@ -155,7 +155,7 @@ Class.eliteSpawner = {
         }, {
             POSITION: [2, 18, 1, 11, 0, 60, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.5, maxSpeed: 0.5, heath: 1.35}]),
+                SHOOT_SETTINGS: combineStats([g.drone, {reload: 2, size: 0.5, speed: 0.6, maxSpeed: 0.6, heath: 1.35}]),
                 TYPE: "sentrySwarmMinion",
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
@@ -164,7 +164,7 @@ Class.eliteSpawner = {
         }, {
             POSITION: [2, 18, 1, 11, 0, 180, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.5, maxSpeed: 0.5, heath: 1.35}]),
+                SHOOT_SETTINGS: combineStats([g.drone, {reload: 2, size: 0.5, speed: 0.6, maxSpeed: 0.6, heath: 1.35}]),
                 TYPE: "sentryTrapMinion",
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,
@@ -173,7 +173,7 @@ Class.eliteSpawner = {
         }, {
             POSITION: [2, 18, 1, 11, 0, 300, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, {size: 0.5, speed: 0.5, maxSpeed: 0.5, heath: 1.35}]),
+                SHOOT_SETTINGS: combineStats([g.drone, {reload: 2, size: 0.5, speed: 0.6, maxSpeed: 0.6, heath: 1.35}]),
                 TYPE: "sentryGunMinion",
                 SYNCS_SKILLS: true,
                 AUTOFIRE: true,

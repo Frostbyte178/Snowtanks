@@ -6,6 +6,10 @@
 ![Discord](https://img.shields.io/discord/1004907608018264094)
 ![GitHub repo size](https://img.shields.io/github/repo-size/Taureon/aps-plus-plus)
 
+We're currently in the process of [rebuilding OSA from scratch on Codeberg](https://codeberg.org/Taureon/OpenSourceArras). This repository will be archived once the Codeberg repo is in a playable state and has most of the features from regular OSA.
+
+## Important Notice
+
 **Open Source Arras is beta software.** This build is **not** representative of the final product. Expect bugs and missing features.
 
 Major updates may introduce breaking changes that alter how certain things work. It is **your responsibility** to keep your private server up-to-date and functioning.

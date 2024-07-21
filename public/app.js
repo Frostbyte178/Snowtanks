@@ -73,6 +73,8 @@ class Animation {
 }
 let controls = document.getElementById("controlSettings"),
     resetButton = document.getElementById("resetControls"),
+    moreControls = document.getElementById("moreControls"),
+    moreControlsLength = null,
     selectedElement = null,
     controlsArray = [],
     defaultKeybinds = {},
@@ -205,12 +207,12 @@ function unselectElement() {
     if (window.getSelection) {
         window.getSelection().removeAllRanges();
     }
-    selectedElement.element.parentNode.classList.remove("editing");
+    selectedElement.element.parentNode.parentNode.classList.remove("editing");
     selectedElement = null;
 }
 function selectElement(element) {
     selectedElement = element;
-    selectedElement.element.parentNode.classList.add("editing");
+    selectedElement.element.parentNode.parentNode.classList.add("editing");
     if (selectedElement.keyCode !== -1 && window.getSelection) {
         let selection = window.getSelection();
         selection.removeAllRanges();
@@ -220,7 +222,7 @@ function selectElement(element) {
     }
 }
 function setKeybind(key, keyCode) {
-    selectedElement.element.parentNode.classList.remove("editing");
+    selectedElement.element.parentNode.parentNode.classList.remove("editing");
     resetButton.classList.add("active");
     if (keyCode !== selectedElement.keyCode) {
         let otherElement = controlsArray.find(c => c.keyCode === keyCode);
@@ -242,7 +244,7 @@ function setKeybind(key, keyCode) {
 function getElements(kb, storeInDefault) {
     for (let row of controls.rows) {
         for (let cell of row.cells) {
-            let element = cell.firstChild;
+            let element = cell.firstChild.firstChild;
             if (!element) continue;
             let key = element.dataset.key;
             if (storeInDefault) defaultKeybinds[key] = [element.innerText, global[key]];
@@ -314,18 +316,37 @@ window.onload = async () => {
     util.retrieveFromLocalStorage("optScreenshotMode");
     util.retrieveFromLocalStorage("optPredictive");
     util.retrieveFromLocalStorage("optFancy");
+    util.retrieveFromLocalStorage("optLowResolution");
     util.retrieveFromLocalStorage("coloredHealthbars");
     util.retrieveFromLocalStorage("centerTank");
     util.retrieveFromLocalStorage("optColors");
     util.retrieveFromLocalStorage("optCustom");
     util.retrieveFromLocalStorage("optNoPointy");
     util.retrieveFromLocalStorage("optBorders");
+    util.retrieveFromLocalStorage("optNoGrid");
     util.retrieveFromLocalStorage("seperatedHealthbars");
     util.retrieveFromLocalStorage("autoLevelUp");
     util.retrieveFromLocalStorage("optMobile");
+    // GUI
+    util.retrieveFromLocalStorage("optRenderGui");
+    util.retrieveFromLocalStorage("optRenderLeaderboard");
+    util.retrieveFromLocalStorage("optRenderNames");
+    util.retrieveFromLocalStorage("optRenderHealth");
+    util.retrieveFromLocalStorage("optRenderScores");
+    util.retrieveFromLocalStorage("optReducedInfo");
+    util.retrieveFromLocalStorage("showCrosshair");
+    util.retrieveFromLocalStorage("showJoystick");
     // Set default theme
     if (document.getElementById("optColors").value === "") {
         document.getElementById("optColors").value = "normal";
+        // Also do auto check for GUI stuff.
+        document.getElementById("optRenderGui").checked = true;
+        document.getElementById("optRenderLeaderboard").checked = true;
+        document.getElementById("optRenderNames").checked = true;
+        document.getElementById("optRenderHealth").checked = true;
+        document.getElementById("optRenderScores").checked = true;
+        document.getElementById("optFancy").checked = true;
+        if (global.mobile) document.getElementById("showCrosshair").checked = true, document.getElementById("showJoystick").checked = true;
     }
     if (document.getElementById("optBorders").value === "") {
         document.getElementById("optBorders").value = "normal";
@@ -357,6 +378,17 @@ window.onload = async () => {
             resetButton.classList.remove("active"); 
             resetButton.classList.remove("spin");
         }, 400);
+    });
+    moreControls.addEventListener("click", () => {
+      if (moreControlsLength) {
+        for (var b = 0; b < moreControlsLength.length; b++) moreControlsLength[b].classList.add("hidden");
+        moreControlsLength = null;
+        moreControls.classList.remove("x");
+      } else {
+        moreControlsLength = document.querySelectorAll("#controlSettings tr.hidden");
+        for (b = 0; b < moreControlsLength.length; b++) moreControlsLength[b].classList.remove("hidden");
+        moreControls.classList.add("x");
+      }
     });
     // Game start stuff
     document.getElementById("startButton").onclick = () => startGame();
@@ -404,9 +436,30 @@ function toggleOptionsMenu() {
         clicked || ((clicked = !0), toggle());
     };
 };
+// Tab options
+function tabOptionsMenuSwitcher() {
+    let buttonTabs = document.getElementById("optionMenuTabs"),
+    tabOptions = [
+      document.getElementById("tabAppearance"),
+      document.getElementById("tabOptions"),
+      document.getElementById("tabControls"),
+      document.getElementById("tabAbout"),
+    ];
+    for (let g = 1; g < tabOptions.length; g++) tabOptions[g].style.display = "none";
+    let e = 0;
+    for (let g = 0; g < buttonTabs.children.length; g++)
+        buttonTabs.children[g].addEventListener("click", () => {
+            e !== g &&
+            (buttonTabs.children[e].classList.remove("active"), // Remove the active class
+            buttonTabs.children[g].classList.add("active"), // Add the clicked active class
+            (tabOptions[e].style.display = "none"), // Dont display the old menu.
+            (tabOptions[g].style.display = "block"), // Display the menu.
+            (e = g))
+      });
+}
 function resizeEvent() {
     let scale = window.devicePixelRatio;
-    if (!settings.graphical.fancyAnimations) {
+    if (settings.graphical.lowResolution) {
         scale *= 0.5;
     }
     global.screenWidth = window.innerWidth * scale;
@@ -422,7 +475,8 @@ var ctx = c.getContext("2d");
 var c2 = document.createElement("canvas");
 var ctx2 = c2.getContext("2d");
 ctx2.imageSmoothingEnabled = true;
-global.mobile && document.getElementById("controlsSection").remove();
+// important functions
+tabOptionsMenuSwitcher();
 toggleOptionsMenu();
 // Animation things
 function Smoothbar(value, speed, sharpness = 3, lerpValue = 0.025) {
@@ -593,6 +647,7 @@ function startGame() {
     }
     // Get options
     util.submitToLocalStorage("optFancy");
+    util.submitToLocalStorage("optLowResolution");
     util.submitToLocalStorage("centerTank");
     util.submitToLocalStorage("optBorders");
     util.submitToLocalStorage("optNoPointy");
@@ -602,7 +657,17 @@ function startGame() {
     util.submitToLocalStorage("optScreenshotMode");
     util.submitToLocalStorage("coloredHealthbars");
     util.submitToLocalStorage("seperatedHealthbars");
-    settings.graphical.fancyAnimations = !document.getElementById("optFancy").checked;
+    util.submitToLocalStorage("optNoGrid");
+    // GUI
+    util.submitToLocalStorage("optRenderGui");
+    util.submitToLocalStorage("optRenderLeaderboard");
+    util.submitToLocalStorage("optRenderNames");
+    util.submitToLocalStorage("optRenderHealth");
+    util.submitToLocalStorage("optRenderScores");
+    util.submitToLocalStorage("optReducedInfo");
+    util.submitToLocalStorage("showCrosshair");
+    util.submitToLocalStorage("showJoystick");
+    settings.graphical.fancyAnimations = document.getElementById("optFancy").checked;
     settings.graphical.centerTank = document.getElementById("centerTank").checked;
     settings.graphical.pointy = !document.getElementById("optNoPointy").checked;
     settings.game.autoLevelUp = document.getElementById("autoLevelUp").checked;
@@ -610,9 +675,17 @@ function startGame() {
     settings.graphical.screenshotMode = document.getElementById("optScreenshotMode").checked;
     settings.graphical.coloredHealthbars = document.getElementById("coloredHealthbars").checked;
     settings.graphical.seperatedHealthbars = document.getElementById("seperatedHealthbars").checked;
-    if (global.mobile) {
-        settings.graphical.fancyAnimations = false; // this basicly improves the performance.
-    }
+    settings.graphical.lowResolution = document.getElementById("optLowResolution").checked;
+    settings.graphical.showGrid = !document.getElementById("optNoGrid").checked;
+    // GUI
+    global.GUIStatus.renderGUI = document.getElementById("optRenderGui").checked;
+    global.GUIStatus.renderLeaderboard = document.getElementById("optRenderLeaderboard").checked;
+    global.GUIStatus.renderPlayerNames = document.getElementById("optRenderNames").checked;
+    global.GUIStatus.renderPlayerScores = document.getElementById("optRenderScores").checked;
+    global.GUIStatus.renderhealth = document.getElementById("optRenderHealth").checked;
+    global.GUIStatus.minimapReducedInfo = document.getElementById("optReducedInfo").checked;
+    global.mobileStatus.enableCrosshair = document.getElementById("showCrosshair").checked;
+    global.mobileStatus.showJoysticks = document.getElementById("showJoystick").checked;
     switch (document.getElementById("optBorders").value) {
         case "normal":
             settings.graphical.darkBorders = settings.graphical.neon = false;
@@ -629,6 +702,14 @@ function startGame() {
             settings.graphical.darkBorders = settings.graphical.neon = true;
             break;
     }
+    switch (document.getElementById("optMobile").value) {
+        case "desktop":
+            global.mobile = false;
+            break;
+        case "mobileWithBigJoysticks":
+            global.mobileStatus.useBigJoysticks = true;
+            break;
+    }
     util.submitToLocalStorage("optColors");
     let a = document.getElementById("optColors").value;
     color = color[a === "" ? "normal" : a];
@@ -643,7 +724,6 @@ function startGame() {
     let playerKeyInput = document.getElementById("playerKeyInput");
     let autolevelUpInput = document.getElementById("autoLevelUp").checked;
     global.autolvlUp = autolevelUpInput;
-    if (document.getElementById("optMobile").value === "desktop") global.mobile = false;
     // Name and keys
     util.submitToLocalStorage("playerNameInput");
     util.submitToLocalStorage("playerKeyInput");
@@ -1009,7 +1089,8 @@ const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, line
         initStrokeWidth = lineWidthMult * Math.max(settings.graphical.mininumBorderChunk, ratio * settings.graphical.borderChunk);
     source.guns.update();
     if (fade === 0 || alpha === 0) return;
-    if (render.expandsWithDeath) drawSize *= 1 + 0.5 * (1 - fade);
+    if (render.expandsWithDeath && settings.graphical.fancyAnimations) drawSize *= 1 + 0.5 * (1 - fade);
+    if (!settings.graphical.fancyAnimations) drawSize *= 1 + -2 * (1 - fade);
     if (settings.graphical.fancyAnimations && assignedContext != ctx2 && (fade !== 1 || alpha !== 1)) {
         context = ctx2;
         context.canvas.width = context.canvas.height = drawSize * m.position.axis / ratio * 2 + initStrokeWidth;
@@ -1156,11 +1237,10 @@ function drawHealth(x, y, instance, ratio, alpha) {
     if (instance.drawsHealth) {
         let health = instance.render.health.get(),
             shield = instance.render.shield.get();
-        if (health < 0.99 || shield < 0.99) {
+        if (health < 0.99 || shield < 0.99 && global.GUIStatus.renderhealth) {
             let col = settings.graphical.coloredHealthbars ? gameDraw.mixColors(gameDraw.modifyColor(instance.color), color.guiwhite, 0.5) : color.lgreen;
             let yy = y + realSize + 15 * ratio;
             let barWidth = 3 * ratio;
-            ctx.globalAlpha = fade * (alpha ** 2);
             //TODO: seperate option for hp bars
             // function drawBar(x1, x2, y, width, color) {
 
@@ -1176,15 +1256,16 @@ function drawHealth(x, y, instance, ratio, alpha) {
                 drawBar(x - size, x - size + 2 * size * shield, yy, barWidth, settings.graphical.coloredHealthbars ? gameDraw.mixColors(col, color.guiblack, 0.25) : color.teal);
                 ctx.globalAlpha = 1;
             }
+            if (gui.showhealthtext) drawText(Math.round(instance.healthN) + "/" + Math.round(instance.maxHealthN), x, yy + barWidth * 2 + barWidth * settings.graphical.seperatedHealthbars * 2 + 10, 12 * ratio, color.guiwhite, "center");
+            ctx.globalAlpha = fade * (alpha ** 2);
         }
     }
     if (instance.id !== gui.playerid && instance.nameplate) {
         var name = instance.name.substring(7, instance.name.length + 1);
         var namecolor = instance.name.substring(0, 7);
-        ctx.globalAlpha = alpha;
-        drawText(name, x, y - realSize - 22 * ratio, 12 * ratio, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
-        drawText(util.handleLargeNumber(instance.score, 1), x, y - realSize - 12 * ratio, 6 * ratio, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = fade * (alpha ** 2);
+        if (global.GUIStatus.renderPlayerNames) drawText(name, x, y - realSize - 22 * ratio, 12 * ratio, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
+        if (global.GUIStatus.renderPlayerScores) drawText(util.handleLargeNumber(instance.score, 1), x, y - realSize - 12 * ratio, 6 * ratio, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
     }
 }
 
@@ -1465,22 +1546,24 @@ function drawFloor(px, py, ratio) {
             ctx.fillRect(left, top, right - left, bottom - top);
         }
     }
-    let gridsize = 30 * ratio;
-    if (gridsize < 7) return;
-    ctx.lineWidth = ratio;
-    ctx.strokeStyle = settings.graphical.screenshotMode ? color.guiwhite : color.guiblack;
-    ctx.globalAlpha = 0.04;
-    ctx.beginPath();
-    for (let x = (global.screenWidth / 2 - px) % gridsize; x < global.screenWidth; x += gridsize) {
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, global.screenHeight);
+    if (settings.graphical.showGrid) {
+        let gridsize = 30 * ratio;
+        if (gridsize < 7) return;
+        ctx.lineWidth = ratio;
+        ctx.strokeStyle = settings.graphical.screenshotMode ? color.guiwhite : color.guiblack;
+        ctx.globalAlpha = 0.04;
+        ctx.beginPath();
+        for (let x = (global.screenWidth / 2 - px) % gridsize; x < global.screenWidth; x += gridsize) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, global.screenHeight);
+        }
+        for (let y = (global.screenHeight / 2 - py) % gridsize; y < global.screenHeight; y += gridsize) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(global.screenWidth, y);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
     }
-    for (let y = (global.screenHeight / 2 - py) % gridsize; y < global.screenHeight; y += gridsize) {
-        ctx.moveTo(0, y);
-        ctx.lineTo(global.screenWidth, y);
-    }
-    ctx.stroke();
-    ctx.globalAlpha = 1;
 }
 
 let oldpx = 0;
@@ -1891,21 +1974,16 @@ function drawSelfInfo(spacing, alcoveSize, max) {
     drawBar(x + len * 0.1, x + len * (0.1 + 0.8 * (max ? Math.min(1, gui.__s.getScore() / max) : 1)), y + height / 2, height - 3 - settings.graphical.barChunk / 4, color.green);
 
     //write the score and name
-    drawText("Score: " + util.formatLargeNumber(Math.floor(gui.__s.getScore())), x + len / 2, y + height / 2 + 1, height - 3.5, color.guiwhite, "center", true);
+    drawText("Score: " + util.formatLargeNumber(Math.round(gui.__s.getScore())), x + len / 2, y + height / 2 + 1, height - 3.5, color.guiwhite, "center", true);
     ctx.lineWidth = 4;
     drawText(global.player.name, Math.round(x + len / 2) + 0.5, Math.round(y - 10 - vspacing) + 0.5, 32, global.nameColor = "#ffffff" ? color.guiwhite : global.nameColor, "center");
 }
-
 function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
     // Draw minimap and FPS monitors
     //minimap stuff starts here
     let orangeColor = false;
     let len = alcoveSize; // * global.screenWidth;
     let height = (len / global.gameWidth) * global.gameHeight;
-    if (global.mobile) {
-        height = (len / global.gameWidth / 1.9) * global.gameHeight
-        len = alcoveSize * 0.6;
-    }
     if (global.gameHeight > global.gameWidth || global.gameHeight < global.gameWidth) {
         let ratio = [
             global.gameWidth / global.gameHeight,
@@ -1923,8 +2001,9 @@ function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
         len /= ratio;
         height /= ratio;
     }
-    let x = global.screenWidth - spacing - len;
-    let y = global.screenHeight - height - spacing;
+    let upgradeColumns = Math.ceil(gui.upgrades.length / 9);
+    let x = global.mobile ? spacing : global.screenWidth - spacing - len;
+    let y = global.mobile ? (global.mobile ? global.canUpgrade ? (alcoveSize / 3.5 /*+ spacing * 2*/) * mobileUpgradeGlide.get() * upgradeColumns / 3.5 * (upgradeColumns + 3.55) + 67 : 0 + global.canSkill || global.showSkill ? statMenu.get() * alcoveSize / 2.6 + spacing / 0.75 : 0 : 0) + spacing: global.screenHeight - height - spacing;
     ctx.globalAlpha = 0.4;
     let W = global.roomSetup[0].length,
         H = global.roomSetup.length,
@@ -1969,7 +2048,7 @@ function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
                 drawGuiCircle(x + (entity.x / global.gameWidth) * len, y + (entity.y / global.gameHeight) * height, (entity.size / global.gameWidth) * len + 0.2);
                 break;
             case 0:
-                if (entity.id !== gui.playerid) drawGuiCircle(x + (entity.x / global.gameWidth) * len, y + (entity.y / global.gameHeight) * height, 2);
+                if (entity.id !== gui.playerid) drawGuiCircle(x + (entity.x / global.gameWidth) * len, y + (entity.y / global.gameHeight) * height, !global.mobile ? 2 : 3.5);
                 break;
         }
     }
@@ -1977,7 +2056,11 @@ function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = color.guiblack;
     ctx.fillStyle = color.guiblack;
-    drawGuiCircle(x + (global.player.cx / global.gameWidth) * len - 0, y + (global.player.cy / global.gameHeight) * height - 1, !global.mobile ? 2 : 3, false);
+    drawGuiCircle(x + (global.player.cx / global.gameWidth) * len - 0, y + (global.player.cy / global.gameHeight) * height - 1, !global.mobile ? 2 : 3.5, false);
+    if (global.mobile) {
+        x = global.screenWidth - spacing - len;
+        y = global.screenHeight - spacing;
+    }
     if (global.showDebug) {
         drawGuiRect(x, y - 40, len, 30);
         lagGraph(lag.get(), x, y - 40, len, 30, color.teal);
@@ -1994,16 +2077,15 @@ function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
         drawText("Open Source Arras", x + len, y - 50 - 5 * 14 - 2, 15, "#1081E5", "right");
         drawText("Prediction: " + Math.round(GRAPHDATA) + "ms : " + global.mspt + " mspt", x + len, y - 50 - 4 * 14, 10, color.guiwhite, "right");
         // drawText(`Bandwidth: ${gui.bandwidth.in} in, ${gui.bandwidth.out} out`, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
-        drawText("Memory: " + global.metrics.rendergap + " Mib : " + "Class: " + gui.class, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
+        drawText("Memory: " + global.metrics.rendergap.toFixed(1) + " Mib : " + "Class: " + gui.class, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
         drawText("Update Rate: " + global.metrics.updatetime + "Hz", x + len, y - 50 - 2 * 14, 10, color.guiwhite, "right");
         drawText("Server Speed: " + (100 * gui.fps).toFixed(2) + "% : Client Speed: " + global.metrics.rendertime + " FPS", x + len, y - 50 - 1 * 14, 10, orangeColor ? color.orange : color.guiwhite, "right");
         drawText(global.metrics.latency + " ms - " + global.serverName, x + len, y - 50, 10, color.guiwhite, "right");
-    } else {
+    } else if (!global.GUIStatus.minimapReducedInfo) {
         drawText("Open Source Arras", x + len, y - 50 - 2 * 14 - 2, 15, "#1081E5", "right");
         drawText((100 * gui.fps).toFixed(2) + "% : " + global.metrics.rendertime + " FPS", x + len, y - 50 - 1 * 14, 10, orangeColor ? color.orange : color.guiwhite, "right");
         drawText(global.metrics.latency + " ms : " + global.metrics.updatetime + "Hz", x + len, y - 50, 10, color.guiwhite, "right");
-    }
-    global.fps = global.metrics.rendertime;
+    } else drawText("Open Source Arras", x + len, y - 22 - 2 * 14 - 2, 15, "#1081E5", "right");
 }
 
 function drawLeaderboard(spacing, alcoveSize, max) {
@@ -2107,7 +2189,7 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
             global.clickables.upgrade.place(i, x * clickableRatio, y * clickableRatio, len * clickableRatio, height * clickableRatio);
             let upgradeKey = getClassUpgradeKey(upgradeNum);
 
-            drawEntityIcon(model, x, y, len, height, 1, upgradeSpin, 0.6, colorIndex++, !global.mobile ? upgradeKey : false, upgradeNum == upgradeHoverIndex);
+            drawEntityIcon(model, x, y, len, height, 1, upgradeSpin, 0.6, colorIndex++, !global.mobile ? upgradeKey : false, !global.mobile ? upgradeNum == upgradeHoverIndex : false);
 
             ticker++;
             upgradeNum++;
@@ -2126,7 +2208,7 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
         global.clickables.skipUpgrades.place(0, (buttonX - m / 2) * clickableRatio, buttonY * clickableRatio, m * clickableRatio, h * clickableRatio);
 
         // Upgrade tooltip
-        if (upgradeHoverIndex > -1 && upgradeHoverIndex < gui.upgrades.length) {
+        if (upgradeHoverIndex > -1 && upgradeHoverIndex < gui.upgrades.length && !global.mobile) {
             let picture = gui.upgrades[upgradeHoverIndex][2];
             if (picture.upgradeTooltip.length > 0) {
                 let boxWidth = measureText(picture.name, alcoveSize / 10),
@@ -2163,8 +2245,8 @@ function drawAvailableUpgrades(spacing, alcoveSize) {
 function drawMobileJoysticks() {
     // Draw the joysticks.
     let radius = Math.min(
-        global.screenWidth * 0.8,
-        global.screenHeight * 0.16
+        global.mobileStatus.useBigJoysticks ? global.screenWidth * 0.8 : global.screenWidth * 0.6,
+        global.mobileStatus.useBigJoysticks ? global.screenHeight * 0.16 : global.screenHeight * 0.12
     );
     ctx.globalAlpha = 0.3;
     ctx.fillStyle = "#ffffff";
@@ -2187,36 +2269,40 @@ function drawMobileJoysticks() {
     ctx.globalAlpha = 0.5;
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
-    ctx.arc(
-        canvas.movementTouchPos.x + (global.screenWidth * 1) / 6,
-        canvas.movementTouchPos.y + (global.screenHeight * 2) / 3,
-        radius / 2.5,
-        0,
-        2 * Math.PI
-    );
-    ctx.arc(
-        canvas.controlTouchPos.x + (global.screenWidth * 5) / 6,
-        canvas.controlTouchPos.y + (global.screenHeight * 2) / 3,
-        radius / 2.5,
-        0,
-        2 * Math.PI
-    );
+    if (global.mobileStatus.showJoysticks) {
+        ctx.arc(
+            canvas.movementTouchPos.x + (global.screenWidth * 1) / 6,
+            canvas.movementTouchPos.y + (global.screenHeight * 2) / 3,
+            radius / 2.5,
+            0,
+            2 * Math.PI
+        );
+        ctx.arc(
+            canvas.controlTouchPos.x + (global.screenWidth * 5) / 6,
+            canvas.controlTouchPos.y + (global.screenHeight * 2) / 3,
+            radius / 2.5,
+            0,
+            2 * Math.PI
+        );
+    }
     ctx.fill();
     // crosshair
-    const crosshairpos = {
-        x: global.screenWidth / 2 + global.player.target.x,
-        y: global.screenHeight / 2 + global.player.target.y
-    };
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = "#202020"
-    ctx.beginPath();
-    ctx.moveTo(crosshairpos.x, crosshairpos.y - 20);
-    ctx.lineTo(crosshairpos.x, crosshairpos.y + 20);
-    ctx.moveTo(crosshairpos.x - 20, crosshairpos.y);
-    ctx.lineTo(crosshairpos.x + 20, crosshairpos.y);
-    ctx.closePath();
-    ctx.stroke();
+    if (global.mobileStatus.showCrosshair && global.mobileStatus.enableCrosshair) {
+        const crosshairpos = {
+            x: global.screenWidth / 2 + global.player.target.x,
+            y: global.screenHeight / 2 + global.player.target.y
+        };
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = "#202020"
+        ctx.beginPath();
+        ctx.moveTo(crosshairpos.x, crosshairpos.y - 20);
+        ctx.lineTo(crosshairpos.x, crosshairpos.y + 20);
+        ctx.moveTo(crosshairpos.x - 20, crosshairpos.y);
+        ctx.lineTo(crosshairpos.x + 20, crosshairpos.y);
+        ctx.closePath();
+        ctx.stroke();
+    }
 }
 
 function makeButton(index, x, y, width, height, text, clickableRatio) {
@@ -2285,7 +2371,26 @@ function drawMobileButtons(spacing, alcoveSize) {
     }
     if (global.clickables.mobileButtons.altFire) buttons.push([["\u2756", 2, 2]]);
 
-    makeButtons(buttons, spacing * 2, yOffset + spacing, baseSize, clickableRatio, spacing);
+    let len = alcoveSize;
+    let height = (len / global.gameWidth) * global.gameHeight;
+    if (global.gameHeight > global.gameWidth || global.gameHeight < global.gameWidth) {
+        let ratio = [
+            global.gameWidth / global.gameHeight,
+            global.gameHeight / global.gameWidth,
+        ];
+        len /= ratio[1] * 1.5;
+        height /= ratio[1] * 1.5;
+        if (len > alcoveSize * 2) {
+            ratio = len / (alcoveSize * 2);
+       } else if (height > alcoveSize * 2) {
+            ratio = height / (alcoveSize * 2);
+        } else {
+            ratio = 1;
+        }
+        len /= ratio;
+        height /= ratio;
+   }
+    makeButtons(buttons, len + spacing * 2, yOffset + spacing, baseSize, clickableRatio, spacing);
 }
 const gameDrawAlive = (ratio, drawRatio) => {
     let GRAPHDATA = 0;
@@ -2318,6 +2423,7 @@ const gameDrawAlive = (ratio, drawRatio) => {
     let lb = leaderboard.get();
     let max = lb.max;
     global.canSkill = !!gui.points && !global.showTree;
+    global.fps = global.metrics.rendertime;
     if (global.showTree) {
         drawUpgradeTree(spacing, alcoveSize);
     } else {
@@ -2325,12 +2431,14 @@ const gameDrawAlive = (ratio, drawRatio) => {
             drawMobileJoysticks();
             drawMobileButtons(spacing, alcoveSize);
         }
-        drawMessages(spacing, alcoveSize);
-        drawSkillBars(spacing, alcoveSize);
-        drawSelfInfo(spacing, alcoveSize, max);
-        drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA);
-        drawLeaderboard(spacing, alcoveSize, max, lb);
-        drawAvailableUpgrades(spacing, alcoveSize);
+        if (global.GUIStatus.renderGUI) {
+            drawMessages(spacing, alcoveSize);
+            drawSkillBars(spacing, alcoveSize);
+            drawSelfInfo(spacing, alcoveSize, max);
+            drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA);
+            if (global.GUIStatus.renderLeaderboard) drawLeaderboard(spacing, alcoveSize, max, lb);
+            drawAvailableUpgrades(spacing, alcoveSize);
+        } else drawAvailableUpgrades(spacing, alcoveSize);
     }
     global.metrics.lastrender = getNow();
 };
@@ -2378,11 +2486,11 @@ let getDeath = () => {
 let getTips = () => {
     let txt = "❓ ";
     if (global.finalKillers.length) {
-        txt += "Try to get revenge on your enemy to get your score back!";
+        txt += "lol you died";
     } else if (!global.autolvlUp) {
-        txt += "Enable auto level up at the options menu to get instant level 45!";
+        txt += "Enable auto-level up in the options menu to get level 45";
     } else {
-        txt += "Try killing players to earn XP!";
+        txt += "Kill players and polygons to get more score";
     }
     return txt;
 };
@@ -2400,11 +2508,12 @@ const gameDrawDead = () => {
         xx = global.screenWidth / 2 - scale * position.middle.x * 0.707,
         yy = global.screenHeight / 2 - 35 + scale * position.middle.y * 0.707,
         picture = util.getEntityImageFromMockup(gui.type, gui.color),
-        baseColor = picture.color;
+        baseColor = picture.color,
+        timestamp = Math.floor(Date.now() /1000);
     drawEntity(baseColor, (xx - 190 - len / 2 + 0.5) | 0, (yy - 10 + 0.5) | 0, picture, 1.5, 1, (0.5 * scale) / picture.realSize, 1, -Math.PI / 4, true);
     drawText("Level " + gui.__s.getLevel(), x - 275, y - -80, 14, color.guiwhite, "center");
     drawText(picture.name, x - 275, y - -110, 24, color.guiwhite, "center");
-    drawText("Game over, try again!", x, y - 80, 8, color.guiwhite, "center");
+    drawText(timestamp + '', x, y - 80, 10, color.guiwhite, "center");
     if (global.player.name == "") {
         drawText("Your Score: ", x - 170, y - 30, 24, color.guiwhite);
     } else {
@@ -2415,7 +2524,7 @@ const gameDrawDead = () => {
     drawText(getKills(), x - 170, y + 77, 16, color.guiwhite);
     drawText(getDeath(), x - 170, y + 99, 16, color.guiwhite);
     drawText(getTips(), x - 170, y + 122, 16, color.guiwhite);
-    drawText("🦆 The server was " + +(100 * gui.fps).toFixed(0) + "%" + " active for the run!", x - 170, y + 144, 16, color.guiwhite);
+    drawText("🦆 The server was " + +(100 * gui.fps).toFixed(0) + "%" + " active", x - 170, y + 144, 16, color.guiwhite);
     drawText(global.cannotRespawn ? global.respawnTimeout ? "(" + global.respawnTimeout + " Secon" + `${global.respawnTimeout <= 1 ? 'd' : 'ds'} ` + "left to respawn)" : "(You cannot respawn)" : global.mobile ? "(Tap to respawn)" : "(Press enter to respawn)", x, y + 189, 16, color.guiwhite, "center");
     ctx.translate(0, shift * global.screenHeight);
 };

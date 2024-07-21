@@ -150,7 +150,7 @@ Class.spamAutoTurret = {
 		{
 			POSITION: [22, 10, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard, g.flankGuard, g.autoTurret, {recoil: 0.2}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard, g.flankGuard, g.autoTurret, {recoil: 0.125}]),
 				TYPE: "bullet",
 			},
 		},
@@ -347,7 +347,7 @@ Class.byteTurretOfficialV2 = {
 		{
 			POSITION: [22, 10, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, {health: 1.2, speed: 0.85, recoil: 1.15}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, {size: 0.9, health: 1.3, speed: 0.85, recoil: 0.8, range: 0.45}]),
 				TYPE: "bullet",
 			},
 		},
@@ -619,7 +619,7 @@ Class.kilobyteTurretOfficialV2 = {
 		{
 			POSITION: [26, 10, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, g.assassin, {health: 1.39, speed: 0.63, recoil: 1.8, range: 0.55}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, g.assassin, {size: 0.9, health: 1.39, speed: 0.63, recoil: 1.25, range: 0.5}]),
 				TYPE: "bullet",
 			},
 		},
@@ -1049,7 +1049,7 @@ Class.megabyteTurretOfficialV2 = {
 		{
 			POSITION: [26, 13, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, g.assassin, g.pounder, {size: 0.9, health: 1.31, speed: 0.62, recoil: 2, range: 0.6}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, g.assassin, g.pounder, {size: 0.85, health: 1.31, speed: 0.62, recoil: 1.4, range: 0.52}]),
 				TYPE: "bullet",
 			},
 		},
@@ -1662,7 +1662,7 @@ Class.gigabyteTurretOfficialV2 = {
 		{
 			POSITION: [26, 16, 1, 0, 0, 0, 0],
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, g.assassin, g.pounder, g.destroyer, {size: 0.8, health: 1.24, speed: 0.9, recoil: 2, range: 1.15}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.turret, g.assassin, g.pounder, g.destroyer, {size: 0.75, health: 1.24, speed: 0.9, recoil: 1.4, range: 0.9}]),
 				TYPE: "bullet",
 			},
 		},

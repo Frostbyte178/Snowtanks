@@ -7,13 +7,16 @@ const settings = {
         deathBlurAmount: 3,
         darkBorders: false,
         fancyAnimations: true,
+        lowResolution: false,
         colors: 'normal',
         pointy: true,
+        showGrid: true,
         fontSizeBoost: 1.4,
         fontStrokeRatio: 4.5,
         neon: false,
         coloredHealthbars: false,
-        seperatedHealthbars: false
+        seperatedHealthbars: false,
+        showHealthText: false,
     },
     lag: {
         unresponsive: false,
